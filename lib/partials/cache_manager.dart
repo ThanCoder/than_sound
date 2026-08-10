@@ -1,0 +1,68 @@
+import 'dart:io';
+
+import 'package:dart_core_extensions/dart_core_extensions.dart';
+import 'package:flutter/material.dart';
+import 'package:t_widgets/t_widgets.dart';
+import 'package:than_sound/core/utils/p_utils.dart';
+
+class CacheManagerListTile extends StatefulWidget {
+  final String cacheDirPath;
+  const CacheManagerListTile({super.key, required this.cacheDirPath});
+
+  @override
+  State<CacheManagerListTile> createState() => _CacheManagerListTileState();
+}
+
+class _CacheManagerListTileState extends State<CacheManagerListTile> {
+  @override
+  void didUpdateWidget(covariant CacheManagerListTile oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    setState(() {});
+  }
+
+  bool needToClean = false;
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder(
+      future: PUtils.instance.getFolderInfo(Directory(widget.cacheDirPath)),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == .waiting) {
+          return Card(
+            child: ListTile(
+              title: Text('စစ်ဆေးနေပါတယ်.....', style: TextStyle(fontSize: 13)),
+            ),
+          );
+        }
+        final data = snapshot.data;
+        if (data == null) return SizedBox.shrink();
+        if (data.$1 == 0) return SizedBox.shrink();
+
+        needToClean = data.$2 > 0;
+
+        return Card(
+          child: ListTile(
+            leading: Icon(Icons.cleaning_services_sharp),
+            title: Text(
+              'Cache: Count: ${data.$1} - Size: ${data.$2.fileSizeLabel()}',
+              style: TextStyle(fontSize: 13),
+            ),
+            onTap: _showCaleanConfirm,
+          ),
+        );
+      },
+    );
+  }
+
+  void _showCaleanConfirm() {
+    showTConfirmDialog(
+      context,
+      contentText: 'Cache: ရှင်းချင်ပါသလား?',
+      submitText: 'Clean Cache',
+      onSubmit: () async {
+        await PUtils.instance.deleteFolder(Directory(widget.cacheDirPath));
+        if (!mounted) return;
+        setState(() {});
+      },
+    );
+  }
+}
