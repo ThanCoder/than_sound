@@ -12,6 +12,7 @@ import 'package:than_sound/core/controllers/player/player_state_controller.dart'
 import 'package:than_sound/core/utils/p_utils.dart';
 import 'package:than_sound/main_app.dart';
 import 'package:mpv_audio_kit/mpv_audio_kit.dart';
+import 'package:than_sound/ui/favourite/favourite_controller.dart';
 import 'package:waveform_visualizer/waveform_visualizer.dart';
 
 void main() async {
@@ -41,9 +42,14 @@ void main() async {
   await AllFileStateController.cacheStore.open(
     PUtils.instance.getCachePath('app.audio.cache.files.cfb'),
   );
+  await FavouriteController.cacheStore.open(
+    PUtils.instance.getExternalConfigPath('app.audio.favourite.cfb'),
+  );
+
+  final favController = FavouriteController();
 
   final audioHandler = await AudioService.init(
-    builder: () => MyAudioHandler(),
+    builder: () => MyAudioHandler(favController),
     config: const AudioServiceConfig(
       androidNotificationChannelId: 'than_sound',
       androidNotificationChannelName: 'Than Sound',
@@ -57,6 +63,11 @@ void main() async {
         CustController((raf) => PlayerStateController(audioHandler)..init()),
         CustController(
           (raf) => AllFileStateController(raf.read<PlayerStateController>()),
+        ),
+        CustController(
+          (raf) => favController
+            ..init()
+            ..setController(raf.read<AllFileStateController>()),
         ),
       ],
       child: const MainApp(),

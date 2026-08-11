@@ -1,13 +1,18 @@
 import 'dart:async';
 import 'dart:io';
+import 'dart:math';
 
 import 'package:dart_core_extensions/dart_core_extensions.dart';
 import 'package:flutter/material.dart';
-import 'package:than_sound/audio/thumbnail.dart';
-import 'package:than_sound/content/c_slider.dart';
-import 'package:than_sound/content/player_playlist.dart';
+import 'package:marquee/marquee.dart';
+import 'package:t_widgets/t_widgets.dart';
+import 'package:than_sound/ui/audio/thumbnail.dart';
+import 'package:than_sound/ui/content/c_slider.dart';
+import 'package:than_sound/ui/content/player_playlist.dart';
 import 'package:than_sound/core/controllers/interfaces/i_controller.dart';
 import 'package:than_sound/core/controllers/player/player_state_controller.dart';
+import 'package:than_sound/core/models/audio_file.dart';
+import 'package:than_sound/ui/favourite/favourite_button.dart';
 import 'package:waveform_visualizer/waveform_visualizer.dart';
 
 class AudioContentScreen extends StatefulWidget {
@@ -49,25 +54,27 @@ class _AudioContentScreenState extends State<AudioContentScreen> {
       }
     });
 
-    _sub = con.stream.position.listen((position) {
-      final duration = con.state.duration;
+    _sub = con.stream.pcm.listen((frame) {
+      // frame ထဲက PCM samples → amplitude
+      final amplitude = calculateRMS(frame.samples);
 
-      if (duration == Duration.zero) return;
-
-      final progress = position.inMilliseconds / duration.inMilliseconds;
-
-      _controller.updateAmplitude(progress.clamp(0.0, 1.0));
+      _controller.updateAmplitude(amplitude.clamp(0.0, 1.0));
     });
+  }
+
+  double calculateRMS(List<double> samples) {
+    double sum = 0.0;
+    for (double sample in samples) {
+      sum += sample * sample;
+    }
+    return sqrt(sum / samples.length);
   }
 
   @override
   Widget build(BuildContext context) {
-    return Theme(
-      data: .dark(),
-      child: Scaffold(
-        appBar: Platform.isAndroid ? null : AppBar(title: Text('content')),
-        body: SafeArea(child: bodyWidget),
-      ),
+    return Scaffold(
+      appBar: Platform.isAndroid ? null : AppBar(title: Text('content')),
+      body: SafeArea(child: bodyWidget),
     );
   }
 
@@ -85,12 +92,30 @@ class _AudioContentScreenState extends State<AudioContentScreen> {
         return Stack(
           children: [
             Positioned.fill(child: Thumbnail(file: current)),
+
+            // main background
             Container(
               decoration: BoxDecoration(
-                color: const Color.fromARGB(178, 8, 8, 8),
+                gradient: LinearGradient(
+                  begin: .topStart,
+                  end: .bottomEnd,
+                  colors: [
+                    if (context.isLightMode)
+                      Color.fromARGB(116, 255, 255, 255)
+                    else
+                      Color.fromARGB(116, 0, 0, 0),
+                    if (context.isLightMode)
+                      Color.fromARGB(181, 255, 255, 255)
+                    else
+                      Color.fromARGB(181, 0, 0, 0),
+                    if (context.isLightMode)
+                      Color.fromARGB(132, 222, 222, 222)
+                    else
+                      Color.fromARGB(132, 0, 0, 0),
+                  ],
+                ),
               ),
             ),
-
             Positioned(
               top: size.height * 0.13,
               right: 0,
@@ -99,9 +124,7 @@ class _AudioContentScreenState extends State<AudioContentScreen> {
                 height: size.height,
                 child: ClipRRect(
                   borderRadius: .circular(10),
-                  child: Container(
-                    color: const Color.fromARGB(155, 18, 20, 20),
-                  ),
+                  child: BackdropFilter(filter: .blur(sigmaX: 10, sigmaY: 10)),
                 ),
               ),
             ),
@@ -112,23 +135,47 @@ class _AudioContentScreenState extends State<AudioContentScreen> {
               // height: size.height,
               child: Center(child: waveformWidget),
             ),
-            Positioned(top: 0, right: 0, left: 0, child: coverWidget),
-            Positioned(
-              top: size.height * 0.43,
-              right: 0,
-              left: 0,
-              child: mainContentWidget,
-            ),
-            Positioned(
-              left: 0,
-              right: 0,
-              // width: size.width,
-              bottom: 5,
-              child: controlsWiget,
-            ),
+            Positioned(top: 50, right: 0, left: 0, child: coverWidget),
+            Positioned(top: 5, right: 0, left: 0, child: headerWidget(current)),
+            Positioned(left: 0, right: 0, bottom: 5, child: controlsWiget),
           ],
         );
       },
+    );
+  }
+
+  Widget headerWidget(AudioFile current) {
+    final con = context.read<PlayerStateController>();
+    return ConstrainedBox(
+      constraints: BoxConstraints(maxHeight: 50, maxWidth: 200),
+      child: Center(
+        child: StreamBuilder(
+          stream: con.stream.playing,
+          builder: (context, asyncSnapshot) {
+            if (con.state.playing) {
+              return Marquee(
+                text: current.autoTitle,
+                style: TextStyle(fontWeight: FontWeight.bold),
+                scrollAxis: Axis.horizontal,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                blankSpace: 20.0,
+                velocity: 100.0,
+                pauseAfterRound: Duration(seconds: 1),
+                accelerationDuration: Duration(seconds: 1),
+                accelerationCurve: Curves.linear,
+                decelerationDuration: Duration(milliseconds: 500),
+                decelerationCurve: Curves.easeOut,
+              );
+            }
+            return Text(
+              current.autoTitle,
+              maxLines: 1,
+              overflow: .clip,
+              style: TextStyle(fontWeight: .bold, fontSize: 18),
+            );
+          },
+        ),
+      ),
     );
   }
 
@@ -138,7 +185,7 @@ class _AudioContentScreenState extends State<AudioContentScreen> {
       child: ClipRRect(
         borderRadius: .circular(8),
         child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 420, maxHeight: 230),
+          constraints: const BoxConstraints(maxWidth: 300, maxHeight: 400),
           child: Thumbnail(file: con.current.value!),
         ),
       ),
@@ -155,9 +202,9 @@ class _AudioContentScreenState extends State<AudioContentScreen> {
       child: Column(
         children: [
           Text(current.autoTitle),
+
           // waveformWidget,
           // Spacer(),
-          controlButtonWidget(con),
         ],
       ),
     );
@@ -213,17 +260,32 @@ class _AudioContentScreenState extends State<AudioContentScreen> {
   // slider controls
   Widget get controlsWiget {
     final con = context.read<PlayerStateController>();
-    return Column(children: [audioPosiWidget(con), specialWidget()]);
+    return Column(
+      children: [
+        controlButtonWidget(con),
+        audioPosiWidget(con),
+        specialWidget(con),
+      ],
+    );
   }
 
-  Row specialWidget() {
+  Row specialWidget(PlayerStateController con) {
     return Row(
       spacing: 4,
       children: [
         Spacer(),
-        IconButton(onPressed: () {}, icon: Icon(Icons.timer)),
-        IconButton(onPressed: () {}, icon: Icon(Icons.favorite)),
-        IconButton(onPressed: showPlayList, icon: Icon(Icons.list_rounded)),
+        IconButton(
+          // color: const Color.fromARGB(255, 25, 127, 210),
+          onPressed: () {},
+          icon: Icon(Icons.timer),
+        ),
+        if (con.current.value != null)
+          FavouriteButton(file: con.current.value!),
+        IconButton(
+          // color: const Color.fromARGB(255, 25, 127, 210),
+          onPressed: showPlayList,
+          icon: Icon(Icons.list_rounded),
+        ),
       ],
     );
   }

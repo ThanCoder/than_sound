@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:than_sound/audio/list_item.dart';
+import 'package:than_sound/ui/audio/list_item.dart';
 import 'package:than_sound/core/const_keys.dart';
-import 'package:than_sound/core/controllers/all_file_state_controller.dart';
-import 'package:than_sound/core/controllers/interfaces/i_controller.dart';
-import 'package:than_sound/core/controllers/player/player_state_controller.dart';
 import 'package:than_sound/core/models/audio_file.dart';
 
 class AudioSliverList extends StatelessWidget {

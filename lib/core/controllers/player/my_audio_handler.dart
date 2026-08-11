@@ -6,11 +6,13 @@ import 'package:flutter/material.dart';
 import 'package:mpv_audio_kit/mpv_audio_kit.dart' hide MediaAction;
 import 'package:than_sound/core/const_keys.dart';
 import 'package:than_sound/core/models/audio_file.dart';
+import 'package:than_sound/ui/favourite/favourite_controller.dart';
 
 class MyAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
   final _player = Player();
+  final FavouriteController favouriteController;
 
-  MyAudioHandler() {
+  MyAudioHandler(this.favouriteController) {
     _listen();
   }
 
@@ -101,6 +103,10 @@ class MyAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
   // The most common callbacks:
   @override
   Future<void> play() async {
+    // _player.state
+    if (_player.state.duration.inSeconds == _player.state.position.inSeconds) {
+      await _player.seek(Duration.zero);
+    }
     _player.play();
     audioPaused = false;
   }
@@ -131,13 +137,15 @@ class MyAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
 
   @override
   Future<dynamic> customAction(String name, [Map<String, dynamic>? extras]) {
-    // final current = AudioStateController.instance.currentAudioFile;
-    // if (name == 'favorite' && current != null) {
-    //   AudioBookmarkController.instance.remove(current.id);
-    // }
-    // if (name == 'favorite_outline' && current != null) {
-    //   AudioBookmarkController.instance.add(current.id);
-    // }
+    final current = currentNotifier.value;
+    if (name == 'favorite' && current != null) {
+      // AudioBookmarkController.instance.remove(current.id);
+      favouriteController.remove(current);
+    }
+    if (name == 'favorite_outline' && current != null) {
+      favouriteController.add(current);
+      // AudioBookmarkController.instance.add(current.id);
+    }
 
     return super.customAction(name, extras);
   }
@@ -189,18 +197,19 @@ class MyAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
       state.playing ? MediaControl.pause : .play,
       MediaControl.stop,
       MediaControl.skipToNext,
-      // if (true)
-      MediaControl.custom(
-        androidIcon: "drawable/favorite",
-        label: 'Favorite',
-        name: 'favorite',
-      ),
-      // else
-      //   MediaControl.custom(
-      //     androidIcon: "drawable/favorite_outline",
-      //     label: 'UnFavorite',
-      //     name: 'favorite_outline',
-      //   ),
+      if (currentNotifier.value != null &&
+          favouriteController.isExists(currentNotifier.value!))
+        MediaControl.custom(
+          androidIcon: "drawable/favorite",
+          label: 'Favorite',
+          name: 'favorite',
+        )
+      else
+        MediaControl.custom(
+          androidIcon: "drawable/favorite_outline",
+          label: 'UnFavorite',
+          name: 'favorite_outline',
+        ),
     ],
     systemActions: {
       MediaAction.seek,

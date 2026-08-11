@@ -4,7 +4,7 @@ import 'package:than_sound/core/controllers/interfaces/i_controller.dart';
 import 'package:than_sound/core/controllers/player/my_audio_handler.dart';
 import 'package:than_sound/core/models/audio_file.dart';
 
-enum AudioFileSourceType { allFileState, singleState }
+enum AudioFileSourceType { none, allFileState, favouriteState }
 
 class PlayerStateController extends IController {
   ValueNotifier<AudioFile?> get current => _audioHandler.currentNotifier;
@@ -15,34 +15,23 @@ class PlayerStateController extends IController {
 
   PlayerState get state => _audioHandler.state;
   PlayerStream get stream => _audioHandler.stream;
-  bool _serviceInit = false;
 
   @override
-  void init() async {
-    if (_serviceInit) return;
+  void init() async {}
 
-    _serviceInit = true;
-  }
-
-  AudioFileSourceType _sourceType = .allFileState;
+  AudioFileSourceType _sourceType = .none;
   AudioFileSourceType get sourceType => _sourceType;
   final showFloatWidget = ValueNotifier<bool>(false);
 
-  Future<void> setTracks(List<AudioFile> files, {int index = 0}) async {
-    if (state.playing) {
-      debugPrint('[PlayerStateController:setTracks]: Audio is Playing...');
-      return;
-    }
-    await _audioHandler.setAll(files, index: index, play: false);
-  }
-
-  Future<void> openAll(
+  Future<void> setTracks(
     List<AudioFile> files, {
-    AudioFileSourceType sourceType = .allFileState,
     int index = 0,
+    AudioFileSourceType source = .none,
   }) async {
-    _sourceType = sourceType;
-    await _audioHandler.setAll(files, index: index);
+    if (_sourceType == source && this.files.isNotEmpty) return;
+
+    await _audioHandler.setAll(files, index: index, play: false);
+    _sourceType = source;
   }
 
   Future<void> open(AudioFile file) async {

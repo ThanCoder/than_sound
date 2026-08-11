@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:than_sound/main/main_screen.dart';
-import 'package:than_sound/partials/material_theme_provider.dart';
+import 'package:than_sound/ui/main/main_screen.dart';
+import 'package:than_sound/ui/partials/material_theme_provider.dart';
 
 class MainApp extends StatelessWidget {
   const MainApp({super.key});

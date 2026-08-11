@@ -3,11 +3,12 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:t_widgets/t_widgets.dart';
 import 'package:than_pkg_android/than_pkg_android.dart';
-import 'package:than_sound/audio/audio_float_widget.dart';
+import 'package:than_sound/ui/audio/audio_float_widget.dart';
 import 'package:than_sound/core/controllers/interfaces/i_controller.dart';
 import 'package:than_sound/core/controllers/player/player_state_controller.dart';
-import 'package:than_sound/main/audio_list_page.dart';
-import 'package:than_sound/main/more_page.dart';
+import 'package:than_sound/ui/main/audio_list_page.dart';
+import 'package:than_sound/ui/main/lib_page.dart';
+import 'package:than_sound/ui/main/more_page.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -51,7 +52,7 @@ class _MainScreenState extends State<MainScreen> {
             children: [
               IndexedStack(
                 index: index,
-                children: [AudioListPage(), MorePage()],
+                children: [AudioListPage(), LibPage(), MorePage()],
               ),
 
               // float widget
@@ -77,6 +78,10 @@ class _MainScreenState extends State<MainScreen> {
         unselectedItemColor: context.isDarkMode ? Colors.white : Colors.black,
         items: [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.library_music_outlined),
+            label: 'Library',
+          ),
           BottomNavigationBarItem(
             icon: Icon(Icons.grid_view_rounded),
             label: 'More',

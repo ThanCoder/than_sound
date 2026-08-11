@@ -1,15 +1,15 @@
 import 'dart:io';
-import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:t_widgets/t_widgets.dart' hide SortButton;
-import 'package:than_sound/audio/audio_sliver_list.dart';
-import 'package:than_sound/audio/list_gps_button.dart';
+import 'package:than_sound/ui/audio/audio_sliver_list.dart';
+import 'package:than_sound/ui/audio/list_gps_button.dart';
 import 'package:than_sound/core/const_keys.dart';
 import 'package:than_sound/core/controllers/all_file_state_controller.dart';
 import 'package:than_sound/core/controllers/interfaces/i_controller.dart';
 import 'package:than_sound/core/controllers/player/player_state_controller.dart';
-import 'package:than_sound/partials/sort_provider.dart';
+import 'package:than_sound/ui/partials/sort_provider.dart';
 
 class AudioListPage extends StatefulWidget {
   const AudioListPage({super.key});
@@ -98,7 +98,7 @@ class _AudioListPageState extends State<AudioListPage> {
         child: RefreshButton(text: Text('List Empty!'), onClicked: init),
       );
     }
-
+    final pCon = context.read<PlayerStateController>();
     return RefreshIndicator.adaptive(
       onRefresh: () => init(usedCache: false),
       child: CustomScrollView(
@@ -106,20 +106,40 @@ class _AudioListPageState extends State<AudioListPage> {
         slivers: [
           if (state.isLoading && con.files.isNotEmpty)
             SliverToBoxAdapter(child: LinearProgressIndicator()),
-
+          SliverToBoxAdapter(child: headerWidget),
           AudioSliverList(
             list: con.files,
             onClicked: (file) async {
-              final con = context.read<PlayerStateController>();
-              if (con.files.isEmpty) {
-                await con.setTracks(
-                  context.read<AllFileStateController>().files,
-                );
-              }
-              // con.open(file);
+              await pCon.setTracks(
+                context.read<AllFileStateController>().files,
+                source: .allFileState,
+              );
               // print('item: $file');
-              con.open(file);
+              pCon.open(file);
             },
+          ),
+          SliverToBoxAdapter(
+            child: SizedBox(height: pCon.showFloatWidget.value ? 130 : 90),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget get headerWidget {
+    final con = context.read<AllFileStateController>();
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Row(
+        children: [
+          SvgPicture.asset(
+            'assets/svg/music-svgrepo-com.svg',
+            width: 25,
+            height: 25,
+          ),
+          Text(
+            '${con.files.length}',
+            style: TextStyle(fontSize: 18, fontWeight: .bold),
           ),
         ],
       ),

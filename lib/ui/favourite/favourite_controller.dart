@@ -1,0 +1,70 @@
+import 'package:cfb_store/cfb_store.dart';
+import 'package:than_sound/core/controllers/all_file_state_controller.dart';
+import 'package:than_sound/core/controllers/interfaces/i_controller.dart';
+import 'package:than_sound/core/models/audio_file.dart';
+
+class FavouriteController extends IController {
+  static final cacheStore = CFBStore();
+
+  Stream<StoreEvent> get events => cacheStore.events;
+  late AllFileStateController allFileStateController;
+  void setController(AllFileStateController con) {
+    allFileStateController = con;
+  }
+
+  @override
+  void init() {}
+
+  bool isExists(AudioFile file) {
+    final index = files.indexWhere((e) => e.id == file.id);
+    return index != -1;
+  }
+
+  void toggle(AudioFile file) {
+    final list = cacheStore.getList('list');
+    if (list.contains(file.id)) {
+      remove(file);
+    } else {
+      add(file);
+    }
+  }
+
+  void add(AudioFile file) {
+    final list = cacheStore.getList('list');
+    list.remove(file.id);
+    list.insert(0, file.id);
+    cacheStore.putAndWriteAll('list', list);
+    cacheList.clear();
+  }
+
+  void remove(AudioFile file) {
+    final list = cacheStore.getList('list');
+    list.remove(file.id);
+    cacheStore.putAndWriteAll('list', list);
+    cacheList.clear();
+  }
+
+  final List<AudioFile> cacheList = [];
+
+  List<AudioFile> get files {
+    if (cacheList.isNotEmpty) return cacheList;
+
+    final favList = cacheStore.getStringList('list');
+    if (favList.isEmpty) return [];
+
+    final map = <String, AudioFile>{};
+    for (var file in allFileStateController.files) {
+      map[file.id] = file;
+    }
+
+    for (var id in favList) {
+      final file = map[id];
+      if (file == null) continue;
+      cacheList.add(file);
+    }
+    return cacheList;
+  }
+
+  @override
+  void dispose() {}
+}

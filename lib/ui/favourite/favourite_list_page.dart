@@ -1,0 +1,72 @@
+import 'package:flutter/material.dart';
+import 'package:t_widgets/t_widgets.dart';
+import 'package:than_sound/core/controllers/interfaces/i_controller.dart';
+import 'package:than_sound/core/controllers/player/player_state_controller.dart';
+import 'package:than_sound/ui/audio/audio_float_widget.dart';
+import 'package:than_sound/ui/audio/audio_sliver_list.dart';
+import 'package:than_sound/ui/favourite/favourite_controller.dart';
+
+class FavouriteListPage extends StatefulWidget {
+  const FavouriteListPage({super.key});
+
+  @override
+  State<FavouriteListPage> createState() => _FavouriteListPageState();
+}
+
+class _FavouriteListPageState extends State<FavouriteListPage> {
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
+  }
+
+  final controller = ScrollController();
+
+  Future<void> init({bool usedCache = true}) async {
+    // final con = context.read<FavouriteController>();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text("Favourite List")),
+      body: bodyWidget,
+    );
+  }
+
+  Widget get bodyWidget {
+    final con = context.read<FavouriteController>();
+
+    if (con.files.isEmpty) {
+      return Center(
+        child: RefreshButton(text: Text('List Empty!'), onClicked: init),
+      );
+    }
+    final pCon = context.read<PlayerStateController>();
+    return RefreshIndicator.adaptive(
+      onRefresh: () => init(usedCache: false),
+      child: Stack(
+        children: [
+          CustomScrollView(
+            controller: controller,
+            slivers: [
+              AudioSliverList(
+                list: con.files,
+                onClicked: (file) async {
+                  pCon.setTracks(con.files, source: .favouriteState);
+                  pCon.open(file);
+                },
+              ),
+              SliverToBoxAdapter(
+                child: SizedBox(height: pCon.showFloatWidget.value ? 130 : 90),
+              ),
+            ],
+          ),
+
+          // floating widget
+          Positioned(left: 0, bottom: 0, right: 0, child: AudioFloatWidget()),
+        ],
+      ),
+    );
+  }
+}
