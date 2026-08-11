@@ -2,7 +2,7 @@ import 'package:dart_core_extensions/dart_core_extensions.dart';
 import 'package:flutter/material.dart';
 import 'package:mini_music_visualizer/mini_music_visualizer.dart';
 import 'package:than_sound/audio/thumbnail.dart';
-import 'package:than_sound/core/controllers/i_controller.dart';
+import 'package:than_sound/core/controllers/interfaces/i_controller.dart';
 import 'package:than_sound/core/controllers/player/player_state_controller.dart';
 import 'package:than_sound/core/models/audio_file.dart';
 
@@ -15,10 +15,10 @@ class ListItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final con = context.read<PlayerStateController>();
 
-    return StreamBuilder(
-      stream: con.stream.playing,
-      builder: (context, asyncSnapshot) {
-        final isCurrent = (con.current != null && con.current!.id == file.id);
+    return ValueListenableBuilder(
+      valueListenable: con.current,
+      builder: (context, current, child) {
+        final isCurrent = (current != null && current.id == file.id);
         return GestureDetector(
           onTap: () => onClicked(file),
           child: Card(
@@ -30,11 +30,16 @@ class ListItem extends StatelessWidget {
                   SizedBox(width: 90, height: 90, child: Thumbnail(file: file)),
                   Expanded(child: contentTextWidget),
                   if (isCurrent)
-                    MiniMusicVisualizer(
-                      color: Colors.red,
-                      width: 4,
-                      height: 15,
-                      animate: con.state.playing,
+                    StreamBuilder(
+                      stream: con.stream.playing,
+                      builder: (context, asyncSnapshot) {
+                        return MiniMusicVisualizer(
+                          color: Colors.red,
+                          width: 4,
+                          height: 15,
+                          animate: con.state.playing,
+                        );
+                      },
                     ),
                   IconButton(onPressed: () {}, icon: Icon(Icons.more_vert)),
                 ],
@@ -53,7 +58,7 @@ class ListItem extends StatelessWidget {
       children: [
         Text(
           'T: ${file.autoTitle}',
-          maxLines: 2,
+          maxLines: 1,
           overflow: .ellipsis,
           style: TextStyle(fontWeight: .w400, fontSize: 11),
         ),

@@ -1,26 +1,29 @@
-import 'package:flutter/material.dart';
+part of 'i_controller.dart';
 
-abstract class IController {
-  void init();
-  void dispose();
-}
-
-class _ControllerManagerScope extends InheritedWidget {
-  final Map<Type, IController> controllers;
-  const _ControllerManagerScope({
-    required this.controllers,
-    required super.child,
-  });
-
-  @override
-  bool updateShouldNotify(covariant InheritedWidget oldWidget) {
-    return false;
-  }
-}
-
+/// အသုံးပြုပုံက—
+/// ```dart
+/// runApp(
+///   ControllerManager(
+///     controllers: [
+///       CustController(
+///         (ref) => PlayerStateController(audioHandler),
+///       ),
+///       CustController(
+///         (ref) => AllFileStateController(
+///           ref.read<PlayerStateController>(),
+///         ),
+///       ),
+///     ],
+///     child: const MainApp(),
+///   ),
+/// );
+/// ```
 class ControllerManager extends StatefulWidget {
   final Widget child;
-  final List<IController> controllers;
+
+  /// use -> CustController
+  final List<CustController> controllers;
+
   const ControllerManager({
     super.key,
     required this.controllers,
@@ -33,10 +36,13 @@ class ControllerManager extends StatefulWidget {
   static T of<T extends IController>(BuildContext context) {
     final scope = context
         .dependOnInheritedWidgetOfExactType<_ControllerManagerScope>();
+
     if (scope == null) {
       throw FlutterError('ControllerManager မတွေ့ပါ။ Context ကို စစ်ဆေးပါ။');
     }
+
     final controller = scope.controllers[T];
+
     if (controller == null) {
       throw FlutterError(
         '$T ကို ControllerManager ထဲမှာ Register မလုပ်ရသေးပါ။',
@@ -52,18 +58,25 @@ class _ControllerManagerState extends State<ControllerManager> {
 
   @override
   void initState() {
-    for (var con in widget.controllers) {
+    super.initState();
+
+    final ref = ControllerRef(_controllersMap);
+
+    for (final custCon in widget.controllers) {
+      final con = custCon.callback(ref);
+
       _controllersMap[con.runtimeType] = con;
+
       con.init();
     }
-    super.initState();
   }
 
   @override
   void dispose() {
-    for (var con in _controllersMap.values) {
+    for (final con in _controllersMap.values) {
       con.dispose();
     }
+
     super.dispose();
   }
 
@@ -76,9 +89,16 @@ class _ControllerManagerState extends State<ControllerManager> {
   }
 }
 
-// ext
-extension ControllerManagerExt on BuildContext {
-  T read<T extends IController>() {
-    return ControllerManager.of<T>(this);
+class _ControllerManagerScope extends InheritedWidget {
+  final Map<Type, IController> controllers;
+
+  const _ControllerManagerScope({
+    required this.controllers,
+    required super.child,
+  });
+
+  @override
+  bool updateShouldNotify(covariant InheritedWidget oldWidget) {
+    return false;
   }
 }

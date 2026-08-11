@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:audio_service/audio_service.dart';
 import 'package:cfb_store/cfb_store.dart';
+import 'package:flutter/material.dart';
 import 'package:mpv_audio_kit/mpv_audio_kit.dart' hide MediaAction;
 import 'package:than_sound/core/const_keys.dart';
 import 'package:than_sound/core/models/audio_file.dart';
@@ -17,6 +18,22 @@ class MyAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
   PlayerStream get stream => _player.stream;
   bool audioPaused = false;
 
+  List<AudioFile> _files = [];
+
+  List<AudioFile> get files => _files;
+  final currentNotifier = ValueNotifier<AudioFile?>(null);
+
+  AudioFile? findFile(AudioFile file) {
+    final index = files.indexWhere((e) => e.id == file.id);
+    if (index == -1) return null;
+    return files[index];
+  }
+
+  int get currentIndex {
+    if (currentNotifier.value == null) return -1;
+    return files.indexWhere((e) => e.id == currentNotifier.value!.id);
+  }
+
   void _listen() {
     _player.stream.position.listen((pos) {
       playbackState.add(_transformEvent());
@@ -29,25 +46,56 @@ class MyAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
     _player.stream.playbackState.listen((event) {
       playbackState.add(_transformEvent());
     });
+
+    _player.stream.playbackState.listen((event) {
+      // print('playbackState: $event');
+      if (event == .completed) {
+        // print('completed');
+        skipToNext();
+      }
+    });
   }
 
-  Future<void> openByIndex(int index) async {
-    await _player.jump(index);
-    await _player.play();
-  }
-
-  Future<void> openAll(
+  Future<void> setAll(
     List<AudioFile> files, {
     int index = 0,
     bool play = true,
   }) async {
-    final medias = files.map((e) => createMedia(e)).toList();
-    // final chapters = files.map((e) => createChapter(e)).toList();
+    _files = files;
+    currentNotifier.value = files[index];
+    await _player.open(createMedia(currentNotifier.value!), play: play);
+    addNotiMediaItem(currentNotifier.value!);
+  }
 
-    // await _player.setChapters(chapters);
-    await _player.openAll(medias, index: index, play: play);
+  Future<void> open(AudioFile file) async {
+    final index = currentIndex;
+    if (index == -1) {
+      debugPrint('[MyAudioHandler:open]: index:$index');
+      return;
+    }
+    currentNotifier.value = file;
+    await _player.open(createMedia(file), play: true);
+    addNotiMediaItem(currentNotifier.value!);
+  }
 
-    mediaItem.add(createMediaItem(files[index], duration: state.duration));
+  @override
+  Future<void> skipToNext() async {
+    final index = currentIndex;
+    if (index == -1) return;
+    final next = index + 1;
+    if (next >= files.length) return;
+    currentNotifier.value = files[next];
+    await open(files[next]);
+  }
+
+  @override
+  Future<void> skipToPrevious() async {
+    final index = currentIndex;
+    if (index == -1) return;
+    final prev = index - 1;
+    if (prev < 0) return;
+    currentNotifier.value = files[prev];
+    await open(files[prev]);
   }
 
   // The most common callbacks:
@@ -67,16 +115,6 @@ class MyAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
   Future<void> seek(Duration position) => _player.seek(position);
   @override
   Future<void> skipToQueueItem(int index) => _player.seek(Duration.zero);
-
-  @override
-  Future<void> skipToNext() async {
-    await _player.next();
-  }
-
-  @override
-  Future<void> skipToPrevious() async {
-    await _player.previous();
-  }
 
   Future<void> dispose() async {
     _player.dispose();
@@ -115,15 +153,16 @@ class MyAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
     return super.click(button);
   }
 
-  Chapter createChapter(AudioFile file) {
-    return Chapter(time: .new(), title: file.id);
+  void addNotiMediaItem(AudioFile file) {
+    mediaItem.add(createMediaItem(file, duration: state.duration));
   }
 
   Media createMedia(AudioFile file) {
     return Media(
       File(file.path).uri.toString(),
       extras: {
-        'title': file.meta.title,
+        'id': file.id,
+        'title': file.autoTitle,
         'artist': file.meta.artist,
         'album': file.meta.album,
         'duration': file.meta.duration,
@@ -134,8 +173,8 @@ class MyAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
   MediaItem createMediaItem(AudioFile file, {Duration? duration}) {
     var item = MediaItem(
       id: file.id,
+      title: file.autoTitle,
       album: file.meta.album,
-      title: file.meta.title,
       artist: file.meta.artist,
       genre: file.meta.genre,
       duration: duration ?? file.meta.duration,

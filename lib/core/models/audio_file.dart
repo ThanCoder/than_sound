@@ -49,6 +49,10 @@ class AudioFile {
       cacheCoverPath: map['cacheCoverPath'] ?? '',
     );
   }
+  @override
+  String toString() {
+    return 'id: $id - \nname: $name \nautoTitle: $autoTitle';
+  }
 }
 
 extension AudioFileExt on List<AudioFile> {

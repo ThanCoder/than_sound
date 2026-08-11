@@ -1,8 +1,9 @@
 const String audioBackgroundBlurColorKeyName = 'audio-background-blur-color';
-const double audioSliverListItemHeight = 110;
+const double audioSliverListItemHeight = 80;
 const String audioBluetoothControlKeyName = 'audio-bluetooth-control';
 const String audioVolumeKeyName = 'audio-volume';
 const String audioShuffleModeEnabledKeyName = 'audioShuffleModeEnabled';
+const String audioAllStateSortKey = 'audio-all-state-sort-key';
 
 const String linuxWindowWidthKey = 'linux-window-width';
 const String linuxWindowHeightKey = 'linux-window-height';

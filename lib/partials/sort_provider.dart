@@ -1,4 +1,3 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
 
 ///Sort Item
@@ -8,7 +7,7 @@ class SortItem {
   final bool isTrue;
   final Widget trueTitle;
   final Widget falseTitle;
-  SortItem({
+  const SortItem({
     required this.id,
     required this.title,
     required this.isTrue,
@@ -17,6 +16,13 @@ class SortItem {
   });
 
   ///default name
+  ///
+  ///trueTitle: Text("A To Z"),
+  ///
+  ///falseTitle: Text('Z To A'),
+  ///
+  ///isTrue: true,
+  ///
   static final nameSortItem = SortItem(
     id: 1000,
     title: Text('Name'),
@@ -26,6 +32,11 @@ class SortItem {
   );
 
   /// default data
+  /// trueTitle: Text("New To Old"),
+  ///
+  /// falseTitle: Text('Old To New'),
+  ///
+  /// isTrue: true,
   static final dateSortItem = SortItem(
     id: 1001,
     title: Text('Date'),
@@ -33,12 +44,18 @@ class SortItem {
     falseTitle: Text('Old To New'),
     isTrue: true,
   );
+
+  /// trueTitle: Text("Small To Big"),
+  ///
+  /// falseTitle: Text("Big To Small"),
+  ///
+  /// isTrue: true,
   static final sizeSortItem = SortItem(
     id: 1,
     title: Text('Size'),
-    isTrue: true,
     trueTitle: Text("Small To Big"),
     falseTitle: Text("Big To Small"),
+    isTrue: true,
   );
 
   SortItem copyWith({

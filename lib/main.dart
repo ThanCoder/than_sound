@@ -1,11 +1,13 @@
 import 'dart:io';
 
+import 'package:audio_service/audio_service.dart';
 import 'package:audio_session/audio_session.dart';
 import 'package:cfb_store/cfb_store.dart';
 import 'package:flutter/material.dart';
 import 'package:than_pkg_linux/than_pkg_linux.dart';
 import 'package:than_sound/core/controllers/all_file_state_controller.dart';
-import 'package:than_sound/core/controllers/i_controller.dart';
+import 'package:than_sound/core/controllers/interfaces/i_controller.dart';
+import 'package:than_sound/core/controllers/player/my_audio_handler.dart';
 import 'package:than_sound/core/controllers/player/player_state_controller.dart';
 import 'package:than_sound/core/utils/p_utils.dart';
 import 'package:than_sound/main_app.dart';
@@ -40,10 +42,26 @@ void main() async {
     PUtils.instance.getCachePath('app.audio.cache.files.cfb'),
   );
 
+  final audioHandler = await AudioService.init(
+    builder: () => MyAudioHandler(),
+    config: const AudioServiceConfig(
+      androidNotificationChannelId: 'than_sound',
+      androidNotificationChannelName: 'Than Sound',
+      androidNotificationOngoing: true,
+    ),
+  );
+
   runApp(
     ControllerManager(
-      controllers: [AllFileStateController(), PlayerStateController()],
+      controllers: [
+        CustController((raf) => PlayerStateController(audioHandler)..init()),
+        CustController(
+          (raf) => AllFileStateController(raf.read<PlayerStateController>()),
+        ),
+      ],
       child: const MainApp(),
     ),
   );
 }
+
+// AllFileStateController(), PlayerStateController()..init()
