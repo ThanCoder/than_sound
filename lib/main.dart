@@ -46,33 +46,23 @@ void main() async {
     PUtils.instance.getExternalConfigPath('app.audio.favourite.cfb'),
   );
 
-  final favController = FavouriteController();
-
   final audioHandler = await AudioService.init(
-    builder: () => MyAudioHandler(favController),
+    builder: () => MyAudioHandler(),
     config: const AudioServiceConfig(
       androidNotificationChannelId: 'than_sound',
       androidNotificationChannelName: 'Than Sound',
       androidNotificationOngoing: true,
+      androidNotificationIcon: 'mipmap/launcher_icon'
     ),
   );
+  ControllerManager.register(PlayerStateController(audioHandler));
 
-  runApp(
-    ControllerManager(
-      controllers: [
-        CustController((raf) => PlayerStateController(audioHandler)..init()),
-        CustController(
-          (raf) => AllFileStateController(raf.read<PlayerStateController>()),
-        ),
-        CustController(
-          (raf) => favController
-            ..init()
-            ..setController(raf.read<AllFileStateController>()),
-        ),
-      ],
-      child: const MainApp(),
-    ),
-  );
+  ControllerManager.register(AllFileStateController());
+  ControllerManager.register(FavouriteController());
+
+  audioHandler.startListen();
+
+  runApp(const MainApp());
 }
 
 // AllFileStateController(), PlayerStateController()..init()

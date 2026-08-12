@@ -5,38 +5,32 @@ import 'package:cfb_store/cfb_store.dart';
 import 'package:flutter/material.dart';
 import 'package:mpv_audio_kit/mpv_audio_kit.dart' hide MediaAction;
 import 'package:than_sound/core/const_keys.dart';
+import 'package:than_sound/core/controllers/all_file_event.dart';
+import 'package:than_sound/core/controllers/all_file_state_controller.dart';
+import 'package:than_sound/core/controllers/interfaces/i_controller.dart';
+import 'package:than_sound/core/controllers/player/player_state_controller.dart';
 import 'package:than_sound/core/models/audio_file.dart';
 import 'package:than_sound/ui/favourite/favourite_controller.dart';
 
 class MyAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
   final _player = Player();
-  final FavouriteController favouriteController;
-
-  MyAudioHandler(this.favouriteController) {
-    _listen();
-  }
+  FavouriteController get favouriteController =>
+      ControllerManager.read<FavouriteController>();
+  AllFileStateController get allFileStateController =>
+      ControllerManager.read<AllFileStateController>();
 
   PlayerState get state => _player.state;
   PlayerStream get stream => _player.stream;
   bool audioPaused = false;
 
+  AudioFileSourceType _source = .none;
+  AudioFileSourceType get source => _source;
   List<AudioFile> _files = [];
 
   List<AudioFile> get files => _files;
   final currentNotifier = ValueNotifier<AudioFile?>(null);
 
-  AudioFile? findFile(AudioFile file) {
-    final index = files.indexWhere((e) => e.id == file.id);
-    if (index == -1) return null;
-    return files[index];
-  }
-
-  int get currentIndex {
-    if (currentNotifier.value == null) return -1;
-    return files.indexWhere((e) => e.id == currentNotifier.value!.id);
-  }
-
-  void _listen() {
+  void startListen() {
     _player.stream.position.listen((pos) {
       playbackState.add(_transformEvent());
     });
@@ -56,6 +50,52 @@ class MyAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
         skipToNext();
       }
     });
+    // all audio state
+    favouriteController.eventStream.listen((event) {
+      if (source != .favouriteState) return;
+      if (event is FavouriteControllerAddEvent) {
+        _files.insert(0, event.file);
+      }
+      if (event is FavouriteControllerRemoveEvent) {
+        final index = _files.indexWhere((e) => e.id == event.file.id);
+        if (index == -1) return;
+        _files.removeAt(index);
+      }
+    });
+    allFileStateController.eventStream.listen((event) {
+      if (source != .allFileState) return;
+      if (event is AllFileAddEvent) {
+        _files.insert(0, event.file);
+      }
+      if (event is AllFileRemoveEvent) {
+        final index = _files.indexWhere((e) => e.id == event.file.id);
+        if (index == -1) return;
+        _files.removeAt(index);
+      }
+    });
+  }
+
+  AudioFile? findFile(AudioFile file) {
+    final index = files.indexWhere((e) => e.id == file.id);
+    if (index == -1) return null;
+    return files[index];
+  }
+
+  int getCurrentIndex(AudioFile? file) {
+    if (file == null) return -1;
+    return files.indexWhere((e) => e.id == file.id);
+  }
+
+  Future<void> setTracks(
+    List<AudioFile> files, {
+    int index = 0,
+    required AudioFileSourceType source,
+  }) async {
+    _files = files;
+    _source = source;
+    currentNotifier.value = files[index];
+    if (_player.state.playing || currentNotifier.value != null) return;
+    await setAll(files, play: false);
   }
 
   Future<void> setAll(
@@ -64,13 +104,12 @@ class MyAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
     bool play = true,
   }) async {
     _files = files;
-    currentNotifier.value = files[index];
     await _player.open(createMedia(currentNotifier.value!), play: play);
     addNotiMediaItem(currentNotifier.value!);
   }
 
   Future<void> open(AudioFile file) async {
-    final index = currentIndex;
+    final index = getCurrentIndex(file);
     if (index == -1) {
       debugPrint('[MyAudioHandler:open]: index:$index');
       return;
@@ -82,7 +121,7 @@ class MyAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
 
   @override
   Future<void> skipToNext() async {
-    final index = currentIndex;
+    final index = getCurrentIndex(currentNotifier.value);
     if (index == -1) return;
     final next = index + 1;
     if (next >= files.length) return;
@@ -92,7 +131,7 @@ class MyAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
 
   @override
   Future<void> skipToPrevious() async {
-    final index = currentIndex;
+    final index = getCurrentIndex(currentNotifier.value);
     if (index == -1) return;
     final prev = index - 1;
     if (prev < 0) return;
@@ -130,6 +169,7 @@ class MyAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
   Future<void> stop() async {
     audioPaused = false;
     await _player.stop();
+    currentNotifier.value = null;
     playbackState.add(
       playbackState.value.copyWith(playing: false, processingState: .idle),
     );

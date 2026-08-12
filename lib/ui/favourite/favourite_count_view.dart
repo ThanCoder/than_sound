@@ -10,7 +10,7 @@ class FavouriteCountView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final con = context.read<FavouriteController>();
+    final con = ControllerManager.read<FavouriteController>();
     return InkWell(
       onTap: () {
         context.pushMaterialPageRoute(

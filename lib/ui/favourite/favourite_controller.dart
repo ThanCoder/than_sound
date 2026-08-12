@@ -1,19 +1,40 @@
 import 'package:cfb_store/cfb_store.dart';
+import 'package:than_sound/core/controllers/all_file_event.dart';
 import 'package:than_sound/core/controllers/all_file_state_controller.dart';
 import 'package:than_sound/core/controllers/interfaces/i_controller.dart';
 import 'package:than_sound/core/models/audio_file.dart';
 
+class FavouriteControllerAddEvent extends IControllerEvent {
+  final AudioFile file;
+  FavouriteControllerAddEvent(this.file);
+}
+
+class FavouriteControllerRemoveEvent extends IControllerEvent {
+  final AudioFile file;
+  FavouriteControllerRemoveEvent(this.file);
+}
+
 class FavouriteController extends IController {
   static final cacheStore = CFBStore();
-
   Stream<StoreEvent> get events => cacheStore.events;
-  late AllFileStateController allFileStateController;
-  void setController(AllFileStateController con) {
-    allFileStateController = con;
-  }
+
+  AllFileStateController get allFileStateController =>
+      ControllerManager.read<AllFileStateController>();
 
   @override
-  void init() {}
+  void init() {
+    allFileStateController.eventStream.listen((event) {
+      if (event is AllFileAddEvent) {
+        add(event.file);
+      }
+      if (event is AllFileRemoveEvent) {
+        remove(event.file);
+      }
+      if (event is AllFileResetEvent) {
+        cacheList.clear();
+      }
+    });
+  }
 
   bool isExists(AudioFile file) {
     final index = files.indexWhere((e) => e.id == file.id);
@@ -35,6 +56,7 @@ class FavouriteController extends IController {
     list.insert(0, file.id);
     cacheStore.putAndWriteAll('list', list);
     cacheList.clear();
+    addEvent(FavouriteControllerAddEvent(file));
   }
 
   void remove(AudioFile file) {
@@ -42,6 +64,7 @@ class FavouriteController extends IController {
     list.remove(file.id);
     cacheStore.putAndWriteAll('list', list);
     cacheList.clear();
+    addEvent(FavouriteControllerRemoveEvent(file));
   }
 
   final List<AudioFile> cacheList = [];
@@ -64,7 +87,4 @@ class FavouriteController extends IController {
     }
     return cacheList;
   }
-
-  @override
-  void dispose() {}
 }

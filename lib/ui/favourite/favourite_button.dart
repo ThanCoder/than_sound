@@ -10,7 +10,7 @@ class FavouriteButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final con = context.read<FavouriteController>();
+    final con = ControllerManager.read<FavouriteController>();
     return GestureDetector(
       onTap: () {
         con.toggle(file);

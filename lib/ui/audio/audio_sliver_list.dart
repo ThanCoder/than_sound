@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:than_sound/ui/audio/audio_item_menu.dart';
 import 'package:than_sound/ui/audio/list_item.dart';
 import 'package:than_sound/core/const_keys.dart';
 import 'package:than_sound/core/models/audio_file.dart';
@@ -22,6 +23,16 @@ class AudioSliverList extends StatelessWidget {
   }
 
   Widget listItem(BuildContext context, AudioFile file) {
-    return ListItem(file: file, onClicked: onClicked);
+    return ListItem(
+      file: file,
+      onClicked: onClicked,
+      onMenuClicked: (file) {
+        showModalBottomSheet(
+          context: context,
+          isScrollControlled: true,
+          builder: (context) => AudioItemMenu(file: file),
+        );
+      },
+    );
   }
 }

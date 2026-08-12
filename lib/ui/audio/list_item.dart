@@ -10,11 +10,17 @@ import 'package:than_sound/ui/favourite/favourite_button.dart';
 class ListItem extends StatelessWidget {
   final AudioFile file;
   final void Function(AudioFile file) onClicked;
-  const ListItem({super.key, required this.file, required this.onClicked});
+  final void Function(AudioFile file)? onMenuClicked;
+  const ListItem({
+    super.key,
+    required this.file,
+    required this.onClicked,
+    this.onMenuClicked,
+  });
 
   @override
   Widget build(BuildContext context) {
-    final con = context.read<PlayerStateController>();
+    final con = ControllerManager.read<PlayerStateController>();
 
     return ValueListenableBuilder(
       valueListenable: con.current,
@@ -31,7 +37,10 @@ class ListItem extends StatelessWidget {
                   SizedBox(width: 90, height: 90, child: Thumbnail(file: file)),
                   Expanded(child: contentTextWidget),
                   if (isCurrent) CurrentMusicVisualizerWidget(),
-                  IconButton(onPressed: () {}, icon: Icon(Icons.more_vert)),
+                  IconButton(
+                    onPressed: () => onMenuClicked?.call(file),
+                    icon: Icon(Icons.more_vert),
+                  ),
                 ],
               ),
             ),

@@ -46,7 +46,9 @@ class _MainScreenState extends State<MainScreen> {
     return Scaffold(
       extendBody: true,
       body: ValueListenableBuilder(
-        valueListenable: context.read<PlayerStateController>().showFloatWidget,
+        valueListenable: ControllerManager
+            .read<PlayerStateController>()
+            .showFloatWidget,
         builder: (context, value, child) {
           return Stack(
             children: [

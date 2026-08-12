@@ -1,6 +1,9 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:cfb_store/cfb_store.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:than_sound/core/controllers/all_file_event.dart';
 import 'package:than_sound/core/controllers/all_state.dart';
 import 'package:than_sound/core/controllers/interfaces/i_controller.dart';
 import 'package:than_sound/core/controllers/player/player_state_controller.dart';
@@ -9,8 +12,8 @@ import 'package:than_sound/core/scanner/audio_scanner.dart';
 import 'package:than_sound/ui/partials/sort_provider.dart';
 
 class AllFileStateController extends IController {
-  final PlayerStateController _playerStateController;
-  AllFileStateController(this._playerStateController);
+  PlayerStateController get _playerStateController =>
+      ControllerManager.read<PlayerStateController>();
 
   final List<AudioFile> files = [];
   final List<SortItem> sortList = [.nameSortItem, .dateSortItem, .sizeSortItem];
@@ -41,6 +44,7 @@ class AllFileStateController extends IController {
         _state = _state.copyWith(isLoading: false);
         sort(_state.currentSort, files);
         _con.add(state);
+        addEvent(AllFileResetEvent());
       }
 
       final list = await AudioScanner.scan();
@@ -52,6 +56,7 @@ class AllFileStateController extends IController {
       _state = _state.copyWith(isLoading: false);
       sort(_state.currentSort, files);
       _con.add(state);
+      addEvent(AllFileResetEvent());
       // set cache
       if (files.isNotEmpty) {
         final cList = files.map((e) => e.toMap()).toList();
@@ -111,16 +116,43 @@ class AllFileStateController extends IController {
     sort(item, files);
     _setSortToConfig();
     _con.add(_state);
-    _playerStateController.setTracks(files);
-  }
-
-  @override
-  void dispose() {
-    _con.close();
+    _playerStateController.setTracks(files, source: .allFileState);
   }
 
   @override
   void init() {
     scanFromStorage();
+  }
+
+  Future<void> deleteAudioFile(AudioFile file) async {
+    try {
+      // check current songe
+      final current = _playerStateController.current.value;
+      if (current != null && current.path == file.path) {
+        await _playerStateController.stop();
+
+        _playerStateController.current.value = null;
+      }
+
+      final index = files.indexWhere((e) => e.path == file.path);
+      if (index == -1) {
+        debugPrint(
+          '[AllFileStateController:deleteAudioFile]: Not found index: $index',
+        );
+        return;
+      }
+      files.removeAt(index);
+      addEvent(AllFileRemoveEvent(file));
+
+      _con.add(_state);
+
+      // delete
+      final f = File(file.path);
+      if (f.existsSync()) {
+        await f.delete();
+      }
+    } catch (e) {
+      debugPrint('[AllFileStateController:deleteAudioFile]: $e');
+    }
   }
 }

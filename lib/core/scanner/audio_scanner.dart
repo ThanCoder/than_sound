@@ -33,6 +33,7 @@ class AudioScanner {
       final home = Platform.environment['HOME'];
       if (home != null) {
         scanFolders.add(home.join('Music'));
+        scanFolders.add(home.join('Videos'));
       }
     }
     if (Platform.isAndroid) {

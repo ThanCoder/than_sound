@@ -317,6 +317,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.4.2"
+  flutter_colorpicker:
+    dependency: "direct main"
+    description:
+      name: flutter_colorpicker
+      sha256: "969de5f6f9e2a570ac660fb7b501551451ea2a1ab9e2097e89475f60e07816ea"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.1.0"
   flutter_launcher_icons:
     dependency: "direct dev"
     description:
@@ -799,10 +807,10 @@ packages:
     dependency: "direct main"
     description:
       name: than_pkg_android
-      sha256: "038a79fb1895019e7e09271d6354674283ef12e9ff2e966416dab5adbd415fb5"
+      sha256: "27b1ea1f60d1f0160c4f0eb8e2bb22347991e05cc1bdf0af14cb75eec3259cbb"
       url: "https://pub.dev"
     source: hosted
-    version: "0.2.1"
+    version: "0.4.0"
   than_pkg_linux:
     dependency: "direct main"
     description:

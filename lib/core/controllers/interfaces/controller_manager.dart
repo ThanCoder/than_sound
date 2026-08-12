@@ -1,104 +1,51 @@
 part of 'i_controller.dart';
 
-/// အသုံးပြုပုံက—
-/// ```dart
-/// runApp(
-///   ControllerManager(
-///     controllers: [
-///       CustController(
-///         (ref) => PlayerStateController(audioHandler),
-///       ),
-///       CustController(
-///         (ref) => AllFileStateController(
-///           ref.read<PlayerStateController>(),
-///         ),
-///       ),
-///     ],
-///     child: const MainApp(),
-///   ),
-/// );
-/// ```
-class ControllerManager extends StatefulWidget {
-  final Widget child;
+class ControllerManager {
+  ControllerManager._();
 
-  /// use -> CustController
-  final List<CustController> controllers;
+  static final Map<Type, IController> _controllers = {};
 
-  const ControllerManager({
-    super.key,
-    required this.controllers,
-    required this.child,
-  });
+  static final ControllerRef ref = ControllerRef._(_controllers);
 
-  @override
-  State<ControllerManager> createState() => _ControllerManagerState();
+  static void register<T extends IController>(T controller) {
+    final type = T;
 
-  static T of<T extends IController>(BuildContext context) {
-    final scope = context
-        .dependOnInheritedWidgetOfExactType<_ControllerManagerScope>();
-
-    if (scope == null) {
-      throw FlutterError('ControllerManager မတွေ့ပါ။ Context ကို စစ်ဆေးပါ။');
+    if (_controllers.containsKey(type)) {
+      throw FlutterError('$T ကို Register လုပ်ပြီးသားဖြစ်ပါတယ်။');
     }
 
-    final controller = scope.controllers[T];
+    _controllers[type] = controller;
+
+    controller.init();
+  }
+
+  static T read<T extends IController>() {
+    final controller = _controllers[T];
 
     if (controller == null) {
-      throw FlutterError(
-        '$T ကို ControllerManager ထဲမှာ Register မလုပ်ရသေးပါ။',
-      );
+      throw FlutterError('$T ကို Register မလုပ်ရသေးပါ။');
     }
 
     return controller as T;
   }
-}
 
-class _ControllerManagerState extends State<ControllerManager> {
-  final Map<Type, IController> _controllersMap = {};
-
-  @override
-  void initState() {
-    super.initState();
-
-    final ref = ControllerRef(_controllersMap);
-
-    for (final custCon in widget.controllers) {
-      final con = custCon.callback(ref);
-
-      _controllersMap[con.runtimeType] = con;
-
-      con.init();
-    }
-  }
-
-  @override
-  void dispose() {
-    for (final con in _controllersMap.values) {
-      con.dispose();
-    }
-
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return _ControllerManagerScope(
-      controllers: _controllersMap,
-      child: widget.child,
-    );
+  static bool has<T extends IController>() {
+    return _controllers.containsKey(T);
   }
 }
 
-class _ControllerManagerScope extends InheritedWidget {
-  final Map<Type, IController> controllers;
+class ControllerRef {
+  final Map<Type, IController> _controllers;
 
-  const _ControllerManagerScope({
-    required this.controllers,
-    required super.child,
-  });
+  const ControllerRef._(this._controllers);
 
-  @override
-  bool updateShouldNotify(covariant InheritedWidget oldWidget) {
-    return false;
+  T read<T extends IController>() {
+    final controller = _controllers[T];
+
+    if (controller == null) {
+      throw FlutterError('$T ကို Register မလုပ်ရသေးပါ။');
+    }
+
+    return controller as T;
   }
 }

@@ -22,11 +22,14 @@ class _AudioListPageState extends State<AudioListPage> {
   final controller = ScrollController();
 
   Future<void> init({bool usedCache = true}) async {
-    final con = context.read<AllFileStateController>();
+    final con = ControllerManager.read<AllFileStateController>();
     await con.scanFromStorage(usedCache: usedCache);
     if (!mounted) return;
 
-    context.read<PlayerStateController>().setTracks(con.files);
+    ControllerManager.read<PlayerStateController>().setTracks(
+      con.files,
+      source: .allFileState,
+    );
   }
 
   @override
@@ -37,8 +40,8 @@ class _AudioListPageState extends State<AudioListPage> {
 
   @override
   Widget build(BuildContext context) {
-    final con = context.read<AllFileStateController>();
-    final pCon = context.read<PlayerStateController>();
+    final con = ControllerManager.read<AllFileStateController>();
+    final pCon = ControllerManager.read<PlayerStateController>();
     return StreamBuilder(
       stream: con.stream,
       builder: (context, asyncSnapshot) {
@@ -61,7 +64,7 @@ class _AudioListPageState extends State<AudioListPage> {
   }
 
   List<Widget> get actions {
-    final con = context.read<AllFileStateController>();
+    final con = ControllerManager.read<AllFileStateController>();
 
     return [
       if (Platform.isLinux)
@@ -80,7 +83,7 @@ class _AudioListPageState extends State<AudioListPage> {
   }
 
   Widget get bodyWidget {
-    final con = context.read<AllFileStateController>();
+    final con = ControllerManager.read<AllFileStateController>();
     final state = con.state;
     if (state.isLoading && con.files.isEmpty) {
       return Center(child: TLoaderRandom());
@@ -98,7 +101,7 @@ class _AudioListPageState extends State<AudioListPage> {
         child: RefreshButton(text: Text('List Empty!'), onClicked: init),
       );
     }
-    final pCon = context.read<PlayerStateController>();
+    final pCon = ControllerManager.read<PlayerStateController>();
     return RefreshIndicator.adaptive(
       onRefresh: () => init(usedCache: false),
       child: CustomScrollView(
@@ -111,7 +114,7 @@ class _AudioListPageState extends State<AudioListPage> {
             list: con.files,
             onClicked: (file) async {
               await pCon.setTracks(
-                context.read<AllFileStateController>().files,
+                ControllerManager.read<AllFileStateController>().files,
                 source: .allFileState,
               );
               // print('item: $file');
@@ -127,7 +130,7 @@ class _AudioListPageState extends State<AudioListPage> {
   }
 
   Widget get headerWidget {
-    final con = context.read<AllFileStateController>();
+    final con = ControllerManager.read<AllFileStateController>();
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Row(
@@ -148,10 +151,10 @@ class _AudioListPageState extends State<AudioListPage> {
 
   void goListGps() {
     try {
-      final con = context.read<PlayerStateController>();
+      final con = ControllerManager.read<PlayerStateController>();
       final current = con.current.value;
       if (current == null) return;
-      final allCon = context.read<AllFileStateController>();
+      final allCon = ControllerManager.read<AllFileStateController>();
       final index = allCon.files.indexWhere((e) => e.id == current.id);
       if (index == -1) return;
       final size = MediaQuery.of(context).size;

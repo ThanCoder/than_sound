@@ -12,7 +12,7 @@ class AudioFloatWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final con = context.read<PlayerStateController>();
+    final con = ControllerManager.read<PlayerStateController>();
     return InkWell(
       onTap: () => goContent(context),
       onLongPress: () => showCloseDialog(context),
@@ -152,7 +152,10 @@ class AudioFloatWidget extends StatelessWidget {
             TextButton(
               onPressed: () {
                 ScaffoldMessenger.of(ctx).hideCurrentSnackBar();
-                ctx.read<PlayerStateController>().showFloatWidget.value = false;
+                ControllerManager.read<PlayerStateController>()
+                        .showFloatWidget
+                        .value =
+                    false;
               },
               child: Text('Hide'),
             ),

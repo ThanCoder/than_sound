@@ -8,7 +8,7 @@ class CurrentMusicVisualizerWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final con = context.read<PlayerStateController>();
+    final con = ControllerManager.read<PlayerStateController>();
     return StreamBuilder(
       stream: con.stream.playing,
       builder: (context, asyncSnapshot) {

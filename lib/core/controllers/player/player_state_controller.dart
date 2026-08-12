@@ -15,23 +15,19 @@ class PlayerStateController extends IController {
 
   PlayerState get state => _audioHandler.state;
   PlayerStream get stream => _audioHandler.stream;
+  AudioFileSourceType get source => _audioHandler.source;
 
   @override
   void init() async {}
 
-  AudioFileSourceType _sourceType = .none;
-  AudioFileSourceType get sourceType => _sourceType;
+  AudioFileSourceType get sourceType => _audioHandler.source;
   final showFloatWidget = ValueNotifier<bool>(false);
 
   Future<void> setTracks(
     List<AudioFile> files, {
-    int index = 0,
-    AudioFileSourceType source = .none,
+    required AudioFileSourceType source,
   }) async {
-    if (_sourceType == source && this.files.isNotEmpty) return;
-
-    await _audioHandler.setAll(files, index: index, play: false);
-    _sourceType = source;
+    _audioHandler.setTracks(files, source: source);
   }
 
   Future<void> open(AudioFile file) async {
@@ -42,6 +38,12 @@ class PlayerStateController extends IController {
   Future<void> pause() async {
     if (_audioHandler.state.playing) {
       await _audioHandler.pause();
+    }
+  }
+
+  Future<void> stop() async {
+    if (_audioHandler.state.playing) {
+      await _audioHandler.stop();
     }
   }
 
@@ -68,10 +70,5 @@ class PlayerStateController extends IController {
 
   Future<void> seek(Duration position) async {
     await _audioHandler.seek(position);
-  }
-
-  @override
-  void dispose() {
-    _audioHandler.dispose();
   }
 }

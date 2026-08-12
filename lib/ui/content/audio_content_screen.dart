@@ -6,10 +6,11 @@ import 'package:dart_core_extensions/dart_core_extensions.dart';
 import 'package:flutter/material.dart';
 import 'package:marquee/marquee.dart';
 import 'package:t_widgets/t_widgets.dart';
+import 'package:than_sound/core/controllers/interfaces/i_controller.dart';
+import 'package:than_sound/exts.dart';
 import 'package:than_sound/ui/audio/thumbnail.dart';
 import 'package:than_sound/ui/content/c_slider.dart';
 import 'package:than_sound/ui/content/player_playlist.dart';
-import 'package:than_sound/core/controllers/interfaces/i_controller.dart';
 import 'package:than_sound/core/controllers/player/player_state_controller.dart';
 import 'package:than_sound/core/models/audio_file.dart';
 import 'package:than_sound/ui/favourite/favourite_button.dart';
@@ -23,292 +24,428 @@ class AudioContentScreen extends StatefulWidget {
 }
 
 class _AudioContentScreenState extends State<AudioContentScreen> {
-  final _controller = WaveformController();
-  StreamSubscription? _sub, _sub2;
+  final _waveformController = WaveformController();
+
+  StreamSubscription? _playingSub;
+  StreamSubscription? _pcmSub;
+
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) => init());
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _initPlayer();
+    });
   }
 
   @override
   void dispose() {
-    _sub?.cancel();
-    _sub2?.cancel();
-    _controller.dispose();
+    _playingSub?.cancel();
+    _pcmSub?.cancel();
+    _waveformController.dispose();
     super.dispose();
   }
 
-  void init() {
-    final con = context.read<PlayerStateController>();
+  void _initPlayer() {
+    final con = ControllerManager.read<PlayerStateController>();
 
     if (con.state.playing) {
-      _controller.start();
+      _waveformController.start();
     }
 
-    _sub2 = con.stream.playing.listen((event) {
-      if (con.state.playing) {
-        _controller.start();
+    _playingSub = con.stream.playing.listen((playing) {
+      if (playing) {
+        _waveformController.start();
       } else {
-        _controller.stop();
+        _waveformController.stop();
       }
     });
 
-    _sub = con.stream.pcm.listen((frame) {
-      // frame ထဲက PCM samples → amplitude
+    _pcmSub = con.stream.pcm.listen((frame) {
+      if (frame.samples.isEmpty) return;
+
       final amplitude = calculateRMS(frame.samples);
 
-      _controller.updateAmplitude(amplitude.clamp(0.0, 1.0));
+      _waveformController.updateAmplitude(amplitude.clamp(0.0, 1.0));
     });
   }
 
   double calculateRMS(List<double> samples) {
-    double sum = 0.0;
-    for (double sample in samples) {
+    if (samples.isEmpty) return 0;
+
+    double sum = 0;
+
+    for (final sample in samples) {
       sum += sample * sample;
     }
+
     return sqrt(sum / samples.length);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: Platform.isAndroid ? null : AppBar(title: Text('content')),
-      body: SafeArea(child: bodyWidget),
+      appBar: Platform.isAndroid ? null : AppBar(title: const Text('Content')),
+      body: SafeArea(child: _body),
     );
   }
 
-  Widget get bodyWidget {
-    final con = context.read<PlayerStateController>();
+  Widget get _body {
+    final con = ControllerManager.read<PlayerStateController>();
 
     return ValueListenableBuilder(
       valueListenable: con.current,
       builder: (context, current, child) {
         if (current == null) {
-          return SizedBox.shrink();
+          return const SizedBox.shrink();
         }
-        final size = MediaQuery.of(context).size;
 
         return Stack(
-          children: [
-            Positioned.fill(child: Thumbnail(file: current)),
-
-            // main background
-            Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: .topStart,
-                  end: .bottomEnd,
-                  colors: [
-                    if (context.isLightMode)
-                      Color.fromARGB(116, 255, 255, 255)
-                    else
-                      Color.fromARGB(116, 0, 0, 0),
-                    if (context.isLightMode)
-                      Color.fromARGB(181, 255, 255, 255)
-                    else
-                      Color.fromARGB(181, 0, 0, 0),
-                    if (context.isLightMode)
-                      Color.fromARGB(132, 222, 222, 222)
-                    else
-                      Color.fromARGB(132, 0, 0, 0),
-                  ],
-                ),
-              ),
-            ),
-            Positioned(
-              top: size.height * 0.13,
-              right: 0,
-              left: 0,
-              child: SizedBox(
-                height: size.height,
-                child: ClipRRect(
-                  borderRadius: .circular(10),
-                  child: BackdropFilter(filter: .blur(sigmaX: 10, sigmaY: 10)),
-                ),
-              ),
-            ),
-            Positioned(
-              left: 0,
-              right: 0,
-              top: size.height * 0.2,
-              // height: size.height,
-              child: Center(child: waveformWidget),
-            ),
-            Positioned(top: 50, right: 0, left: 0, child: coverWidget),
-            Positioned(top: 5, right: 0, left: 0, child: headerWidget(current)),
-            Positioned(left: 0, right: 0, bottom: 5, child: controlsWiget),
-          ],
+          fit: StackFit.expand,
+          children: [_background(current), _playerContent(current)],
         );
       },
     );
   }
 
-  Widget headerWidget(AudioFile current) {
-    final con = context.read<PlayerStateController>();
-    return ConstrainedBox(
-      constraints: BoxConstraints(maxHeight: 50, maxWidth: 200),
-      child: Center(
-        child: StreamBuilder(
-          stream: con.stream.playing,
-          builder: (context, asyncSnapshot) {
-            if (con.state.playing) {
-              return Marquee(
-                text: current.autoTitle,
-                style: TextStyle(fontWeight: FontWeight.bold),
-                scrollAxis: Axis.horizontal,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                blankSpace: 20.0,
-                velocity: 100.0,
-                pauseAfterRound: Duration(seconds: 1),
-                accelerationDuration: Duration(seconds: 1),
-                accelerationCurve: Curves.linear,
-                decelerationDuration: Duration(milliseconds: 500),
-                decelerationCurve: Curves.easeOut,
-              );
-            }
-            return Text(
-              current.autoTitle,
-              maxLines: 1,
-              overflow: .clip,
-              style: TextStyle(fontWeight: .bold, fontSize: 18),
-            );
-          },
+  // ---------------------------------------------------------------------------
+  // Background
+  // ---------------------------------------------------------------------------
+
+  Widget _background(AudioFile current) {
+    final isLight = context.isLightMode;
+
+    return Stack(
+      fit: StackFit.expand,
+      children: [
+        Thumbnail(file: current),
+
+        Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [
+                isLight
+                    ? Colors.white.withValues(alpha: .45)
+                    : Colors.black.withValues(alpha: .45),
+                isLight
+                    ? Colors.white.withValues(alpha: .72)
+                    : Colors.black.withValues(alpha: .72),
+                isLight
+                    ? Colors.white.withValues(alpha: .92)
+                    : Colors.black.withValues(alpha: .94),
+              ],
+            ),
+          ),
         ),
-      ),
+
+        Positioned.fill(
+          child: BackdropFilter(
+            filter: .blur(sigmaX: 18, sigmaY: 18),
+            child: const SizedBox(),
+          ),
+        ),
+      ],
     );
   }
 
-  Widget get coverWidget {
-    final con = context.read<PlayerStateController>();
-    return Center(
-      child: ClipRRect(
-        borderRadius: .circular(8),
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 300, maxHeight: 400),
-          child: Thumbnail(file: con.current.value!),
-        ),
-      ),
-    );
-  }
+  // ---------------------------------------------------------------------------
+  // Main Content
+  // ---------------------------------------------------------------------------
 
-  Widget get mainContentWidget {
-    final con = context.read<PlayerStateController>();
-    final current = con.current.value!;
-    final size = MediaQuery.of(context).size;
-    return SizedBox(
-      width: size.width,
-      height: size.height * 0.5,
+  Widget _playerContent(AudioFile current) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(20, 8, 20, 4),
       child: Column(
         children: [
-          Text(current.autoTitle),
+          _header(current),
 
-          // waveformWidget,
-          // Spacer(),
+          const SizedBox(height: 12),
+
+          Expanded(child: _mainPlayer(current)),
+
+          const SizedBox(height: 8),
+
+          _controls(),
+
+          const SizedBox(height: 4),
+
+          _actions(),
         ],
       ),
     );
   }
 
-  StreamBuilder<bool> controlButtonWidget(PlayerStateController con) {
-    return StreamBuilder(
-      stream: con.stream.playing,
-      builder: (context, asyncSnapshot) {
-        return Row(
-          mainAxisAlignment: .center,
+  // ---------------------------------------------------------------------------
+  // Header
+  // ---------------------------------------------------------------------------
+
+  Widget _header(AudioFile current) {
+    final con = ControllerManager.read<PlayerStateController>();
+
+    return SizedBox(
+      height: 48,
+      child: Row(
+        children: [
+          const SizedBox(width: 48),
+
+          Expanded(
+            child: StreamBuilder(
+              stream: con.stream.playing,
+              builder: (context, snapshot) {
+                final playing = con.state.playing;
+
+                if (playing) {
+                  return Marquee(
+                    text: current.autoTitle,
+                    style: const TextStyle(
+                      fontSize: 17,
+                      fontWeight: FontWeight.w700,
+                    ),
+                    blankSpace: 30,
+                    velocity: 35,
+                    pauseAfterRound: const Duration(seconds: 2),
+                    accelerationDuration: const Duration(milliseconds: 500),
+                    accelerationCurve: Curves.easeOut,
+                    decelerationDuration: const Duration(milliseconds: 300),
+                    decelerationCurve: Curves.easeOut,
+                  );
+                }
+
+                return Text(
+                  current.autoTitle,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                    fontSize: 17,
+                    fontWeight: FontWeight.w700,
+                  ),
+                );
+              },
+            ),
+          ),
+
+          IconButton(onPressed: () {}, icon: const Icon(Icons.more_vert)),
+        ],
+      ),
+    );
+  }
+
+  // ---------------------------------------------------------------------------
+  // Album + Info + Waveform
+  // ---------------------------------------------------------------------------
+
+  Widget _mainPlayer(AudioFile current) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final coverSize = min(
+          constraints.maxWidth - 20,
+          constraints.maxHeight * .55,
+        );
+
+        return Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            IconButton(
-              iconSize: 60,
-              onPressed: () {
-                con.prev();
-              },
-              icon: Icon(Icons.skip_previous),
-            ),
-            IconButton(
-              iconSize: 70,
-              onPressed: () {
-                con.toggle();
-              },
-              icon: Icon(con.state.playing ? Icons.pause : Icons.play_arrow),
-            ),
-            IconButton(
-              iconSize: 60,
-              onPressed: () {
-                con.next();
-              },
-              icon: Icon(Icons.skip_next),
-            ),
+            _cover(current, coverSize),
+
+            const SizedBox(height: 18),
+
+            _songInfo(current),
+
+            const SizedBox(height: 14),
+
+            Expanded(child: _waveform()),
           ],
         );
       },
     );
   }
 
-  Widget get waveformWidget {
-    return WaveformWidget(
-      controller: _controller,
-      height: 400,
-      style: WaveformStyle(
-        waveColor: const Color.fromARGB(255, 98, 238, 238),
-        backgroundColor: const Color.fromARGB(47, 37, 34, 34),
-        waveformStyle: WaveformDrawStyle.bars,
-        showGradient: true,
+  Widget _cover(AudioFile current, double size) {
+    return Container(
+      width: size,
+      height: size,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(24),
+        boxShadow: [
+          BoxShadow(
+            blurRadius: 35,
+            spreadRadius: 2,
+            offset: const Offset(0, 18),
+            color: Colors.black.withValues(alpha: .25),
+          ),
+        ],
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(24),
+        child: Thumbnail(file: current),
       ),
     );
   }
 
-  // slider controls
-  Widget get controlsWiget {
-    final con = context.read<PlayerStateController>();
+  Widget _songInfo(AudioFile current) {
     return Column(
       children: [
-        controlButtonWidget(con),
-        audioPosiWidget(con),
-        specialWidget(con),
+        Text(
+          current.autoTitle,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          textAlign: TextAlign.center,
+          style: const TextStyle(fontSize: 21, fontWeight: FontWeight.w700),
+        ),
+
+        const SizedBox(height: 5),
+
+        Text(
+          current.meta.artist.isEmptyOr('Unknown Artist'),
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            fontSize: 14,
+            color: Theme.of(
+              context,
+            ).colorScheme.onSurface.withValues(alpha: .65),
+          ),
+        ),
       ],
     );
   }
 
-  Row specialWidget(PlayerStateController con) {
-    return Row(
-      spacing: 4,
+  Widget _waveform() {
+    return SizedBox(
+      height: 65,
+      width: double.infinity,
+      child: WaveformWidget(
+        controller: _waveformController,
+        height: 65,
+        style: WaveformStyle(
+          waveColor: Theme.of(context).colorScheme.primary,
+          backgroundColor: Colors.transparent,
+          waveformStyle: WaveformDrawStyle.bars,
+          showGradient: true,
+        ),
+      ),
+    );
+  }
+
+  // ---------------------------------------------------------------------------
+  // Controls
+  // ---------------------------------------------------------------------------
+
+  Widget _controls() {
+    final con = ControllerManager.read<PlayerStateController>();
+
+    return Column(
       children: [
-        Spacer(),
-        IconButton(
-          // color: const Color.fromARGB(255, 25, 127, 210),
-          onPressed: () {},
-          icon: Icon(Icons.timer),
-        ),
-        if (con.current.value != null)
-          FavouriteButton(file: con.current.value!),
-        IconButton(
-          // color: const Color.fromARGB(255, 25, 127, 210),
-          onPressed: showPlayList,
-          icon: Icon(Icons.list_rounded),
+        _progress(con),
+
+        const SizedBox(height: 8),
+
+        StreamBuilder(
+          stream: con.stream.playing,
+          builder: (context, snapshot) {
+            final playing = con.state.playing;
+
+            return Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                _controlButton(
+                  icon: Icons.skip_previous_rounded,
+                  size: 48,
+                  onPressed: con.prev,
+                ),
+
+                const SizedBox(width: 28),
+
+                Container(
+                  width: 68,
+                  height: 68,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Theme.of(context).colorScheme.primary,
+                    boxShadow: [
+                      BoxShadow(
+                        blurRadius: 20,
+                        offset: const Offset(0, 8),
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.primary.withValues(alpha: .25),
+                      ),
+                    ],
+                  ),
+                  child: IconButton(
+                    onPressed: con.toggle,
+                    iconSize: 36,
+                    color: Theme.of(context).colorScheme.onPrimary,
+                    icon: Icon(
+                      playing ? Icons.pause_rounded : Icons.play_arrow_rounded,
+                    ),
+                  ),
+                ),
+
+                const SizedBox(width: 28),
+
+                _controlButton(
+                  icon: Icons.skip_next_rounded,
+                  size: 48,
+                  onPressed: con.next,
+                ),
+              ],
+            );
+          },
         ),
       ],
     );
   }
 
-  StreamBuilder<Duration> audioPosiWidget(PlayerStateController con) {
-    return StreamBuilder(
+  Widget _controlButton({
+    required IconData icon,
+    required double size,
+    required VoidCallback onPressed,
+  }) {
+    return IconButton(onPressed: onPressed, iconSize: size, icon: Icon(icon));
+  }
+
+  // ---------------------------------------------------------------------------
+  // Progress
+  // ---------------------------------------------------------------------------
+
+  Widget _progress(PlayerStateController con) {
+    return StreamBuilder<Duration>(
       stream: con.stream.position,
-      builder: (context, asyncSnapshot) {
+      builder: (context, snapshot) {
+        final position = con.state.position;
+        final duration = con.state.duration;
+
+        final max = maxValue(duration.inMilliseconds.toDouble(), 1);
+
+        final value = position.inMilliseconds.toDouble().clamp(0.0, max);
+
         return Column(
           children: [
             CSlider(
-              max: con.state.duration.inSeconds.toDouble(),
-              value: con.state.position.inSeconds.toDouble(),
+              max: max,
+              value: value,
               onChangeEnd: (value) {
-                con.seek(Duration(seconds: value.toInt()));
+                con.seek(Duration(milliseconds: value.toInt()));
               },
             ),
+
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8),
+              padding: const EdgeInsets.symmetric(horizontal: 4),
               child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    '${con.state.position.formatClockLabel()}/${con.state.duration.formatClockLabel()}',
+                    position.formatClockLabel(),
+                    style: const TextStyle(fontSize: 12),
+                  ),
+                  Text(
+                    duration.formatClockLabel(),
+                    style: const TextStyle(fontSize: 12),
                   ),
                 ],
               ),
@@ -319,12 +456,50 @@ class _AudioContentScreenState extends State<AudioContentScreen> {
     );
   }
 
+  // ---------------------------------------------------------------------------
+  // Bottom Actions
+  // ---------------------------------------------------------------------------
+
+  Widget _actions() {
+    final con = ControllerManager.read<PlayerStateController>();
+
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      children: [
+        IconButton(
+          tooltip: 'Sleep timer',
+          onPressed: () {},
+          icon: const Icon(Icons.timer_outlined),
+        ),
+
+        if (con.current.value != null)
+          FavouriteButton(file: con.current.value!),
+
+        IconButton(
+          tooltip: 'Playlist',
+          onPressed: showPlayList,
+          icon: const Icon(Icons.queue_music_rounded),
+        ),
+      ],
+    );
+  }
+
+  // ---------------------------------------------------------------------------
+  // Playlist
+  // ---------------------------------------------------------------------------
+
   void showPlayList() {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      builder: (context) =>
-          FractionallySizedBox(heightFactor: 0.8, child: PlayerPlaylist()),
+      showDragHandle: true,
+      builder: (context) {
+        return FractionallySizedBox(heightFactor: .82, child: PlayerPlaylist());
+      },
     );
+  }
+
+  double maxValue(double value, double min) {
+    return value < min ? min : value;
   }
 }

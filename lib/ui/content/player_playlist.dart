@@ -54,7 +54,7 @@ class _PlayerPlaylistState extends State<PlayerPlaylist> {
   }
 
   Padding headerWidget() {
-    final con = context.read<PlayerStateController>();
+    final con = ControllerManager.read<PlayerStateController>();
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Row(
@@ -85,14 +85,14 @@ class _PlayerPlaylistState extends State<PlayerPlaylist> {
   }
 
   StreamBuilder listWidget() {
-    final con = context.read<PlayerStateController>();
+    final con = ControllerManager.read<PlayerStateController>();
     return StreamBuilder(
       stream: con.stream.playbackState,
       builder: (context, asyncSnapshot) {
         return AudioSliverList(
           list: con.files,
           onClicked: (file) async {
-            final con = context.read<PlayerStateController>();
+            final con = ControllerManager.read<PlayerStateController>();
             con.open(file);
           },
         );
@@ -102,7 +102,7 @@ class _PlayerPlaylistState extends State<PlayerPlaylist> {
 
   void goListGps() {
     try {
-      final con = context.read<PlayerStateController>();
+      final con = ControllerManager.read<PlayerStateController>();
       final current = con.current.value;
       if (current == null) return;
       final index = con.files.indexWhere((e) => e.id == current.id);

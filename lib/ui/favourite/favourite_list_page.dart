@@ -23,7 +23,7 @@ class _FavouriteListPageState extends State<FavouriteListPage> {
   final controller = ScrollController();
 
   Future<void> init({bool usedCache = true}) async {
-    // final con = context.read<FavouriteController>();
+    // final con = ControllerManager.read<FavouriteController>();
   }
 
   @override
@@ -35,38 +35,49 @@ class _FavouriteListPageState extends State<FavouriteListPage> {
   }
 
   Widget get bodyWidget {
-    final con = context.read<FavouriteController>();
-
-    if (con.files.isEmpty) {
-      return Center(
-        child: RefreshButton(text: Text('List Empty!'), onClicked: init),
-      );
-    }
-    final pCon = context.read<PlayerStateController>();
-    return RefreshIndicator.adaptive(
-      onRefresh: () => init(usedCache: false),
-      child: Stack(
-        children: [
-          CustomScrollView(
-            controller: controller,
-            slivers: [
-              AudioSliverList(
-                list: con.files,
-                onClicked: (file) async {
-                  pCon.setTracks(con.files, source: .favouriteState);
-                  pCon.open(file);
-                },
+    final con = ControllerManager.read<FavouriteController>();
+    return StreamBuilder(
+      stream: con.eventStream,
+      builder: (context, snapshot) {
+        if (con.files.isEmpty) {
+          return Center(
+            child: RefreshButton(text: Text('List Empty!'), onClicked: init),
+          );
+        }
+        final pCon = ControllerManager.read<PlayerStateController>();
+        return RefreshIndicator.adaptive(
+          onRefresh: () => init(usedCache: false),
+          child: Stack(
+            children: [
+              CustomScrollView(
+                controller: controller,
+                slivers: [
+                  AudioSliverList(
+                    list: con.files,
+                    onClicked: (file) async {
+                      pCon.setTracks(con.files, source: .favouriteState);
+                      pCon.open(file);
+                    },
+                  ),
+                  SliverToBoxAdapter(
+                    child: SizedBox(
+                      height: pCon.showFloatWidget.value ? 130 : 90,
+                    ),
+                  ),
+                ],
               ),
-              SliverToBoxAdapter(
-                child: SizedBox(height: pCon.showFloatWidget.value ? 130 : 90),
+
+              // floating widget
+              Positioned(
+                left: 0,
+                bottom: 0,
+                right: 0,
+                child: AudioFloatWidget(),
               ),
             ],
           ),
-
-          // floating widget
-          Positioned(left: 0, bottom: 0, right: 0, child: AudioFloatWidget()),
-        ],
-      ),
+        );
+      },
     );
   }
 }
