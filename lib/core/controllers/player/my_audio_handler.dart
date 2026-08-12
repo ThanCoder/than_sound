@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:audio_service/audio_service.dart';
@@ -29,6 +30,9 @@ class MyAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
 
   List<AudioFile> get files => _files;
   final currentNotifier = ValueNotifier<AudioFile?>(null);
+  final _currentAudioChangeContrller = StreamController<AudioFile?>.broadcast();
+  Stream<AudioFile?> get currentAudioChangeStream =>
+      _currentAudioChangeContrller.stream;
 
   void startListen() {
     _player.stream.position.listen((pos) {
@@ -73,6 +77,9 @@ class MyAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
         _files.removeAt(index);
       }
     });
+    currentNotifier.addListener(
+      () => _currentAudioChangeContrller.add(currentNotifier.value),
+    );
   }
 
   AudioFile? findFile(AudioFile file) {

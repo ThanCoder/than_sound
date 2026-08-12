@@ -16,6 +16,8 @@ class PlayerStateController extends IController {
   PlayerState get state => _audioHandler.state;
   PlayerStream get stream => _audioHandler.stream;
   AudioFileSourceType get source => _audioHandler.source;
+  Stream<AudioFile?> get currentAudioChangeStream =>
+      _audioHandler.currentAudioChangeStream;
 
   @override
   void init() async {}
