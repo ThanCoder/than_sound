@@ -26,7 +26,6 @@ void main() async {
   }
 
   MpvAudioKit.ensureInitialized();
-
   WaveformVisualizer.initialize();
 
   if (Platform.isAndroid) {
@@ -52,7 +51,7 @@ void main() async {
       androidNotificationChannelId: 'than_sound',
       androidNotificationChannelName: 'Than Sound',
       androidNotificationOngoing: true,
-      androidNotificationIcon: 'mipmap/launcher_icon'
+      androidNotificationIcon: 'mipmap/launcher_icon',
     ),
   );
   ControllerManager.register(PlayerStateController(audioHandler));

@@ -16,7 +16,14 @@ enum MaterialThemeProviderType {
 
 class MaterialThemeProvider extends StatefulWidget {
   final Widget child;
-  const MaterialThemeProvider({super.key, required this.child});
+  final ThemeData? theme;
+  final ThemeData? darkTheme;
+  const MaterialThemeProvider({
+    super.key,
+    required this.child,
+    this.theme,
+    this.darkTheme,
+  });
 
   @override
   State<MaterialThemeProvider> createState() => _MaterialThemeProviderState();
@@ -74,8 +81,8 @@ class _MaterialThemeProviderState extends State<MaterialThemeProvider>
       builder: (context, value, child) {
         return MaterialApp(
           debugShowCheckedModeBanner: false,
-          theme: ThemeData.light(),
-          darkTheme: ThemeData.dark(),
+          theme: widget.theme ?? ThemeData.light(),
+          darkTheme: widget.darkTheme ?? ThemeData.dark(useMaterial3: true),
           themeMode: currentThemeMode,
           home: widget.child,
         );

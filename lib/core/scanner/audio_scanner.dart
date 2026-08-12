@@ -106,7 +106,6 @@ class AudioScanner {
                 final audio = processEntry(entry, name);
 
                 if (audio != null) {
-                  await audio.meta.getDurationInAndroid();
                   list.add(audio);
                 }
               } else if (entry is Directory) {

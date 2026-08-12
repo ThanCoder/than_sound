@@ -3,10 +3,18 @@ import 'package:t_widgets/t_widgets.dart';
 import 'package:than_sound/core/controllers/all_file_state_controller.dart';
 import 'package:than_sound/core/controllers/interfaces/i_controller.dart';
 import 'package:than_sound/core/models/audio_file.dart';
+import 'package:than_sound/ui/audio/art_cover_manager.dart';
+import 'package:than_sound/ui/audio/audio_info_menu.dart';
 
 class AudioItemMenu extends StatefulWidget {
   final AudioFile file;
-  const AudioItemMenu({super.key, required this.file});
+  final bool showDeleteAction;
+
+  const AudioItemMenu({
+    super.key,
+    required this.file,
+    this.showDeleteAction = false,
+  });
 
   @override
   State<AudioItemMenu> createState() => _AudioItemMenuState();
@@ -15,17 +23,122 @@ class AudioItemMenu extends StatefulWidget {
 class _AudioItemMenuState extends State<AudioItemMenu> {
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
     return ConstrainedBox(
-      constraints: BoxConstraints(minHeight: 130),
+      constraints: const BoxConstraints(minHeight: 130),
       child: TScrollableColumn(
         children: [
-          ListTile(
-            title: Text("Delete"),
+          // Header
+          Padding(
+            padding: const EdgeInsets.fromLTRB(20, 12, 20, 16),
+            child: Row(
+              children: [
+                _Cover(path: widget.file.cacheCoverPath),
+
+                const SizedBox(width: 14),
+
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        widget.file.autoTitle,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: theme.textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+
+                      const SizedBox(height: 4),
+
+                      Text(
+                        widget.file.name,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: colorScheme.onSurfaceVariant,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          Divider(
+            height: 1,
+            indent: 20,
+            endIndent: 20,
+            color: colorScheme.outlineVariant.withValues(alpha: .5),
+          ),
+
+          const SizedBox(height: 6),
+
+          // Audio Info
+          _MenuTile(
+            icon: Icons.audiotrack_rounded,
+            title: 'Audio Info',
+            subtitle: 'View audio metadata and file information',
             onTap: () {
               context.pop();
-              deleteConfirm();
+
+              showModalBottomSheet(
+                context: context,
+                isScrollControlled: true,
+                useSafeArea: true,
+                showDragHandle: false,
+                builder: (context) {
+                  return AudioInfoMenu(file: widget.file);
+                },
+              );
             },
           ),
+
+          // Art Cover
+          _MenuTile(
+            icon: Icons.art_track_rounded,
+            title: 'Manage Art Cover',
+            subtitle: 'Change or remove album artwork',
+            onTap: () {
+              context.pop();
+
+              context.pushMaterialPageRoute(
+                builder: (mainCtx) {
+                  return ArtCoverManager(file: widget.file);
+                },
+              );
+            },
+          ),
+
+          const SizedBox(height: 4),
+
+          Divider(
+            height: 1,
+            indent: 20,
+            endIndent: 20,
+            color: colorScheme.outlineVariant.withValues(alpha: .5),
+          ),
+
+          const SizedBox(height: 4),
+
+          // Delete
+          if (widget.showDeleteAction)
+            _MenuTile(
+              icon: Icons.delete_outline_rounded,
+              title: 'Delete',
+              subtitle: 'Permanently delete this audio file',
+              destructive: true,
+              onTap: () {
+                context.pop();
+                deleteConfirm();
+              },
+            ),
+
+          const SizedBox(height: 8),
         ],
       ),
     );
@@ -41,6 +154,131 @@ class _AudioItemMenuState extends State<AudioItemMenu> {
           widget.file,
         );
       },
+    );
+  }
+}
+
+class _MenuTile extends StatelessWidget {
+  final IconData icon;
+  final String title;
+  final String? subtitle;
+  final VoidCallback? onTap;
+  final bool destructive;
+
+  const _MenuTile({
+    required this.icon,
+    required this.title,
+    this.subtitle,
+    this.onTap,
+    this.destructive = false,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
+    final foreground = destructive ? colorScheme.error : colorScheme.onSurface;
+
+    final iconBackground = destructive
+        ? colorScheme.errorContainer.withValues(alpha: .55)
+        : colorScheme.secondaryContainer.withValues(alpha: .55);
+
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(14),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        child: Row(
+          children: [
+            // Icon container
+            Container(
+              width: 44,
+              height: 44,
+              decoration: BoxDecoration(
+                color: iconBackground,
+                borderRadius: BorderRadius.circular(13),
+              ),
+              child: Icon(icon, size: 21, color: foreground),
+            ),
+
+            const SizedBox(width: 14),
+
+            // Text
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: theme.textTheme.bodyLarge?.copyWith(
+                      fontWeight: FontWeight.w600,
+                      color: foreground,
+                    ),
+                  ),
+
+                  if (subtitle != null) ...[
+                    const SizedBox(height: 2),
+                    Text(
+                      subtitle!,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: destructive
+                            ? colorScheme.error.withValues(alpha: .7)
+                            : colorScheme.onSurfaceVariant,
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+            ),
+
+            const SizedBox(width: 8),
+
+            Icon(
+              Icons.chevron_right_rounded,
+              size: 22,
+              color: destructive
+                  ? colorScheme.error.withValues(alpha: .6)
+                  : colorScheme.onSurfaceVariant,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _Cover extends StatelessWidget {
+  final String path;
+
+  const _Cover({required this.path});
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return Container(
+      width: 58,
+      height: 58,
+      clipBehavior: Clip.antiAlias,
+      decoration: BoxDecoration(
+        color: colorScheme.surfaceContainerHighest,
+        borderRadius: BorderRadius.circular(14),
+      ),
+      child: path.isEmpty
+          ? Icon(Icons.music_note_rounded, color: colorScheme.onSurfaceVariant)
+          : Image.asset(
+              path,
+              fit: BoxFit.cover,
+              errorBuilder: (_, _, _) {
+                return Icon(
+                  Icons.music_note_rounded,
+                  color: colorScheme.onSurfaceVariant,
+                );
+              },
+            ),
     );
   }
 }

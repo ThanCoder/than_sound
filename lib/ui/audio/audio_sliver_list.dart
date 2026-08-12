@@ -30,7 +30,8 @@ class AudioSliverList extends StatelessWidget {
         showModalBottomSheet(
           context: context,
           isScrollControlled: true,
-          builder: (context) => AudioItemMenu(file: file),
+          builder: (context) =>
+              AudioItemMenu(file: file, showDeleteAction: true),
         );
       },
     );

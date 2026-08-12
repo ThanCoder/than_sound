@@ -13,6 +13,7 @@ import 'package:than_sound/ui/favourite/favourite_button.dart';
 import 'package:than_sound/ui/player_theme/interfaces/i_player_theme.dart';
 import 'package:than_sound/ui/player_theme/interfaces/player_ui_context.dart';
 import 'package:than_sound/ui/player_theme/interfaces/player_ui_state.dart';
+import 'package:than_sound/ui/player_theme/themes/mobile/default/audio_reactive_cover.dart';
 import 'package:waveform_visualizer/waveform_visualizer.dart';
 
 class DefaultPlayerContentTheme extends IPlayerTheme {
@@ -254,25 +255,48 @@ class _DefaultPlayerViewState extends State<_DefaultPlayerView> {
   }
 
   Widget _cover(AudioFile current, double size) {
-    return Container(
-      width: size,
-      height: size,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(24),
-        boxShadow: [
-          BoxShadow(
-            blurRadius: 35,
-            spreadRadius: 2,
-            offset: const Offset(0, 18),
-            color: Colors.black.withValues(alpha: .25),
-          ),
-        ],
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(24),
-        child: Thumbnail(file: current),
+    return AudioReactiveCover(
+      pcm: ctx.streams.pcm.map((frame) => frame.samples),
+      playing: ctx.streams.playing,
+      child: Container(
+        width: size,
+        height: size,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(24),
+          boxShadow: [
+            BoxShadow(
+              blurRadius: 35,
+              spreadRadius: 2,
+              offset: const Offset(0, 18),
+              color: Colors.black.withValues(alpha: .25),
+            ),
+          ],
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(24),
+          child: Thumbnail(file: current),
+        ),
       ),
     );
+    // return Container(
+    //   width: size,
+    //   height: size,
+    //   decoration: BoxDecoration(
+    //     borderRadius: BorderRadius.circular(24),
+    //     boxShadow: [
+    //       BoxShadow(
+    //         blurRadius: 35,
+    //         spreadRadius: 2,
+    //         offset: const Offset(0, 18),
+    //         color: Colors.black.withValues(alpha: .25),
+    //       ),
+    //     ],
+    //   ),
+    //   child: ClipRRect(
+    //     borderRadius: BorderRadius.circular(24),
+    //     child: Thumbnail(file: current),
+    //   ),
+    // );
   }
 
   Widget _songInfo(AudioFile current) {

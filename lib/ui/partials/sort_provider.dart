@@ -1,12 +1,13 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
 
 ///Sort Item
 class SortItem {
   final int id;
-  final Widget title;
+  final String title;
   final bool isTrue;
-  final Widget trueTitle;
-  final Widget falseTitle;
+  final String trueTitle;
+  final String falseTitle;
   const SortItem({
     required this.id,
     required this.title,
@@ -25,9 +26,9 @@ class SortItem {
   ///
   static final nameSortItem = SortItem(
     id: 1000,
-    title: Text('Name'),
-    trueTitle: Text("A To Z"),
-    falseTitle: Text('Z To A'),
+    title: 'Name',
+    trueTitle: "A To Z",
+    falseTitle: 'Z To A',
     isTrue: true,
   );
 
@@ -39,9 +40,9 @@ class SortItem {
   /// isTrue: true,
   static final dateSortItem = SortItem(
     id: 1001,
-    title: Text('Date'),
-    trueTitle: Text("New To Old"),
-    falseTitle: Text('Old To New'),
+    title: 'Date',
+    trueTitle: "New To Old",
+    falseTitle: 'Old To New',
     isTrue: true,
   );
 
@@ -52,27 +53,11 @@ class SortItem {
   /// isTrue: true,
   static final sizeSortItem = SortItem(
     id: 1,
-    title: Text('Size'),
-    trueTitle: Text("Small To Big"),
-    falseTitle: Text("Big To Small"),
+    title: 'Size',
+    trueTitle: "Small To Big",
+    falseTitle: "Big To Small",
     isTrue: true,
   );
-
-  SortItem copyWith({
-    int? id,
-    Widget? title,
-    Widget? trueTitle,
-    Widget? falseTitle,
-    bool? isTrue,
-  }) {
-    return SortItem(
-      id: id ?? this.id,
-      title: title ?? this.title,
-      trueTitle: trueTitle ?? this.trueTitle,
-      falseTitle: falseTitle ?? this.falseTitle,
-      isTrue: isTrue ?? this.isTrue,
-    );
-  }
 
   @override
   String toString() {
@@ -87,6 +72,22 @@ class SortItem {
 
   @override
   int get hashCode => id.hashCode;
+
+  SortItem copyWith({
+    int? id,
+    String? title,
+    bool? isTrue,
+    String? trueTitle,
+    String? falseTitle,
+  }) {
+    return SortItem(
+      id: id ?? this.id,
+      title: title ?? this.title,
+      isTrue: isTrue ?? this.isTrue,
+      trueTitle: trueTitle ?? this.trueTitle,
+      falseTitle: falseTitle ?? this.falseTitle,
+    );
+  }
 }
 
 class SortButton extends StatelessWidget {
@@ -144,6 +145,7 @@ class SortProviderDialog extends StatefulWidget {
 
 class _SortProviderDialogState extends State<SortProviderDialog> {
   late SortItem item;
+
   @override
   void initState() {
     item = widget.value;
@@ -152,6 +154,8 @@ class _SortProviderDialogState extends State<SortProviderDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (didPop, result) {
@@ -161,22 +165,69 @@ class _SortProviderDialogState extends State<SortProviderDialog> {
       child: ConstrainedBox(
         constraints:
             widget.boxConstraints ?? const BoxConstraints(minHeight: 400),
-        child: SingleChildScrollView(
-          child: Column(
-            spacing: 2,
-            children: [
-              widget.title ?? ListTile(title: Text("Sort By")),
-              Divider(),
-              sortGropWidget,
-              Divider(),
+        child: Material(
+          color: colors.surface,
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
+            child: Column(
+              spacing: 12,
+              children: [
+                _header(),
 
-              sortResultWidgt,
-              Divider(),
-              applyWidget,
-            ],
+                _section(child: sortGropWidget),
+
+                _section(child: sortResultWidgt),
+
+                applyWidget,
+              ],
+            ),
           ),
         ),
       ),
+    );
+  }
+
+  Widget _header() {
+    final colors = Theme.of(context).colorScheme;
+
+    return Row(
+      children: [
+        Container(
+          width: 40,
+          height: 40,
+          decoration: BoxDecoration(
+            color: colors.primary.withValues(alpha: .12),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Icon(Icons.sort_rounded, color: colors.primary, size: 22),
+        ),
+
+        const SizedBox(width: 12),
+
+        Expanded(
+          child:
+              widget.title ??
+              const Text(
+                'Sort By',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
+              ),
+        ),
+      ],
+    );
+  }
+
+  Widget _section({required Widget child}) {
+    final colors = Theme.of(context).colorScheme;
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(vertical: 6),
+      decoration: BoxDecoration(
+        color: colors.surfaceContainerLow,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: colors.outlineVariant.withValues(alpha: .25)),
+      ),
+      child: child,
     );
   }
 
@@ -191,7 +242,11 @@ class _SortProviderDialogState extends State<SortProviderDialog> {
       child: Column(
         children: widget.list
             .map(
-              (e) => RadioListTile<SortItem>.adaptive(value: e, title: e.title),
+              (e) => _radioItem<SortItem>(
+                value: e,
+                groupValue: item,
+                title: e.title,
+              ),
             )
             .toList(),
       ),
@@ -202,31 +257,88 @@ class _SortProviderDialogState extends State<SortProviderDialog> {
     return RadioGroup<bool>(
       groupValue: item.isTrue,
       onChanged: (bool? value) {
-        item = item.copyWith(isTrue: value);
-        setState(() {});
+        if (value == null) return;
+
+        setState(() {
+          item = item.copyWith(isTrue: value);
+        });
       },
       child: Column(
         children: [
-          RadioListTile<bool>.adaptive(value: true, title: item.trueTitle),
-          RadioListTile<bool>.adaptive(value: false, title: item.falseTitle),
+          _radioItem<bool>(
+            value: true,
+            groupValue: item.isTrue,
+            title: item.trueTitle,
+          ),
+
+          _radioItem<bool>(
+            value: false,
+            groupValue: item.isTrue,
+            title: item.falseTitle,
+          ),
         ],
       ),
     );
   }
 
-  Widget get applyWidget {
+  Widget _radioItem<T>({
+    required T value,
+    required T? groupValue,
+    required String title,
+  }) {
+    final colors = Theme.of(context).colorScheme;
+    final selected = value == groupValue;
+
     return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Row(
-        mainAxisAlignment: .end,
-        children: [
-          ElevatedButton(
-            onPressed: () {
-              Navigator.pop<SortItem>(context, item);
-            },
-            child: Text('Apply'),
+      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 160),
+        decoration: BoxDecoration(
+          color: selected
+              ? colors.primary.withValues(alpha: .10)
+              : Colors.transparent,
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: RadioListTile<T>.adaptive(
+          value: value,
+          title: Text(
+            title,
+            style: TextStyle(
+              fontSize: 13,
+              fontWeight: selected ? FontWeight.w600 : FontWeight.w400,
+              color: selected ? colors.primary : colors.onSurface,
+            ),
           ),
-        ],
+          activeColor: colors.primary,
+          contentPadding: const EdgeInsets.symmetric(horizontal: 8),
+          dense: true,
+        ),
+      ),
+    );
+  }
+
+  Widget get applyWidget {
+    final colors = Theme.of(context).colorScheme;
+
+    return SizedBox(
+      width: double.infinity,
+      child: FilledButton.icon(
+        onPressed: () {
+          Navigator.pop<SortItem>(context, item);
+        },
+        icon: const Icon(Icons.check_rounded, size: 20),
+        label: const Text(
+          'Apply',
+          style: TextStyle(fontWeight: FontWeight.w600),
+        ),
+        style: FilledButton.styleFrom(
+          backgroundColor: colors.primary,
+          foregroundColor: colors.onPrimary,
+          minimumSize: const Size(double.infinity, 48),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(14),
+          ),
+        ),
       ),
     );
   }

@@ -2,9 +2,10 @@ import 'package:dart_core_extensions/dart_core_extensions.dart';
 import 'package:flutter/material.dart';
 import 'package:than_sound/core/controllers/interfaces/i_controller.dart';
 import 'package:than_sound/core/controllers/player/player_state_controller.dart';
+import 'package:than_sound/ui/audio/audio_item_menu.dart';
 import 'package:than_sound/ui/content/player_playlist.dart';
 import 'package:than_sound/ui/player_theme/interfaces/player_ui_context.dart';
-import 'package:than_sound/ui/player_theme/themes/mobile/default_player_content_theme.dart';
+import 'package:than_sound/ui/player_theme/themes/mobile/default/default_player_content_theme.dart';
 import 'package:than_sound/ui/player_theme/ui_context_creator.dart';
 
 class PlayerContentThemeProviderScreen extends StatefulWidget {
@@ -42,7 +43,7 @@ class _PlayerContentThemeProviderScreenState
         seek: pc.seek,
         playlist: showPlayList,
         sleepTimer: () {},
-        more: () {},
+        more: showItemMenu,
       ),
     );
   }
@@ -73,9 +74,21 @@ class _PlayerContentThemeProviderScreenState
       context: context,
       isScrollControlled: true,
       showDragHandle: true,
+      useSafeArea: true,
       builder: (context) {
         return FractionallySizedBox(heightFactor: .82, child: PlayerPlaylist());
       },
+    );
+  }
+
+  void showItemMenu() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      showDragHandle: true,
+      useSafeArea: true,
+      builder: (context) =>
+          AudioItemMenu(file: playerController.current.value!),
     );
   }
 }

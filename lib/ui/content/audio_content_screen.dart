@@ -493,6 +493,7 @@ class _AudioContentScreenState extends State<AudioContentScreen> {
       context: context,
       isScrollControlled: true,
       showDragHandle: true,
+      useSafeArea: true,
       builder: (context) {
         return FractionallySizedBox(heightFactor: .82, child: PlayerPlaylist());
       },

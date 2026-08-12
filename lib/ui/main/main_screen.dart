@@ -46,9 +46,8 @@ class _MainScreenState extends State<MainScreen> {
     return Scaffold(
       extendBody: true,
       body: ValueListenableBuilder(
-        valueListenable: ControllerManager
-            .read<PlayerStateController>()
-            .showFloatWidget,
+        valueListenable:
+            ControllerManager.read<PlayerStateController>().showFloatWidget,
         builder: (context, value, child) {
           return Stack(
             children: [
@@ -76,8 +75,6 @@ class _MainScreenState extends State<MainScreen> {
             index = value;
           });
         },
-        selectedItemColor: Colors.blue,
-        unselectedItemColor: context.isDarkMode ? Colors.white : Colors.black,
         items: [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
           BottomNavigationBarItem(

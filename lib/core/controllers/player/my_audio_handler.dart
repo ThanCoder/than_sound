@@ -95,12 +95,10 @@ class MyAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
 
   Future<void> setTracks(
     List<AudioFile> files, {
-    int index = 0,
     required AudioFileSourceType source,
   }) async {
     _files = files;
     _source = source;
-    currentNotifier.value = files[index];
     if (_player.state.playing || currentNotifier.value != null) return;
     await setAll(files, play: false);
   }
@@ -111,6 +109,9 @@ class MyAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
     bool play = true,
   }) async {
     _files = files;
+    if (currentNotifier.value == null) {
+      currentNotifier.value = files[index];
+    }
     await _player.open(createMedia(currentNotifier.value!), play: play);
     addNotiMediaItem(currentNotifier.value!);
   }

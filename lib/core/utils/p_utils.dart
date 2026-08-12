@@ -46,8 +46,12 @@ class PUtils {
           cacheDir = Directory(ch);
           configDir = Directory(cacheDir.join('config'));
         }
-        // final info = await ThanPkgAndroid.getInstance.osHandler
-        //     .getOsBuildInfo();
+        final appInfo = await ThanPkgAndroid.getInstance.infoHandler
+            .getAppInfo();
+        if (appInfo != null) {
+          packageName = appInfo.packageName;
+          // appInfo.
+        }
       }
     } catch (e) {
       debugPrint('[PUtils:init]: $e');
