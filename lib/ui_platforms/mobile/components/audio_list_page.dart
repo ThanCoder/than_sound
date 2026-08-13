@@ -12,7 +12,13 @@ import 'package:than_sound/core/controllers/player/player_state_controller.dart'
 import 'package:than_sound/ui/partials/sort_provider.dart';
 
 class AudioListPage extends StatefulWidget {
-  const AudioListPage({super.key});
+  final double? listGpsButtonRightPos;
+  final double? listGpsButtonBottomPos;
+  const AudioListPage({
+    super.key,
+    this.listGpsButtonRightPos,
+    this.listGpsButtonBottomPos,
+  });
 
   @override
   State<AudioListPage> createState() => _AudioListPageState();
@@ -58,9 +64,16 @@ class _AudioListPageState extends State<AudioListPage> {
           body: Stack(
             children: [
               Positioned.fill(child: bodyWidget),
-              if (pCon.current.value != null)
+              // list gps button
+              if (widget.listGpsButtonBottomPos != null)
                 Positioned(
-                  right: 10,
+                  right: widget.listGpsButtonRightPos ?? 10,
+                  bottom: widget.listGpsButtonBottomPos,
+                  child: ListGpsButton(onClicked: goListGps),
+                )
+              else if (pCon.current.value != null)
+                Positioned(
+                  right: widget.listGpsButtonRightPos ?? 10,
                   bottom: pCon.showFloatWidget.value ? 130 : 70,
                   child: ListGpsButton(onClicked: goListGps),
                 ),

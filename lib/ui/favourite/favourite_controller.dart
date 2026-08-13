@@ -15,11 +15,13 @@ class FavouriteControllerRemoveEvent extends IControllerEvent {
 }
 
 class FavouriteController extends IController {
-  static final cacheStore = CFBStore();
-  Stream<StoreEvent> get events => cacheStore.events;
+  static final store = CFBStore();
+  Stream<StoreEvent> get events => store.events;
 
   AllFileStateController get allFileStateController =>
       ControllerManager.read<AllFileStateController>();
+
+  bool needToRefetch = false;
 
   @override
   void init() {
@@ -42,7 +44,7 @@ class FavouriteController extends IController {
   }
 
   void toggle(AudioFile file) {
-    final list = cacheStore.getList('list');
+    final list = store.getList('list');
     if (list.contains(file.id)) {
       remove(file);
     } else {
@@ -51,18 +53,18 @@ class FavouriteController extends IController {
   }
 
   void add(AudioFile file) {
-    final list = cacheStore.getList('list');
+    final list = store.getList('list');
     list.remove(file.id);
     list.insert(0, file.id);
-    cacheStore.putAndWriteAll('list', list);
+    store.putAndWriteAll('list', list);
     cacheList.clear();
     addEvent(FavouriteControllerAddEvent(file));
   }
 
   void remove(AudioFile file) {
-    final list = cacheStore.getList('list');
+    final list = store.getList('list');
     list.remove(file.id);
-    cacheStore.putAndWriteAll('list', list);
+    store.putAndWriteAll('list', list);
     cacheList.clear();
     addEvent(FavouriteControllerRemoveEvent(file));
   }
@@ -70,9 +72,13 @@ class FavouriteController extends IController {
   final List<AudioFile> cacheList = [];
 
   List<AudioFile> get files {
+    if (needToRefetch) {
+      needToRefetch = false;
+      store.openSync(store.dbFile.path);
+    }
     if (cacheList.isNotEmpty) return cacheList;
 
-    final favList = cacheStore.getStringList('list');
+    final favList = store.getStringList('list');
     if (favList.isEmpty) return [];
 
     final map = <String, AudioFile>{};

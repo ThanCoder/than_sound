@@ -887,10 +887,10 @@ packages:
     dependency: "direct main"
     description:
       name: than_pkg_android
-      sha256: "27b1ea1f60d1f0160c4f0eb8e2bb22347991e05cc1bdf0af14cb75eec3259cbb"
+      sha256: df31d224d49411d2679f96066f0b9f62013601fdedd451db92405e1d059b0202
       url: "https://pub.dev"
     source: hosted
-    version: "0.4.0"
+    version: "0.6.1"
   than_pkg_linux:
     dependency: "direct main"
     description:

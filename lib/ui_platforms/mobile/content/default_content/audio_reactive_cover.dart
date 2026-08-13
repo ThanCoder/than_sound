@@ -73,6 +73,7 @@ class AudioReactiveCover extends StatefulWidget {
   final Stream<List<double>> pcm;
 
   final Stream<bool> playing;
+  final bool playingState;
 
   final AudioReactiveCoverConfig config;
 
@@ -81,6 +82,7 @@ class AudioReactiveCover extends StatefulWidget {
     required this.child,
     required this.pcm,
     required this.playing,
+    required this.playingState,
     this.config = const AudioReactiveCoverConfig(),
   });
 
@@ -101,6 +103,7 @@ class _AudioReactiveCoverState extends State<AudioReactiveCover> {
   @override
   void initState() {
     super.initState();
+    _playing = widget.playingState;
 
     _playingSub = widget.playing.listen((playing) {
       if (!mounted) return;
@@ -114,8 +117,19 @@ class _AudioReactiveCoverState extends State<AudioReactiveCover> {
       });
     });
 
+    DateTime lastUpdate = DateTime.fromMillisecondsSinceEpoch(0);
+
     _pcmSub = widget.pcm.listen((samples) {
       if (!_playing || samples.isEmpty) return;
+
+      final now = DateTime.now();
+
+      // Max ~30 updates/sec
+      if (now.difference(lastUpdate).inMilliseconds < 33) {
+        return;
+      }
+
+      lastUpdate = now;
 
       final rms = _calculateRms(samples);
 
@@ -130,6 +144,8 @@ class _AudioReactiveCoverState extends State<AudioReactiveCover> {
         _amplitude = nextAmplitude;
       });
     });
+
+    setState(() {});
   }
 
   double _calculateRms(List<double> samples) {
@@ -166,59 +182,3 @@ class _AudioReactiveCoverState extends State<AudioReactiveCover> {
     );
   }
 }
-
-// ```
-
-// ပြီးတော့ မင်း `DefaultPlayerContentTheme` ထဲမှာ ဒီလိုသုံး—
-
-// ```dart
-// Widget _cover(AudioFile current, double size) {
-//   return AudioReactiveCover(
-//     pcm: ctx.streams.pcm.map((frame) => frame.samples),
-//     playing: ctx.streams.playing,
-
-    // config: const AudioReactiveCoverConfig(
-    //   intensity: 1.4,
-    //   maxScale: .07,
-    //   amplitudeMultiplier: 3.0,
-    //   smoothing: .65,
-    // ),
-
-//     child: Container(
-//       width: size,
-//       height: size,
-//       decoration: BoxDecoration(
-//         borderRadius: BorderRadius.circular(24),
-//         boxShadow: [
-//           BoxShadow(
-//             blurRadius: 35,
-//             spreadRadius: 2,
-//             offset: const Offset(0, 18),
-//             color: Colors.black.withValues(alpha: .25),
-//           ),
-//         ],
-//       ),
-//       child: ClipRRect(
-//         borderRadius: BorderRadius.circular(24),
-//         child: Thumbnail(file: current),
-//       ),
-//     ),
-//   );
-// }
-// ```
-
-// Preset သုံးချင်ရင်လည်း—
-
-// ```dart
-// config: const AudioReactiveCoverConfig.subtle(),
-// ```
-
-// ဒါမှမဟုတ်—
-
-// ```dart
-// config: const AudioReactiveCoverConfig.strong(),
-// ```
-
-// သုံးလို့ရတယ်။
-
-// ငါဆို **default ကို `1.4 / .07 / 3.0 / .65`** လောက်ထားမယ်။ Music player မှာ သိသိသာသာ react ဖြစ်ပေမယ့် cover က အရမ်းကြမ်းကြမ်းတုန်မသွားဘူး။

@@ -20,7 +20,7 @@ dependencies:
   crypto: ^3.0.7
   cfb_store: ^0.5.0
   than_pkg_linux: ^0.1.0
-  than_pkg_android: ^0.4.0
+  than_pkg_android: ^0.6.1
   desktop_drop: ^0.7.1
   lottie: ^3.5.1
   than_audiotag: ^0.0.1

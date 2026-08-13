@@ -7,6 +7,7 @@ const String audioAllStateSortKey = 'audio-all-state-sort-key';
 
 const String linuxWindowWidthKey = 'linux-window-width';
 const String linuxWindowHeightKey = 'linux-window-height';
+const double linuxWindowMinWidth = 840;
 
 final int audioScanMinFileSize = 1024 * 20;
 

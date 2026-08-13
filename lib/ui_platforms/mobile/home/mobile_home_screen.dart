@@ -6,18 +6,19 @@ import 'package:than_pkg_android/than_pkg_android.dart';
 import 'package:than_sound/ui/audio/audio_float_widget.dart';
 import 'package:than_sound/core/controllers/interfaces/i_controller.dart';
 import 'package:than_sound/core/controllers/player/player_state_controller.dart';
-import 'package:than_sound/ui/main/audio_list_page.dart';
-import 'package:than_sound/ui/main/lib_page.dart';
-import 'package:than_sound/ui/main/more_page.dart';
+import 'package:than_sound/ui/favourite/favourite_controller.dart';
+import 'package:than_sound/ui_platforms/mobile/components/audio_list_page.dart';
+import 'package:than_sound/ui_platforms/mobile/components/lib_page.dart';
+import 'package:than_sound/ui_platforms/mobile/components/more_page.dart';
 
-class MainScreen extends StatefulWidget {
-  const MainScreen({super.key});
+class MobileHomeScreen extends StatefulWidget {
+  const MobileHomeScreen({super.key});
 
   @override
-  State<MainScreen> createState() => _MainScreenState();
+  State<MobileHomeScreen> createState() => _MobileHomeScreenState();
 }
 
-class _MainScreenState extends State<MainScreen> {
+class _MobileHomeScreenState extends State<MobileHomeScreen> {
   @override
   void initState() {
     super.initState();
@@ -29,7 +30,9 @@ class _MainScreenState extends State<MainScreen> {
       if (Platform.isAndroid) {
         final pkg = ThanPkgAndroid.getInstance.storagePermissionHandler;
         if (!await pkg.isStoragePermissionGranted()) {
+          ControllerManager.read<FavouriteController>().needToRefetch = true;
           await pkg.requestStoragePermission();
+
           return;
         }
       }

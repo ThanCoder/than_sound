@@ -13,7 +13,8 @@ import 'package:than_sound/ui/favourite/favourite_button.dart';
 import 'package:than_sound/ui/player_theme/interfaces/i_player_theme.dart';
 import 'package:than_sound/ui/player_theme/interfaces/player_ui_context.dart';
 import 'package:than_sound/ui/player_theme/interfaces/player_ui_state.dart';
-import 'package:than_sound/ui/player_theme/themes/mobile/default/audio_reactive_cover.dart';
+import 'package:than_sound/ui_platforms/mobile/content/default_content/audio_reactive_cover.dart';
+import 'package:than_sound/ui_platforms/mobile/mobile_player_ui_actions.dart';
 import 'package:waveform_visualizer/waveform_visualizer.dart';
 
 class DefaultPlayerContentTheme extends IPlayerTheme {
@@ -40,6 +41,8 @@ class _DefaultPlayerViewState extends State<_DefaultPlayerView> {
 
   PlayerUiContext get ctx => widget.ctx;
   PlayerUiState get state => widget.ctx.state();
+  MobilePlayerUiActions get actions =>
+      widget.ctx.actions as MobilePlayerUiActions;
 
   @override
   void initState() {
@@ -220,7 +223,7 @@ class _DefaultPlayerViewState extends State<_DefaultPlayerView> {
           ),
 
           IconButton(
-            onPressed: ctx.actions.more,
+            onPressed: actions.more,
             icon: const Icon(Icons.more_vert),
           ),
         ],
@@ -258,6 +261,7 @@ class _DefaultPlayerViewState extends State<_DefaultPlayerView> {
     return AudioReactiveCover(
       pcm: ctx.streams.pcm.map((frame) => frame.samples),
       playing: ctx.streams.playing,
+      playingState: true,
       child: Container(
         width: size,
         height: size,
@@ -364,7 +368,7 @@ class _DefaultPlayerViewState extends State<_DefaultPlayerView> {
                 _controlButton(
                   icon: Icons.skip_previous_rounded,
                   size: 48,
-                  onPressed: ctx.actions.previous,
+                  onPressed: actions.previous,
                 ),
 
                 const SizedBox(width: 28),
@@ -386,7 +390,7 @@ class _DefaultPlayerViewState extends State<_DefaultPlayerView> {
                     ],
                   ),
                   child: IconButton(
-                    onPressed: ctx.actions.playPause,
+                    onPressed: actions.playPause,
                     iconSize: 36,
                     color: Theme.of(context).colorScheme.onPrimary,
                     icon: Icon(
@@ -400,7 +404,7 @@ class _DefaultPlayerViewState extends State<_DefaultPlayerView> {
                 _controlButton(
                   icon: Icons.skip_next_rounded,
                   size: 48,
-                  onPressed: ctx.actions.next,
+                  onPressed: actions.next,
                 ),
               ],
             );
@@ -437,7 +441,7 @@ class _DefaultPlayerViewState extends State<_DefaultPlayerView> {
               max: max,
               value: value,
               onChangeEnd: (value) {
-                ctx.actions.seek(Duration(milliseconds: value.toInt()));
+                actions.seek(Duration(milliseconds: value.toInt()));
               },
             ),
 
@@ -471,7 +475,7 @@ class _DefaultPlayerViewState extends State<_DefaultPlayerView> {
       children: [
         IconButton(
           tooltip: 'Sleep timer',
-          onPressed: ctx.actions.sleepTimer,
+          onPressed: actions.sleepTimer,
           icon: const Icon(Icons.timer_outlined),
         ),
 
@@ -479,7 +483,7 @@ class _DefaultPlayerViewState extends State<_DefaultPlayerView> {
 
         IconButton(
           tooltip: 'Playlist',
-          onPressed: ctx.actions.playlist,
+          onPressed: actions.playlist,
           icon: const Icon(Icons.queue_music_rounded),
         ),
       ],

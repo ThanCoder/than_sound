@@ -4,17 +4,24 @@ import 'package:than_sound/core/utils/p_utils.dart';
 
 class VersionManager extends StatelessWidget {
   final String githubUrl;
+
   const VersionManager({super.key, required this.githubUrl});
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      child: ListTile(
-        title: Text('Version: ${PUtils.instance.version}'),
-        onTap: () {
-          ThanPkgLinux.getInstance.launcher.launchUrl('$githubUrl/releases');
-        },
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return ListTile(
+      leading: Icon(Icons.info_outline_rounded, color: colorScheme.primary),
+      title: const Text('Version'),
+      subtitle: Text(
+        PUtils.instance.version,
+        style: TextStyle(color: colorScheme.onSurfaceVariant),
       ),
+      trailing: const Icon(Icons.open_in_new_rounded, size: 20),
+      onTap: () {
+        ThanPkgLinux.getInstance.launcher.launchUrl('$githubUrl/releases');
+      },
     );
   }
 }

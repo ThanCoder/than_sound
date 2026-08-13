@@ -15,7 +15,7 @@ class PUtils {
   late Directory configDir;
   late String androidRootDirPath;
   String packageName = 'than_audio';
-  String version = '1.0.0';
+  String version = '1';
 
   Future<void> init() async {
     try {
@@ -35,9 +35,7 @@ class PUtils {
         if (cDir != null) {
           cacheDir = cDir;
         }
-      }
-
-      if (Platform.isAndroid) {
+      } else if (Platform.isAndroid) {
         final path = ThanPkgAndroid.getInstance.pathHandler
             .getDeviceStoragePath();
         androidRootDirPath = PathBuf(path).join('.$packageName').path;
@@ -50,7 +48,7 @@ class PUtils {
             .getAppInfo();
         if (appInfo != null) {
           packageName = appInfo.packageName;
-          // appInfo.
+          version = appInfo.versionName.toString();
         }
       }
     } catch (e) {

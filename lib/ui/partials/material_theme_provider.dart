@@ -100,30 +100,57 @@ class MaterialThemeProviderChooser extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        SizedBox(width: 5),
-        Expanded(
-          child: Text(
-            'Theme',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+    final theme = Theme.of(context);
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      child: Row(
+        children: [
+          Icon(
+            Icons.palette_outlined,
+            size: 22,
+            color: theme.colorScheme.primary,
           ),
-        ),
-        ValueListenableBuilder(
-          valueListenable: MaterialThemeProvider.themeTypeNotifier,
-          builder: (context, value, child) {
-            return DropdownButton(
-              padding: EdgeInsets.all(4),
-              borderRadius: BorderRadius.circular(4),
-              value: MaterialThemeProvider.themeTypeNotifier.value,
-              items: items,
-              onChanged: (value) {
-                MaterialThemeProvider.setTheme(value!);
-              },
-            );
-          },
-        ),
-      ],
+
+          const SizedBox(width: 12),
+
+          const Expanded(
+            child: Text(
+              'Theme',
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+            ),
+          ),
+
+          ValueListenableBuilder<MaterialThemeProviderType>(
+            valueListenable: MaterialThemeProvider.themeTypeNotifier,
+            builder: (context, value, child) {
+              return DropdownButtonHideUnderline(
+                child: DropdownButton<MaterialThemeProviderType>(
+                  value: value,
+                  items: items,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 4,
+                  ),
+                  borderRadius: BorderRadius.circular(12),
+                  icon: const Icon(Icons.keyboard_arrow_down_rounded),
+                  dropdownColor: theme.colorScheme.surfaceContainerHighest,
+                  style: TextStyle(
+                    color: theme.colorScheme.onSurface,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                  ),
+                  onChanged: (value) {
+                    if (value != null) {
+                      MaterialThemeProvider.setTheme(value);
+                    }
+                  },
+                ),
+              );
+            },
+          ),
+        ],
+      ),
     );
   }
 }

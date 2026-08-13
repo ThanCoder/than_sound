@@ -5,8 +5,9 @@ import 'package:than_sound/core/controllers/player/player_state_controller.dart'
 import 'package:than_sound/ui/audio/audio_item_menu.dart';
 import 'package:than_sound/ui/content/player_playlist.dart';
 import 'package:than_sound/ui/player_theme/interfaces/player_ui_context.dart';
-import 'package:than_sound/ui/player_theme/themes/mobile/default/default_player_content_theme.dart';
+import 'package:than_sound/ui_platforms/mobile/content/default_content/default_player_content_theme.dart';
 import 'package:than_sound/ui/player_theme/ui_context_creator.dart';
+import 'package:than_sound/ui_platforms/mobile/mobile_player_ui_actions.dart';
 
 class PlayerContentThemeProviderScreen extends StatefulWidget {
   const PlayerContentThemeProviderScreen({super.key});
@@ -24,19 +25,14 @@ class _PlayerContentThemeProviderScreenState
     super.initState();
   }
 
-  @override
-  void dispose() {
-    super.dispose();
-  }
-
   PlayerStateController get playerController =>
       ControllerManager.read<PlayerStateController>();
-
+  late PlayerUiContext ctx;
   void init() {
     final pc = playerController;
 
     ctx = UiContextCreator.create(
-      actions: .new(
+      actions: MobilePlayerUiActions(
         playPause: pc.toggle,
         next: pc.next,
         previous: pc.prev,
@@ -47,8 +43,6 @@ class _PlayerContentThemeProviderScreenState
       ),
     );
   }
-
-  late PlayerUiContext ctx;
 
   @override
   Widget build(BuildContext context) {
