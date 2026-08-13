@@ -6,6 +6,7 @@ class PlayerUiStreams {
   final Stream<Duration> position;
   final Stream<Duration> duration;
   final Stream<PcmFrame> pcm;
+  final Stream<double> amplitude;
   final Stream<AudioFile?> playlist;
 
   const PlayerUiStreams({
@@ -14,5 +15,6 @@ class PlayerUiStreams {
     required this.duration,
     required this.pcm,
     required this.playlist,
+    required this.amplitude,
   });
 }

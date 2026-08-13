@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:than_sound/ui/partials/material_theme_provider.dart';
+import 'package:than_sound/ui_platforms/ui/partials/material_theme_provider.dart';
 import 'package:than_sound/ui_platforms/platform_main_screen.dart';
 
 class MainApp extends StatelessWidget {

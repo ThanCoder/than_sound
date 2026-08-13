@@ -5,7 +5,7 @@ import 'package:audio_session/audio_session.dart';
 import 'package:cfb_store/cfb_store.dart';
 import 'package:flutter/material.dart';
 import 'package:than_pkg_linux/than_pkg_linux.dart';
-import 'package:than_sound/core/const_keys.dart';
+import 'package:than_sound/const_keys.dart';
 import 'package:than_sound/core/controllers/all_file_state_controller.dart';
 import 'package:than_sound/core/controllers/interfaces/i_controller.dart';
 import 'package:than_sound/core/controllers/player/my_audio_handler.dart';
@@ -13,7 +13,7 @@ import 'package:than_sound/core/controllers/player/player_state_controller.dart'
 import 'package:than_sound/core/utils/p_utils.dart';
 import 'package:than_sound/main_app.dart';
 import 'package:mpv_audio_kit/mpv_audio_kit.dart';
-import 'package:than_sound/ui/favourite/favourite_controller.dart';
+import 'package:than_sound/ui_platforms/ui/favourite/favourite_controller.dart';
 import 'package:waveform_visualizer/waveform_visualizer.dart';
 
 void main() async {
@@ -59,7 +59,7 @@ void main() async {
       androidNotificationIcon: 'mipmap/launcher_icon',
     ),
   );
-  ControllerManager.register(PlayerStateController(audioHandler));
+  ControllerManager.register(PlayerStateController(audioHandler)..init());
 
   ControllerManager.register(AllFileStateController());
   ControllerManager.register(FavouriteController());

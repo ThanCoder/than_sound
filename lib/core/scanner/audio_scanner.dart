@@ -7,7 +7,7 @@ import 'package:dart_core_extensions/dart_core_extensions.dart';
 import 'package:flutter/foundation.dart';
 import 'package:than_pkg_android/than_pkg_android.dart';
 import 'package:than_pkg_linux/than_pkg_linux.dart';
-import 'package:than_sound/core/const_keys.dart';
+import 'package:than_sound/const_keys.dart';
 import 'package:than_sound/core/models/audio_file.dart';
 import 'package:than_sound/core/models/audio_meta.dart';
 import 'package:than_sound/core/utils/file_utils.dart';

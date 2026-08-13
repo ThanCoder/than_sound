@@ -3,12 +3,12 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:t_widgets/t_widgets.dart';
 import 'package:than_pkg_android/than_pkg_android.dart';
-import 'package:than_sound/ui/audio/audio_float_widget.dart';
+import 'package:than_sound/ui_platforms/ui/audio/audio_float_widget.dart';
 import 'package:than_sound/core/controllers/interfaces/i_controller.dart';
 import 'package:than_sound/core/controllers/player/player_state_controller.dart';
-import 'package:than_sound/ui/favourite/favourite_controller.dart';
+import 'package:than_sound/ui_platforms/ui/favourite/favourite_controller.dart';
 import 'package:than_sound/ui_platforms/mobile/components/audio_list_page.dart';
-import 'package:than_sound/ui_platforms/mobile/components/lib_page.dart';
+import 'package:than_sound/ui_platforms/mobile/lib_page.dart';
 import 'package:than_sound/ui_platforms/mobile/components/more_page.dart';
 
 class MobileHomeScreen extends StatefulWidget {
@@ -51,7 +51,7 @@ class _MobileHomeScreenState extends State<MobileHomeScreen> {
       body: ValueListenableBuilder(
         valueListenable:
             ControllerManager.read<PlayerStateController>().showFloatWidget,
-        builder: (context, value, child) {
+        builder: (context, floatWidgetEnable, child) {
           return Stack(
             children: [
               IndexedStack(
@@ -60,7 +60,7 @@ class _MobileHomeScreenState extends State<MobileHomeScreen> {
               ),
 
               // float widget
-              if (value)
+              if (floatWidgetEnable)
                 Positioned(
                   left: 0,
                   right: 0,

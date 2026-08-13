@@ -1,12 +1,15 @@
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:mpv_audio_kit/mpv_audio_kit.dart';
 import 'package:than_sound/core/controllers/interfaces/i_controller.dart';
+import 'package:than_sound/core/controllers/player/amplitude_mixin.dart';
 import 'package:than_sound/core/controllers/player/my_audio_handler.dart';
 import 'package:than_sound/core/models/audio_file.dart';
 
 enum AudioFileSourceType { none, allFileState, favouriteState }
 
-class PlayerStateController extends IController {
+class PlayerStateController extends IController with AmplitudeMixin {
   ValueNotifier<AudioFile?> get current => _audioHandler.currentNotifier;
   List<AudioFile> get files => _audioHandler.files;
 
@@ -14,13 +17,16 @@ class PlayerStateController extends IController {
   PlayerStateController(this._audioHandler);
 
   PlayerState get state => _audioHandler.state;
+  @override
   PlayerStream get stream => _audioHandler.stream;
   AudioFileSourceType get source => _audioHandler.source;
   Stream<AudioFile?> get currentAudioChangeStream =>
       _audioHandler.currentAudioChangeStream;
 
   @override
-  void init() async {}
+  void init() async {
+    onListenPcmFrame();
+  }
 
   AudioFileSourceType get sourceType => _audioHandler.source;
   final showFloatWidget = ValueNotifier<bool>(false);

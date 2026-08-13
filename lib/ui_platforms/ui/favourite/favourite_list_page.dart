@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:t_widgets/t_widgets.dart';
 import 'package:than_sound/core/controllers/interfaces/i_controller.dart';
 import 'package:than_sound/core/controllers/player/player_state_controller.dart';
-import 'package:than_sound/ui/audio/audio_float_widget.dart';
-import 'package:than_sound/ui/audio/audio_sliver_list.dart';
-import 'package:than_sound/ui/favourite/favourite_controller.dart';
+import 'package:than_sound/ui_platforms/ui/audio/audio_float_widget.dart';
+import 'package:than_sound/ui_platforms/ui/audio/audio_sliver_list.dart';
+import 'package:than_sound/ui_platforms/ui/favourite/favourite_controller.dart';
 
 class FavouriteListPage extends StatefulWidget {
   const FavouriteListPage({super.key});
@@ -59,10 +59,15 @@ class _FavouriteListPageState extends State<FavouriteListPage> {
                       pCon.open(file);
                     },
                   ),
-                  SliverToBoxAdapter(
-                    child: SizedBox(
-                      height: pCon.showFloatWidget.value ? 130 : 90,
-                    ),
+                  ValueListenableBuilder(
+                    valueListenable: pCon.showFloatWidget,
+                    builder: (context, value, child) {
+                      return SliverToBoxAdapter(
+                        child: SizedBox(
+                          height: pCon.showFloatWidget.value ? 130 : 90,
+                        ),
+                      );
+                    },
                   ),
                 ],
               ),

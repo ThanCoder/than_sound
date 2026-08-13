@@ -10,6 +10,8 @@ const String linuxWindowHeightKey = 'linux-window-height';
 const double linuxWindowMinWidth = 840;
 
 final int audioScanMinFileSize = 1024 * 20;
+const String audioContentUseReactiveCoverTypeKey = 'audio-conent-use-reactive-cover-type';
+const String audioContentWaveFormTypeKey = 'audio-conent-wave-form-type';
 
 const videoSupportedExtensions = {
   '.mp4',

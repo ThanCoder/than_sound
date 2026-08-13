@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:t_widgets/t_widgets.dart' hide MaterialThemeProviderChooser;
 import 'package:than_sound/core/utils/p_utils.dart';
-import 'package:than_sound/ui/partials/cache_manager.dart';
-import 'package:than_sound/ui/partials/material_theme_provider.dart';
-import 'package:than_sound/ui/partials/version_manager.dart';
+import 'package:than_sound/ui_platforms/ui/partials/cache_manager.dart';
+import 'package:than_sound/ui_platforms/ui/partials/material_theme_provider.dart';
+import 'package:than_sound/ui_platforms/ui/partials/version_manager.dart';
 
 class MorePage extends StatelessWidget {
   const MorePage({super.key});

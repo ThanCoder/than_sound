@@ -8,12 +8,12 @@ import 'package:marquee/marquee.dart';
 import 'package:t_widgets/t_widgets.dart';
 import 'package:than_sound/core/controllers/interfaces/i_controller.dart';
 import 'package:than_sound/exts.dart';
-import 'package:than_sound/ui/audio/thumbnail.dart';
-import 'package:than_sound/ui/content/c_slider.dart';
-import 'package:than_sound/ui/content/player_playlist.dart';
+import 'package:than_sound/ui_platforms/ui/audio/thumbnail.dart';
+import 'package:than_sound/ui_platforms/ui/content/c_slider.dart';
+import 'package:than_sound/ui_platforms/ui/content/player_playlist.dart';
 import 'package:than_sound/core/controllers/player/player_state_controller.dart';
 import 'package:than_sound/core/models/audio_file.dart';
-import 'package:than_sound/ui/favourite/favourite_button.dart';
+import 'package:than_sound/ui_platforms/ui/favourite/favourite_button.dart';
 import 'package:waveform_visualizer/waveform_visualizer.dart';
 
 class AudioContentScreen extends StatefulWidget {

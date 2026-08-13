@@ -2,15 +2,15 @@ import 'dart:async';
 
 import 'package:cfb_store/cfb_store.dart';
 import 'package:flutter/material.dart';
-import 'package:than_sound/core/const_keys.dart';
+import 'package:than_sound/const_keys.dart';
 import 'package:than_sound/core/controllers/interfaces/i_controller.dart';
 import 'package:than_sound/core/controllers/player/player_state_controller.dart';
-import 'package:than_sound/ui/player_theme/interfaces/player_ui_context.dart';
-import 'package:than_sound/ui/player_theme/ui_context_creator.dart';
+import 'package:than_sound/ui_platforms/player_theme/interfaces/player_ui_context.dart';
+import 'package:than_sound/ui_platforms/player_theme/ui_context_creator.dart';
 import 'package:than_sound/ui_platforms/desktop/components/default_music_bar.dart';
 import 'package:than_sound/ui_platforms/desktop/desktop_player_ui_actions.dart';
 import 'package:than_sound/ui_platforms/mobile/components/audio_list_page.dart';
-import 'package:than_sound/ui_platforms/mobile/components/lib_page.dart';
+import 'package:than_sound/ui_platforms/mobile/lib_page.dart';
 import 'package:than_sound/ui_platforms/mobile/components/more_page.dart';
 
 class DesktopHomeScreen extends StatefulWidget {
@@ -84,7 +84,7 @@ class _DesktopHomeScreenState extends State<DesktopHomeScreen> {
       builder: (context, constraints) {
         this.constraints = constraints;
 
-        print(constraints);
+        // print(constraints);
         return Scaffold(
           body: Column(
             children: [

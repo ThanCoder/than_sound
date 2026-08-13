@@ -1,21 +1,19 @@
-import 'dart:async';
 import 'dart:math';
-
 import 'package:dart_core_extensions/dart_core_extensions.dart';
 import 'package:flutter/material.dart';
 import 'package:marquee/marquee.dart';
 import 'package:t_widgets/t_widgets.dart';
 import 'package:than_sound/core/models/audio_file.dart';
 import 'package:than_sound/exts.dart';
-import 'package:than_sound/ui/audio/thumbnail.dart';
-import 'package:than_sound/ui/content/c_slider.dart';
-import 'package:than_sound/ui/favourite/favourite_button.dart';
-import 'package:than_sound/ui/player_theme/interfaces/i_player_theme.dart';
-import 'package:than_sound/ui/player_theme/interfaces/player_ui_context.dart';
-import 'package:than_sound/ui/player_theme/interfaces/player_ui_state.dart';
-import 'package:than_sound/ui_platforms/mobile/content/default_content/audio_reactive_cover.dart';
+import 'package:than_sound/ui_platforms/mobile/components/reactive_cover/audio_reactive_cover_switcher.dart';
+import 'package:than_sound/ui_platforms/mobile/components/waveform/waveform.dart';
+import 'package:than_sound/ui_platforms/ui/audio/thumbnail.dart';
+import 'package:than_sound/ui_platforms/ui/content/c_slider.dart';
+import 'package:than_sound/ui_platforms/ui/favourite/favourite_button.dart';
+import 'package:than_sound/ui_platforms/player_theme/interfaces/i_player_theme.dart';
+import 'package:than_sound/ui_platforms/player_theme/interfaces/player_ui_context.dart';
+import 'package:than_sound/ui_platforms/player_theme/interfaces/player_ui_state.dart';
 import 'package:than_sound/ui_platforms/mobile/mobile_player_ui_actions.dart';
-import 'package:waveform_visualizer/waveform_visualizer.dart';
 
 class DefaultPlayerContentTheme extends IPlayerTheme {
   @override
@@ -34,67 +32,10 @@ class _DefaultPlayerView extends StatefulWidget {
 }
 
 class _DefaultPlayerViewState extends State<_DefaultPlayerView> {
-  final _waveformController = WaveformController();
-
-  StreamSubscription? _playingSub;
-  StreamSubscription? _pcmSub;
-
   PlayerUiContext get ctx => widget.ctx;
   PlayerUiState get state => widget.ctx.state();
   MobilePlayerUiActions get actions =>
       widget.ctx.actions as MobilePlayerUiActions;
-
-  @override
-  void initState() {
-    super.initState();
-
-    _initWaveform();
-  }
-
-  @override
-  void dispose() {
-    _playingSub?.cancel();
-    _pcmSub?.cancel();
-    _waveformController.dispose();
-
-    super.dispose();
-  }
-
-  void _initWaveform() {
-    if (state.playing) {
-      _waveformController.start();
-    }
-
-    _playingSub = ctx.streams.playing.listen((playing) {
-      if (playing) {
-        _waveformController.start();
-      } else {
-        _waveformController.stop();
-      }
-    });
-
-    // pcm stream ကို PlayerUiStreams ထဲ expose ထားတယ်ဆိုရင်
-    // ဒီနေရာမှာ listen လုပ်နိုင်တယ်။
-    _pcmSub = ctx.streams.pcm.listen((frame) {
-      if (frame.samples.isEmpty) return;
-
-      final amplitude = calculateRMS(frame.samples);
-
-      _waveformController.updateAmplitude(amplitude.clamp(0.0, 1.0));
-    });
-  }
-
-  double calculateRMS(List<double> samples) {
-    if (samples.isEmpty) return 0;
-
-    double sum = 0;
-
-    for (final sample in samples) {
-      sum += sample * sample;
-    }
-
-    return sqrt(sum / samples.length);
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -258,8 +199,8 @@ class _DefaultPlayerViewState extends State<_DefaultPlayerView> {
   }
 
   Widget _cover(AudioFile current, double size) {
-    return AudioReactiveCover(
-      pcm: ctx.streams.pcm.map((frame) => frame.samples),
+    return AudioReactiveCoverSwitcher(
+      amplitude: ctx.streams.amplitude,
       playing: ctx.streams.playing,
       playingState: true,
       child: Container(
@@ -282,25 +223,6 @@ class _DefaultPlayerViewState extends State<_DefaultPlayerView> {
         ),
       ),
     );
-    // return Container(
-    //   width: size,
-    //   height: size,
-    //   decoration: BoxDecoration(
-    //     borderRadius: BorderRadius.circular(24),
-    //     boxShadow: [
-    //       BoxShadow(
-    //         blurRadius: 35,
-    //         spreadRadius: 2,
-    //         offset: const Offset(0, 18),
-    //         color: Colors.black.withValues(alpha: .25),
-    //       ),
-    //     ],
-    //   ),
-    //   child: ClipRRect(
-    //     borderRadius: BorderRadius.circular(24),
-    //     child: Thumbnail(file: current),
-    //   ),
-    // );
   }
 
   Widget _songInfo(AudioFile current) {
@@ -336,15 +258,10 @@ class _DefaultPlayerViewState extends State<_DefaultPlayerView> {
     return SizedBox(
       height: 65,
       width: double.infinity,
-      child: WaveformWidget(
-        controller: _waveformController,
-        height: 65,
-        style: WaveformStyle(
-          waveColor: Theme.of(context).colorScheme.primary,
-          backgroundColor: Colors.transparent,
-          waveformStyle: WaveformDrawStyle.bars,
-          showGradient: true,
-        ),
+      child: Waveform(
+        playingState: state.playing,
+        playing: ctx.streams.playing,
+        amplitude: ctx.streams.amplitude,
       ),
     );
   }

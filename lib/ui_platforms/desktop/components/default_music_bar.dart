@@ -2,11 +2,11 @@ import 'dart:io';
 
 import 'package:dart_core_extensions/dart_core_extensions.dart';
 import 'package:flutter/material.dart';
-import 'package:than_sound/ui/audio/thumbnail.dart';
-import 'package:than_sound/ui/content/c_slider.dart';
-import 'package:than_sound/ui/player_theme/interfaces/player_ui_context.dart';
-import 'package:than_sound/ui/player_theme/interfaces/player_ui_state.dart';
-import 'package:than_sound/ui/player_theme/interfaces/player_ui_streams.dart';
+import 'package:than_sound/ui_platforms/ui/audio/thumbnail.dart';
+import 'package:than_sound/ui_platforms/ui/content/c_slider.dart';
+import 'package:than_sound/ui_platforms/player_theme/interfaces/player_ui_context.dart';
+import 'package:than_sound/ui_platforms/player_theme/interfaces/player_ui_state.dart';
+import 'package:than_sound/ui_platforms/player_theme/interfaces/player_ui_streams.dart';
 import 'package:than_sound/ui_platforms/desktop/desktop_player_ui_actions.dart';
 
 class DefaultMusicBar extends StatefulWidget {

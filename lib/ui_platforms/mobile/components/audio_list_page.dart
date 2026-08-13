@@ -3,13 +3,14 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:t_widgets/t_widgets.dart' hide SortButton;
 import 'package:than_sound/core/models/audio_file.dart';
-import 'package:than_sound/ui/audio/audio_sliver_list.dart';
-import 'package:than_sound/ui/audio/list_gps_button.dart';
-import 'package:than_sound/core/const_keys.dart';
+import 'package:than_sound/ui_platforms/ui/audio/audio_list_header.dart';
+import 'package:than_sound/ui_platforms/ui/audio/audio_sliver_list.dart';
+import 'package:than_sound/ui_platforms/ui/audio/list_gps_button.dart';
+import 'package:than_sound/const_keys.dart';
 import 'package:than_sound/core/controllers/all_file_state_controller.dart';
 import 'package:than_sound/core/controllers/interfaces/i_controller.dart';
 import 'package:than_sound/core/controllers/player/player_state_controller.dart';
-import 'package:than_sound/ui/partials/sort_provider.dart';
+import 'package:than_sound/ui_platforms/ui/partials/sort_provider.dart';
 
 class AudioListPage extends StatefulWidget {
   final double? listGpsButtonRightPos;
@@ -206,7 +207,7 @@ class _AudioListPageState extends State<AudioListPage> {
               ),
             ),
 
-          SliverToBoxAdapter(child: headerWidget),
+          SliverToBoxAdapter(child: AudioListHeader()),
 
           AudioSliverList(list: con.files, onClicked: openConfrmAndPlay),
 
@@ -214,71 +215,6 @@ class _AudioListPageState extends State<AudioListPage> {
             child: SizedBox(height: pCon.showFloatWidget.value ? 130 : 90),
           ),
         ],
-      ),
-    );
-  }
-
-  Widget get headerWidget {
-    final con = ControllerManager.read<AllFileStateController>();
-    final colors = Theme.of(context).colorScheme;
-
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(12, 10, 12, 6),
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-        decoration: BoxDecoration(
-          color: colors.surfaceContainerLow,
-          borderRadius: BorderRadius.circular(14),
-          border: Border.all(
-            color: colors.outlineVariant.withValues(alpha: .25),
-          ),
-        ),
-        child: Row(
-          children: [
-            Container(
-              width: 34,
-              height: 34,
-              decoration: BoxDecoration(
-                color: colors.primary.withValues(alpha: .12),
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Icon(
-                Icons.library_music_rounded,
-                size: 20,
-                color: colors.primary,
-              ),
-            ),
-
-            const SizedBox(width: 10),
-
-            Text(
-              'Audio Library',
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w700,
-                color: colors.onSurface,
-              ),
-            ),
-
-            const Spacer(),
-
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
-              decoration: BoxDecoration(
-                color: colors.primary.withValues(alpha: .10),
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: Text(
-                '${con.files.length}',
-                style: TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w700,
-                  color: colors.primary,
-                ),
-              ),
-            ),
-          ],
-        ),
       ),
     );
   }

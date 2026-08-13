@@ -1,7 +1,7 @@
 name: than_sound
-description: "A new Flutter project."
+description: "Audio Project For Free"
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
-version: 1.0.0+1
+version: 0.1.0
 
 repository: https://github.com/ThanCoder/than_sound.git
 

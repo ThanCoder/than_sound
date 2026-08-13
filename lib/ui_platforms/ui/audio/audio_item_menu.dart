@@ -1,10 +1,13 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:t_widgets/t_widgets.dart';
 import 'package:than_sound/core/controllers/all_file_state_controller.dart';
 import 'package:than_sound/core/controllers/interfaces/i_controller.dart';
 import 'package:than_sound/core/models/audio_file.dart';
-import 'package:than_sound/ui/audio/art_cover_manager.dart';
-import 'package:than_sound/ui/audio/audio_info_menu.dart';
+import 'package:than_sound/ui_platforms/mobile/components/audio_content_theme_menu.dart';
+import 'package:than_sound/ui_platforms/ui/audio/art_cover_manager.dart';
+import 'package:than_sound/ui_platforms/ui/audio/audio_info_menu.dart';
 
 class AudioItemMenu extends StatefulWidget {
   final AudioFile file;
@@ -110,6 +113,25 @@ class _AudioItemMenuState extends State<AudioItemMenu> {
                 builder: (mainCtx) {
                   return ArtCoverManager(file: widget.file);
                 },
+              );
+            },
+          ),
+
+          const SizedBox(height: 4),
+
+          // Art Cover
+          _MenuTile(
+            icon: Icons.color_lens_outlined,
+            title: 'Content Theme',
+            subtitle: 'Change or remove Content Theme',
+            onTap: () {
+              context.pop();
+              showModalBottomSheet(
+                context: context,
+                isScrollControlled: true,
+                useSafeArea: true,
+                showDragHandle: false,
+                builder: (context) => AudioContentThemeMenu(),
               );
             },
           ),
@@ -269,8 +291,8 @@ class _Cover extends StatelessWidget {
       ),
       child: path.isEmpty
           ? Icon(Icons.music_note_rounded, color: colorScheme.onSurfaceVariant)
-          : Image.asset(
-              path,
+          : Image.file(
+              File(path),
               fit: BoxFit.cover,
               errorBuilder: (_, _, _) {
                 return Icon(

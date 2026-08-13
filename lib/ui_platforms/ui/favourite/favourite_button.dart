@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:than_sound/core/controllers/interfaces/i_controller.dart';
 import 'package:than_sound/core/models/audio_file.dart';
-import 'package:than_sound/ui/favourite/favourite_controller.dart';
+import 'package:than_sound/ui_platforms/ui/favourite/favourite_controller.dart';
 
 class FavouriteButton extends StatelessWidget {
   final AudioFile file;
