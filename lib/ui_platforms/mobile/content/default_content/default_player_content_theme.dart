@@ -1,12 +1,13 @@
 import 'dart:math';
 import 'package:dart_core_extensions/dart_core_extensions.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:marquee/marquee.dart';
 import 'package:t_widgets/t_widgets.dart';
 import 'package:than_sound/core/models/audio_file.dart';
 import 'package:than_sound/exts.dart';
-import 'package:than_sound/ui_platforms/mobile/components/reactive_cover/audio_reactive_cover_switcher.dart';
-import 'package:than_sound/ui_platforms/mobile/components/waveform/waveform.dart';
+import 'package:than_sound/ui_platforms/components/reactive_cover/audio_reactive_cover_switcher.dart';
+import 'package:than_sound/ui_platforms/components/waveform/waveform_widget/waveform.dart';
 import 'package:than_sound/ui_platforms/ui/audio/thumbnail.dart';
 import 'package:than_sound/ui_platforms/ui/content/c_slider.dart';
 import 'package:than_sound/ui_platforms/ui/favourite/favourite_button.dart';
@@ -37,21 +38,36 @@ class _DefaultPlayerViewState extends State<_DefaultPlayerView> {
   MobilePlayerUiActions get actions =>
       widget.ctx.actions as MobilePlayerUiActions;
 
+  final double statusbarHeight = 40;
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(body: SafeArea(child: _body()));
+    return _body();
   }
 
   Widget _body() {
+    final isLight = context.isLightMode;
     final current = state.current;
 
     if (current == null) {
       return const SizedBox.shrink();
     }
-
+    final statusBarColor = isLight
+        ? Colors.white.withValues(alpha: .2)
+        : Colors.black.withValues(alpha: .4);
     return Stack(
       fit: StackFit.expand,
-      children: [_background(current), _playerContent(current)],
+      children: [
+        _background(current),
+        _playerContent(current),
+        Positioned(
+          top: 0,
+          height: statusbarHeight,
+          left: 0,
+          right: 0,
+          child: Container(decoration: BoxDecoration(color: statusBarColor)),
+        ),
+      ],
     );
   }
 
@@ -61,7 +77,7 @@ class _DefaultPlayerViewState extends State<_DefaultPlayerView> {
     return Stack(
       fit: StackFit.expand,
       children: [
-        Thumbnail(file: current),
+        Positioned.fill(child: Thumbnail(file: current)),
 
         Container(
           decoration: BoxDecoration(
@@ -84,13 +100,6 @@ class _DefaultPlayerViewState extends State<_DefaultPlayerView> {
             ),
           ),
         ),
-
-        Positioned.fill(
-          child: BackdropFilter(
-            filter: .blur(sigmaX: 18, sigmaY: 18),
-            child: const SizedBox(),
-          ),
-        ),
       ],
     );
   }
@@ -100,6 +109,8 @@ class _DefaultPlayerViewState extends State<_DefaultPlayerView> {
       padding: const EdgeInsets.fromLTRB(20, 8, 20, 4),
       child: Column(
         children: [
+          // status bar
+          SizedBox(height: statusbarHeight),
           _header(current),
 
           const SizedBox(height: 12),
@@ -123,7 +134,7 @@ class _DefaultPlayerViewState extends State<_DefaultPlayerView> {
       height: 48,
       child: Row(
         children: [
-          const SizedBox(width: 48),
+          const SizedBox(width: 38),
 
           Expanded(
             child: StreamBuilder<bool>(
@@ -200,7 +211,7 @@ class _DefaultPlayerViewState extends State<_DefaultPlayerView> {
 
   Widget _cover(AudioFile current, double size) {
     return AudioReactiveCoverSwitcher(
-      amplitude: ctx.streams.amplitude,
+      playerStream: ctx.streams.playerStream,
       playing: ctx.streams.playing,
       playingState: true,
       child: Container(
@@ -261,7 +272,7 @@ class _DefaultPlayerViewState extends State<_DefaultPlayerView> {
       child: Waveform(
         playingState: state.playing,
         playing: ctx.streams.playing,
-        amplitude: ctx.streams.amplitude,
+        playerStream: ctx.streams.playerStream,
       ),
     );
   }
@@ -390,6 +401,11 @@ class _DefaultPlayerViewState extends State<_DefaultPlayerView> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: [
+        IconButton(
+          tooltip: 'Volume',
+          onPressed: actions.volume,
+          icon: const Icon(Icons.volume_up_sharp),
+        ),
         IconButton(
           tooltip: 'Sleep timer',
           onPressed: actions.sleepTimer,

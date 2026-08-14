@@ -2,6 +2,7 @@ import 'package:dart_core_extensions/dart_core_extensions.dart';
 import 'package:flutter/material.dart';
 import 'package:than_sound/core/controllers/interfaces/i_controller.dart';
 import 'package:than_sound/core/controllers/player/player_state_controller.dart';
+import 'package:than_sound/ui_platforms/mobile/content/default_content/sound_volume_menu.dart';
 import 'package:than_sound/ui_platforms/ui/audio/audio_item_menu.dart';
 import 'package:than_sound/ui_platforms/ui/content/player_playlist.dart';
 import 'package:than_sound/ui_platforms/player_theme/interfaces/player_ui_context.dart';
@@ -40,6 +41,7 @@ class _PlayerContentThemeProviderScreenState
         playlist: showPlayList,
         sleepTimer: () {},
         more: showItemMenu,
+        volume: showVolumeMenu,
       ),
     );
   }
@@ -48,13 +50,11 @@ class _PlayerContentThemeProviderScreenState
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: !TPlatform.isDesktop ? null : AppBar(),
-      body: SafeArea(
-        child: ValueListenableBuilder(
-          valueListenable: playerController.current,
-          builder: (context, value, child) {
-            return DefaultPlayerContentTheme().build(context, ctx);
-          },
-        ),
+      body: ValueListenableBuilder(
+        valueListenable: playerController.current,
+        builder: (context, value, child) {
+          return DefaultPlayerContentTheme().build(context, ctx);
+        },
       ),
     );
   }
@@ -83,6 +83,16 @@ class _PlayerContentThemeProviderScreenState
       useSafeArea: true,
       builder: (context) =>
           AudioItemMenu(file: playerController.current.value!),
+    );
+  }
+
+  void showVolumeMenu() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      showDragHandle: true,
+      useSafeArea: true,
+      builder: (context) => SoundVolumeMenu(),
     );
   }
 }

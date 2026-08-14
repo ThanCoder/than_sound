@@ -1,12 +1,13 @@
 import 'package:cfb_store/cfb_store.dart';
 import 'package:flutter/widgets.dart';
+import 'package:mpv_audio_kit/mpv_audio_kit.dart';
 import 'package:than_sound/const_keys.dart';
-import 'package:than_sound/ui_platforms/mobile/components/reactive_cover/audio_reactive_cover.dart';
-import 'package:than_sound/ui_platforms/mobile/content/default_content/reactive_cover_types.dart';
+import 'package:than_sound/ui_platforms/components/reactive_cover/audio_reactive_cover.dart';
+import 'package:than_sound/ui_platforms/components/reactive_cover/reactive_cover_types.dart';
 
 class AudioReactiveCoverSwitcher extends StatelessWidget {
   final Widget child;
-  final Stream<double> amplitude;
+  final PlayerStream playerStream;
   final Stream<bool> playing;
   final bool playingState;
   const AudioReactiveCoverSwitcher({
@@ -14,7 +15,7 @@ class AudioReactiveCoverSwitcher extends StatelessWidget {
     required this.child,
     required this.playing,
     required this.playingState,
-    required this.amplitude,
+    required this.playerStream,
   });
 
   @override
@@ -31,9 +32,10 @@ class AudioReactiveCoverSwitcher extends StatelessWidget {
           return child;
         }
         return AudioReactiveCover(
-          amplitude: amplitude,
+          playerStream: playerStream,
           playing: playing,
           playingState: playingState,
+          type: reactiveCoverType,
           child: child,
         );
       },

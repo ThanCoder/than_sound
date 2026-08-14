@@ -3,10 +3,11 @@ import 'dart:io';
 
 import 'package:cfb_store/cfb_store.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:than_sound/core/controllers/all_file_event.dart';
-import 'package:than_sound/core/controllers/all_state.dart';
+import 'package:than_sound/core/controllers/all_audio/all_file_event.dart';
+import 'package:than_sound/core/controllers/all_audio/all_state.dart';
 import 'package:than_sound/core/controllers/interfaces/i_controller.dart';
 import 'package:than_sound/core/controllers/player/player_state_controller.dart';
+import 'package:than_sound/core/extensions/audio_file_extensions.dart';
 import 'package:than_sound/core/models/audio_file.dart';
 import 'package:than_sound/core/scanner/audio_scanner.dart';
 import 'package:than_sound/ui_platforms/ui/partials/sort_provider.dart';
@@ -16,7 +17,12 @@ class AllFileStateController extends IController {
       ControllerManager.read<PlayerStateController>();
 
   final List<AudioFile> files = [];
-  final List<SortItem> sortList = [.nameSortItem, .dateSortItem, .sizeSortItem];
+  final List<SortItem> sortList = [
+    .nameSortItem,
+    .dateSortItem,
+    .sizeSortItem,
+    .durationSortItem,
+  ];
 
   AllState _state = .empty();
   AllState get state => _state;
@@ -90,6 +96,9 @@ class AllFileStateController extends IController {
     if (id == SortItem.dateSortItem.id) {
       return SortItem.dateSortItem.copyWith(isTrue: isTrue);
     }
+    if (id == SortItem.durationSortItem.id) {
+      return SortItem.durationSortItem.copyWith(isTrue: isTrue);
+    }
     return .dateSortItem;
   }
 
@@ -108,6 +117,9 @@ class AllFileStateController extends IController {
     }
     if (item.id == SortItem.sizeSortItem.id) {
       files.sortSize(smToBig: item.isTrue);
+    }
+    if (item.id == SortItem.durationSortItem.id) {
+      files.sortDuration(smToBig: item.isTrue);
     }
   }
 

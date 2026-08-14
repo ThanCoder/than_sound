@@ -1,6 +1,7 @@
 import 'package:cfb_store/cfb_store.dart';
 import 'package:dart_core_extensions/dart_core_extensions.dart';
 import 'package:flutter/material.dart';
+import 'package:t_widgets/t_widgets.dart';
 
 enum MaterialThemeProviderType {
   system,
@@ -102,54 +103,62 @@ class MaterialThemeProviderChooser extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-      child: Row(
-        children: [
-          Icon(
-            Icons.palette_outlined,
-            size: 22,
-            color: theme.colorScheme.primary,
-          ),
-
-          const SizedBox(width: 12),
-
-          const Expanded(
-            child: Text(
-              'Theme',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+    return Container(
+      decoration: BoxDecoration(
+        color: context.colorScheme.surfaceContainerHighest.withValues(
+          alpha: .45,
+        ),
+        borderRadius: .circular(15),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+        child: Row(
+          children: [
+            Icon(
+              Icons.palette_outlined,
+              size: 22,
+              color: theme.colorScheme.primary,
             ),
-          ),
 
-          ValueListenableBuilder<MaterialThemeProviderType>(
-            valueListenable: MaterialThemeProvider.themeTypeNotifier,
-            builder: (context, value, child) {
-              return DropdownButtonHideUnderline(
-                child: DropdownButton<MaterialThemeProviderType>(
-                  value: value,
-                  items: items,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 8,
-                    vertical: 4,
+            const SizedBox(width: 12),
+
+            const Expanded(
+              child: Text(
+                'Theme',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+              ),
+            ),
+
+            ValueListenableBuilder<MaterialThemeProviderType>(
+              valueListenable: MaterialThemeProvider.themeTypeNotifier,
+              builder: (context, value, child) {
+                return DropdownButtonHideUnderline(
+                  child: DropdownButton<MaterialThemeProviderType>(
+                    value: value,
+                    items: items,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 4,
+                    ),
+                    borderRadius: BorderRadius.circular(12),
+                    icon: const Icon(Icons.keyboard_arrow_down_rounded),
+                    dropdownColor: theme.colorScheme.surfaceContainerHighest,
+                    style: TextStyle(
+                      color: theme.colorScheme.onSurface,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                    ),
+                    onChanged: (value) {
+                      if (value != null) {
+                        MaterialThemeProvider.setTheme(value);
+                      }
+                    },
                   ),
-                  borderRadius: BorderRadius.circular(12),
-                  icon: const Icon(Icons.keyboard_arrow_down_rounded),
-                  dropdownColor: theme.colorScheme.surfaceContainerHighest,
-                  style: TextStyle(
-                    color: theme.colorScheme.onSurface,
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                  ),
-                  onChanged: (value) {
-                    if (value != null) {
-                      MaterialThemeProvider.setTheme(value);
-                    }
-                  },
-                ),
-              );
-            },
-          ),
-        ],
+                );
+              },
+            ),
+          ],
+        ),
       ),
     );
   }

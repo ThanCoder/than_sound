@@ -59,6 +59,19 @@ class SortItem {
     isTrue: true,
   );
 
+  /// trueTitle: Text("Small To Big"),
+  ///
+  /// falseTitle: Text("Big To Small"),
+  ///
+  /// isTrue: true,
+  static final durationSortItem = SortItem(
+    id: 2,
+    title: 'Duration',
+    trueTitle: "Small To Big",
+    falseTitle: "Big To Small",
+    isTrue: true,
+  );
+
   @override
   String toString() {
     return 'SortItem(id: $id, title: $title, isTrue: $isTrue, trueTitle: $trueTitle, falseTitle: $falseTitle)';
@@ -178,7 +191,7 @@ class _SortProviderDialogState extends State<SortProviderDialog> {
 
                 _section(child: sortResultWidgt),
 
-                applyWidget,
+                // applyWidget,
               ],
             ),
           ),

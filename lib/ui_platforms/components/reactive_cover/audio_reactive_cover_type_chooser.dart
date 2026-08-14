@@ -2,52 +2,42 @@ import 'package:cfb_store/cfb_store.dart';
 import 'package:dart_core_extensions/dart_core_extensions.dart';
 import 'package:flutter/material.dart';
 import 'package:than_sound/const_keys.dart';
-import 'package:waveform_visualizer/waveform_visualizer.dart';
+import 'package:than_sound/ui_platforms/components/reactive_cover/reactive_cover_types.dart';
 
-class WaveFormChooser extends StatelessWidget {
-  WaveFormChooser({super.key});
-
-  static WaveformDrawStyle getCurrentValue() {
-    WaveformDrawStyle value = .bars;
-    final name = CFBStore.getInstance.getString(audioContentWaveFormTypeKey);
-
-    if (name == WaveformDrawStyle.circular.name) {
-      value = .circular;
-    } else if (name == WaveformDrawStyle.filled.name) {
-      value = .filled;
-    } else if (name == WaveformDrawStyle.line.name) {
-      value = .line;
-    }
-    return value;
-  }
+class AudioReactiveCoverTypeChooser extends StatelessWidget {
+  AudioReactiveCoverTypeChooser({super.key});
 
   final store = CFBStore.getInstance;
 
-  final list = WaveformDrawStyle.values
+  final list = ReactiveCoverType.values
       .map(
-        (e) => DropdownMenuItem<WaveformDrawStyle>(
+        (e) => DropdownMenuItem<ReactiveCoverType>(
           value: e,
           child: Text(e.name.capitalize),
         ),
       )
       .toList();
 
-  final current = WaveFormChooser.getCurrentValue();
-
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+
     return StreamBuilder(
-      stream: store.events.where(
-        (e) => e is PutValue && e.key == audioContentWaveFormTypeKey,
+      stream: CFBStore.getInstance.events.where(
+        (e) => e is PutValue && e.key == audioContentUseReactiveCoverTypeKey,
       ),
       builder: (context, _) {
+        final value = ReactiveCoverType.fromValue(
+          store.getString(audioContentUseReactiveCoverTypeKey),
+        );
         return Container(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           decoration: BoxDecoration(
             color: colorScheme.surfaceContainerHighest.withValues(alpha: .45),
-            borderRadius: BorderRadius.circular(15),
-            border: .all(color: colorScheme.outlineVariant),
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(
+              color: colorScheme.outlineVariant.withValues(alpha: .5),
+            ),
           ),
           child: Row(
             children: [
@@ -56,22 +46,28 @@ class WaveFormChooser extends StatelessWidget {
                 height: 42,
                 decoration: BoxDecoration(
                   color: colorScheme.primaryContainer,
-                  borderRadius: .circular(12),
+                  borderRadius: BorderRadius.circular(12),
                 ),
                 child: Icon(
-                  Icons.waves_rounded,
+                  Icons.animation_rounded,
                   color: colorScheme.onPrimaryContainer,
                 ),
               ),
+
               const SizedBox(width: 14),
-              Expanded(
+
+              const Expanded(
                 child: Column(
-                  crossAxisAlignment: .start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'WaveForm',
-                      style: TextStyle(fontSize: 15, fontWeight: .w600),
+                      'Reactive Cover',
+                      style: TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
+                    SizedBox(height: 3),
                     Text(
                       'Choose how the cover reacts to audio',
                       style: TextStyle(fontSize: 12),
@@ -79,15 +75,17 @@ class WaveFormChooser extends StatelessWidget {
                   ],
                 ),
               ),
+
               const SizedBox(width: 8),
+
               DropdownButtonHideUnderline(
                 child: DropdownButton(
-                  borderRadius: .circular(14),
-                  value: current,
+                  value: value,
+                  borderRadius: BorderRadius.circular(14),
                   items: list,
                   onChanged: (value) {
                     store.putAndWriteAll(
-                      audioContentWaveFormTypeKey,
+                      audioContentUseReactiveCoverTypeKey,
                       value!.name,
                     );
                   },

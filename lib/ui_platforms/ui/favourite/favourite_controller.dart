@@ -1,6 +1,6 @@
 import 'package:cfb_store/cfb_store.dart';
-import 'package:than_sound/core/controllers/all_file_event.dart';
-import 'package:than_sound/core/controllers/all_file_state_controller.dart';
+import 'package:than_sound/core/controllers/all_audio/all_file_event.dart';
+import 'package:than_sound/core/controllers/all_audio/all_file_state_controller.dart';
 import 'package:than_sound/core/controllers/interfaces/i_controller.dart';
 import 'package:than_sound/core/models/audio_file.dart';
 

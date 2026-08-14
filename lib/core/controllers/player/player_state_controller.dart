@@ -3,13 +3,13 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:mpv_audio_kit/mpv_audio_kit.dart';
 import 'package:than_sound/core/controllers/interfaces/i_controller.dart';
-import 'package:than_sound/core/controllers/player/amplitude_mixin.dart';
+import 'package:than_sound/core/controllers/player/listener/loudness_config_listener.dart';
 import 'package:than_sound/core/controllers/player/my_audio_handler.dart';
 import 'package:than_sound/core/models/audio_file.dart';
 
 enum AudioFileSourceType { none, allFileState, favouriteState }
 
-class PlayerStateController extends IController with AmplitudeMixin {
+class PlayerStateController extends IController with LoudnessConfigListener {
   ValueNotifier<AudioFile?> get current => _audioHandler.currentNotifier;
   List<AudioFile> get files => _audioHandler.files;
 
@@ -18,6 +18,8 @@ class PlayerStateController extends IController with AmplitudeMixin {
 
   PlayerState get state => _audioHandler.state;
   @override
+  Player get player => _audioHandler.player;
+
   PlayerStream get stream => _audioHandler.stream;
   AudioFileSourceType get source => _audioHandler.source;
   Stream<AudioFile?> get currentAudioChangeStream =>
@@ -25,7 +27,7 @@ class PlayerStateController extends IController with AmplitudeMixin {
 
   @override
   void init() async {
-    onListenPcmFrame();
+    onLoudnessConfigListener();
   }
 
   AudioFileSourceType get sourceType => _audioHandler.source;

@@ -6,7 +6,7 @@ import 'package:cfb_store/cfb_store.dart';
 import 'package:flutter/material.dart';
 import 'package:than_pkg_linux/than_pkg_linux.dart';
 import 'package:than_sound/const_keys.dart';
-import 'package:than_sound/core/controllers/all_file_state_controller.dart';
+import 'package:than_sound/core/controllers/all_audio/all_file_state_controller.dart';
 import 'package:than_sound/core/controllers/interfaces/i_controller.dart';
 import 'package:than_sound/core/controllers/player/my_audio_handler.dart';
 import 'package:than_sound/core/controllers/player/player_state_controller.dart';
@@ -18,6 +18,8 @@ import 'package:waveform_visualizer/waveform_visualizer.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
 
   MpvAudioKit.ensureInitialized();
   WaveformVisualizer.initialize();
@@ -40,13 +42,25 @@ void main() async {
   );
 
   if (Platform.isLinux) {
-    final size = CFBStore.getInstance.getDouble(
-      linuxWindowWidthKey,
-      linuxWindowMinWidth,
+    await ThanPkgLinux.getInstance.window.setMinWindowSize(
+      width: CFBStore.getInstance.getInt(
+        linuxWindowWidthKey,
+        linuxWindowMinWidth.toInt(),
+      ),
+      height: CFBStore.getInstance.getInt(
+        linuxWindowHeightKey,
+        linuxWindowMinHeight.toInt(),
+      ),
     );
-    await ThanPkgLinux.getInstance.channel.setWindowSize(
-      width: size.clamp(linuxWindowMinWidth, size).toInt(),
-      height: CFBStore.getInstance.getInt(linuxWindowHeightKey, 480),
+    await ThanPkgLinux.getInstance.window.setWindowSize(
+      width: CFBStore.getInstance.getInt(
+        linuxWindowWidthKey,
+        linuxWindowMinWidth.toInt(),
+      ),
+      height: CFBStore.getInstance.getInt(
+        linuxWindowHeightKey,
+        linuxWindowMinHeight.toInt(),
+      ),
     );
   }
 
@@ -59,12 +73,16 @@ void main() async {
       androidNotificationIcon: 'mipmap/launcher_icon',
     ),
   );
-  ControllerManager.register(PlayerStateController(audioHandler)..init());
+  audioHandler.onListenPlayerEvents();
+  await audioHandler.initConfig();
+
+  final ps = PlayerStateController(audioHandler)..init();
+  ControllerManager.register(ps);
 
   ControllerManager.register(AllFileStateController());
   ControllerManager.register(FavouriteController());
 
-  audioHandler.startListen();
+  audioHandler.onListenControllerEvent();
 
   runApp(const MainApp());
 }

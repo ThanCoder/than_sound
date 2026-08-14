@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:dart_core_extensions/dart_core_extensions.dart';
 import 'package:flutter/material.dart';
+import 'package:t_widgets/t_widgets.dart';
 import 'package:than_sound/core/utils/p_utils.dart';
 
 class CacheManagerListTile extends StatefulWidget {
@@ -22,45 +23,57 @@ class _CacheManagerListTileState extends State<CacheManagerListTile> {
   bool needToClean = false;
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: PUtils.instance.getFolderInfo(Directory(widget.cacheDirPath)),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == .waiting) {
-          return Card(
-            child: ListTile(
-              title: Text('စစ်ဆေးနေပါတယ်.....', style: TextStyle(fontSize: 13)),
-            ),
-          );
-        }
-        final data = snapshot.data;
-        if (data == null) return SizedBox.shrink();
-        if (data.$1 == 0) return SizedBox.shrink();
+    return GestureDetector(
+      onTap: _showCaleanConfirm,
+      child: FutureBuilder(
+        future: PUtils.instance.getFolderInfo(Directory(widget.cacheDirPath)),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == .waiting) {
+            return _body('Loading...', '....');
+          }
+          final data = snapshot.data;
+          if (data == null) return SizedBox.shrink();
+          if (data.$1 == 0) return SizedBox.shrink();
 
-        needToClean = data.$2 > 0;
+          needToClean = data.$2 > 0;
 
-        return buttonWidget(data);
-      },
+          return _body(data.$1.toString(), data.$2.fileSizeLabel());
+        },
+      ),
     );
   }
 
-  ListTile buttonWidget((int, int) data) {
+  Widget _body(String count, String size) {
     final colorScheme = Theme.of(context).colorScheme;
-
-    return ListTile(
-      leading: Icon(
-        Icons.cleaning_services_outlined,
-        color: colorScheme.primary,
+    return Container(
+      padding: .symmetric(vertical: 15, horizontal: 16),
+      decoration: BoxDecoration(
+        color: context.colorScheme.surfaceContainerHighest.withValues(
+          alpha: .45,
+        ),
+        borderRadius: .circular(15),
       ),
-      title: const Text(
-        'Clear cache',
-        style: TextStyle(fontWeight: FontWeight.w600),
+      child: Row(
+        spacing: 10,
+        children: [
+          Icon(Icons.cleaning_services_outlined, color: colorScheme.primary),
+          Column(
+            crossAxisAlignment: .start,
+            children: [
+              const Text(
+                'Clear cache',
+                style: TextStyle(fontWeight: FontWeight.w600),
+              ),
+              Text(
+                '$count files • $size',
+                style: TextStyle(color: colorScheme.onSurfaceVariant),
+              ),
+            ],
+          ),
+          Spacer(),
+          const Icon(Icons.delete_outline_rounded),
+        ],
       ),
-      subtitle: Text(
-        '${data.$1} files • ${data.$2.fileSizeLabel()}',
-        style: TextStyle(color: colorScheme.onSurfaceVariant),
-      ),
-      trailing: const Icon(Icons.delete_outline_rounded),
-      onTap: _showCaleanConfirm,
     );
   }
 

@@ -55,38 +55,3 @@ class AudioFile {
   }
 }
 
-extension AudioFileExt on List<AudioFile> {
-  void sortName({bool isA2Z = true}) {
-    sort((a, b) {
-      if (isA2Z) {
-        return a.name.compareTo(b.name);
-      } else {
-        return b.name.compareTo(a.name);
-      }
-    });
-  }
-
-  void sortSize({bool smToBig = true}) {
-    sort((a, b) {
-      if (smToBig) {
-        return a.size.compareTo(b.size);
-      } else {
-        return b.size.compareTo(a.size);
-      }
-    });
-  }
-
-  void sortDate({bool isNewest = true}) {
-    sort((a, b) {
-      if (isNewest) {
-        return b.date.millisecondsSinceEpoch.compareTo(
-          a.date.millisecondsSinceEpoch,
-        );
-      } else {
-        return a.date.millisecondsSinceEpoch.compareTo(
-          b.date.millisecondsSinceEpoch,
-        );
-      }
-    });
-  }
-}

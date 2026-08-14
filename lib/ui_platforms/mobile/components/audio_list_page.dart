@@ -7,7 +7,7 @@ import 'package:than_sound/ui_platforms/ui/audio/audio_list_header.dart';
 import 'package:than_sound/ui_platforms/ui/audio/audio_sliver_list.dart';
 import 'package:than_sound/ui_platforms/ui/audio/list_gps_button.dart';
 import 'package:than_sound/const_keys.dart';
-import 'package:than_sound/core/controllers/all_file_state_controller.dart';
+import 'package:than_sound/core/controllers/all_audio/all_file_state_controller.dart';
 import 'package:than_sound/core/controllers/interfaces/i_controller.dart';
 import 'package:than_sound/core/controllers/player/player_state_controller.dart';
 import 'package:than_sound/ui_platforms/ui/partials/sort_provider.dart';

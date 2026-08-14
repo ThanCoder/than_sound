@@ -11,17 +11,36 @@ class VersionManager extends StatelessWidget {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
 
-    return ListTile(
-      leading: Icon(Icons.info_outline_rounded, color: colorScheme.primary),
-      title: const Text('Version'),
-      subtitle: Text(
-        PUtils.instance.version,
-        style: TextStyle(color: colorScheme.onSurfaceVariant),
-      ),
-      trailing: const Icon(Icons.open_in_new_rounded, size: 20),
+    return GestureDetector(
       onTap: () {
         ThanPkgLinux.getInstance.launcher.launchUrl('$githubUrl/releases');
       },
+      child: Container(
+        padding: .symmetric(vertical: 14, horizontal: 16),
+        decoration: BoxDecoration(
+          color: colorScheme.surfaceContainerHighest.withValues(alpha: .45),
+          borderRadius: .circular(15),
+        ),
+        child: Row(
+          spacing: 10,
+          children: [
+            Icon(Icons.info_outline_rounded, color: colorScheme.primary),
+            Column(
+              crossAxisAlignment: .start,
+              children: [
+                const Text('Version', style: TextStyle(fontWeight: .w600)),
+                Text(
+                  PUtils.instance.version,
+                  style: TextStyle(color: colorScheme.onSurfaceVariant),
+                ),
+              ],
+            ),
+
+            const Spacer(),
+            const Icon(Icons.open_in_new_rounded, size: 20),
+          ],
+        ),
+      ),
     );
   }
 }

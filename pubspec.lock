@@ -895,10 +895,10 @@ packages:
     dependency: "direct main"
     description:
       name: than_pkg_linux
-      sha256: feea87ae55ed1c24c5722f2327526a75233a01eb4c21f48d5ea68589d2d0ecd0
+      sha256: "5a15480402979d199d311f8c117dc06bb63b14dd9a674188c405818f126c4bb4"
       url: "https://pub.dev"
     source: hosted
-    version: "0.1.0"
+    version: "0.2.0"
   typed_data:
     dependency: transitive
     description:

@@ -5,6 +5,7 @@ class MobilePlayerUiActions extends PlayerUiActions {
   final VoidCallback playlist;
   final VoidCallback sleepTimer;
   final VoidCallback more;
+  final VoidCallback volume;
 
   MobilePlayerUiActions({
     required super.playPause,
@@ -13,6 +14,6 @@ class MobilePlayerUiActions extends PlayerUiActions {
     required super.seek,
     required this.playlist,
     required this.sleepTimer,
-    required this.more,
+    required this.more, required this.volume,
   });
 }

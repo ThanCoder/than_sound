@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 
 class CSlider extends StatefulWidget {
+  final double min;
   final double max;
   final double value;
   final void Function(double value) onChangeEnd;
   const CSlider({
     super.key,
+    this.min=0.0,
     required this.max,
     required this.value,
     required this.onChangeEnd,
@@ -39,7 +41,7 @@ class _CSliderState extends State<CSlider> {
   @override
   Widget build(BuildContext context) {
     return Slider.adaptive(
-      min: 0,
+      min: widget.min,
       max: widget.max,
       value: val,
       onChanged: (value) {

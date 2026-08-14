@@ -6,8 +6,8 @@ import 'package:cfb_store/cfb_store.dart';
 import 'package:flutter/material.dart';
 import 'package:mpv_audio_kit/mpv_audio_kit.dart' hide MediaAction;
 import 'package:than_sound/const_keys.dart';
-import 'package:than_sound/core/controllers/all_file_event.dart';
-import 'package:than_sound/core/controllers/all_file_state_controller.dart';
+import 'package:than_sound/core/controllers/all_audio/all_file_event.dart';
+import 'package:than_sound/core/controllers/all_audio/all_file_state_controller.dart';
 import 'package:than_sound/core/controllers/interfaces/i_controller.dart';
 import 'package:than_sound/core/controllers/player/player_state_controller.dart';
 import 'package:than_sound/core/models/audio_file.dart';
@@ -15,6 +15,8 @@ import 'package:than_sound/ui_platforms/ui/favourite/favourite_controller.dart';
 
 class MyAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
   final _player = Player();
+  Player get player => _player;
+
   FavouriteController get favouriteController =>
       ControllerManager.read<FavouriteController>();
   AllFileStateController get allFileStateController =>
@@ -34,7 +36,26 @@ class MyAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
   Stream<AudioFile?> get currentAudioChangeStream =>
       _currentAudioChangeContrller.stream;
 
-  void startListen() {
+  final store = CFBStore.getInstance;
+
+  Future<void> initConfig() async {
+    await _player.setSpectrum(
+      const SpectrumSettings(
+        fftSize: 2048,
+        bandCount: 64,
+        bandLowHz: 20,
+        bandHighHz: 20000,
+        emitInterval: Duration(milliseconds: 33),
+        attackSmoothing: 0.7,
+        releaseSmoothing: 0.15,
+        minDb: -80,
+        maxDb: 0,
+        overlapFactor: 4,
+      ),
+    );
+  }
+
+  void onListenPlayerEvents() {
     _player.stream.position.listen((pos) {
       playbackState.add(_transformEvent());
     });
@@ -54,18 +75,13 @@ class MyAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
         skipToNext();
       }
     });
-    // all audio state
-    favouriteController.eventStream.listen((event) {
-      if (source != .favouriteState) return;
-      if (event is FavouriteControllerAddEvent) {
-        _files.insert(0, event.file);
-      }
-      if (event is FavouriteControllerRemoveEvent) {
-        final index = _files.indexWhere((e) => e.id == event.file.id);
-        if (index == -1) return;
-        _files.removeAt(index);
-      }
-    });
+
+    currentNotifier.addListener(
+      () => _currentAudioChangeContrller.add(currentNotifier.value),
+    );
+  }
+
+  void onListenControllerEvent() {
     allFileStateController.eventStream.listen((event) {
       if (source != .allFileState) return;
       if (event is AllFileAddEvent) {
@@ -77,9 +93,6 @@ class MyAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
         _files.removeAt(index);
       }
     });
-    currentNotifier.addListener(
-      () => _currentAudioChangeContrller.add(currentNotifier.value),
-    );
   }
 
   AudioFile? findFile(AudioFile file) {
@@ -124,7 +137,7 @@ class MyAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
     }
     currentNotifier.value = file;
     await _player.open(createMedia(file), play: true);
-    addNotiMediaItem(currentNotifier.value!);
+    addNotiMediaItem(file);
   }
 
   @override
@@ -210,7 +223,7 @@ class MyAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
   }
 
   void addNotiMediaItem(AudioFile file) {
-    mediaItem.add(createMediaItem(file, duration: state.duration));
+    mediaItem.add(createMediaItem(file, duration: file.meta.duration));
   }
 
   Media createMedia(AudioFile file) {

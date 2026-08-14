@@ -1,7 +1,7 @@
 import 'package:t_widgets/t_widgets.dart';
 import 'package:flutter/material.dart';
-import 'package:than_sound/ui_platforms/mobile/components/reactive_cover/audio_reactive_cover_type_chooser.dart';
-import 'package:than_sound/ui_platforms/mobile/components/waveform/wave_form_chooser.dart';
+import 'package:than_sound/ui_platforms/components/reactive_cover/audio_reactive_cover_type_chooser.dart';
+import 'package:than_sound/ui_platforms/components/waveform/waveform_widget/wave_form_chooser.dart';
 
 class AudioContentThemeMenu extends StatelessWidget {
   const AudioContentThemeMenu({super.key});
@@ -29,6 +29,7 @@ class AudioContentThemeMenu extends StatelessWidget {
         AudioReactiveCoverTypeChooser(),
         //WaveForm Chooser
         WaveFormChooser(),
+
         SizedBox(height: 40),
       ],
     );
