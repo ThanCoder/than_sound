@@ -5,11 +5,12 @@ import 'package:flutter/material.dart';
 import 'package:than_sound/const_keys.dart';
 import 'package:than_sound/core/controllers/interfaces/i_controller.dart';
 import 'package:than_sound/core/controllers/player/player_state_controller.dart';
+import 'package:than_sound/ui_platforms/components/current_music_visualizer_widget.dart';
+import 'package:than_sound/ui_platforms/desktop/components/desktop_list_page.dart';
 import 'package:than_sound/ui_platforms/player_theme/interfaces/player_ui_context.dart';
 import 'package:than_sound/ui_platforms/player_theme/ui_context_creator.dart';
-import 'package:than_sound/ui_platforms/desktop/components/default_music_bar.dart';
+import 'package:than_sound/ui_platforms/desktop/components/desktop_music_bar.dart';
 import 'package:than_sound/ui_platforms/desktop/desktop_player_ui_actions.dart';
-import 'package:than_sound/ui_platforms/mobile/components/audio_list_page.dart';
 import 'package:than_sound/ui_platforms/mobile/lib_page.dart';
 import 'package:than_sound/ui_platforms/mobile/home/more_page.dart';
 
@@ -72,6 +73,8 @@ class _DesktopHomeScreenState extends State<DesktopHomeScreen> {
 
   int index = 0;
 
+  final pc = ControllerManager.read<PlayerStateController>();
+
   final pages = const [
     // AudioListPage(listGpsButtonBottomPos: 10),
     LibPage(),
@@ -88,30 +91,7 @@ class _DesktopHomeScreenState extends State<DesktopHomeScreen> {
         return Scaffold(
           body: Column(
             children: [
-              Expanded(
-                child: Row(
-                  children: [
-                    _buildNavigation(),
-
-                    const VerticalDivider(width: 1),
-
-                    Expanded(
-                      child: Center(
-                        child: ConstrainedBox(
-                          constraints: BoxConstraints(maxWidth: 1000),
-                          child: IndexedStack(
-                            index: index,
-                            children: [
-                              AudioListPage(listGpsButtonBottomPos: 20),
-                              ...pages,
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+              _body(),
 
               //music bar
               _musicBar(),
@@ -119,6 +99,30 @@ class _DesktopHomeScreenState extends State<DesktopHomeScreen> {
           ),
         );
       },
+    );
+  }
+
+  Expanded _body() {
+    return Expanded(
+      child: Row(
+        children: [
+          _buildNavigation(),
+
+          const VerticalDivider(width: 1),
+
+          Expanded(
+            child: Center(
+              child: ConstrainedBox(
+                constraints: BoxConstraints(maxWidth: 1000),
+                child: IndexedStack(
+                  index: index,
+                  children: [DesktopListPage(), ...pages],
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -155,10 +159,41 @@ class _DesktopHomeScreenState extends State<DesktopHomeScreen> {
     return StreamBuilder(
       stream: ctx.streams.playlist,
       builder: (context, asyncSnapshot) {
+        // return SizedBox.shrink();
         if (ctx.state().current == null) {
           return SizedBox.shrink();
         }
-        return DefaultMusicBar(uiContext: ctx);
+        return ValueListenableBuilder(
+          valueListenable: pc.showFloatWidget,
+          builder: (context, value, child) {
+            if (!pc.showFloatWidget.value) {
+              return Row(
+                mainAxisAlignment: .end,
+                children: [
+                  GestureDetector(
+                    onTap: () {
+                      pc.showFloatWidget.value = true;
+                    },
+                    child: MouseRegion(
+                      cursor: SystemMouseCursors.click,
+                      child: Container(
+                        padding: .all(5),
+                        decoration: BoxDecoration(borderRadius: .circular(15)),
+                        child: CurrentMusicVisualizerWidget(),
+                      ),
+                    ),
+                  ),
+                ],
+              );
+            }
+            return DesktopMusicBar(
+              uiContext: ctx,
+              closeBar: () {
+                pc.showFloatWidget.value = false;
+              },
+            );
+          },
+        );
       },
     );
   }

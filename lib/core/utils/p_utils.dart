@@ -39,10 +39,16 @@ class PUtils {
         final path = ThanPkgAndroid.getInstance.pathHandler
             .getDeviceStoragePath();
         androidRootDirPath = PathBuf(path).join('.$packageName').path;
-        final ch = await ThanPkgAndroid.getInstance.pathHandler.getCachePath();
-        if (ch != null) {
-          cacheDir = Directory(ch);
-          configDir = Directory(cacheDir.join('config'));
+        // cache
+        final cache = await ThanPkgAndroid.getInstance.pathHandler
+            .getCachePath();
+        if (cache != null) {
+          cacheDir = Directory(cache);
+        }
+        // config
+        final cf = await ThanPkgAndroid.getInstance.pathHandler.getFilesPath();
+        if (cf != null) {
+          configDir = Directory(cf.join('config'));
         }
         final appInfo = await ThanPkgAndroid.getInstance.infoHandler
             .getAppInfo();

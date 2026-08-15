@@ -5,7 +5,6 @@ class PlayerUiStreams {
   final Stream<bool> playing;
   final Stream<Duration> position;
   final Stream<Duration> duration;
-  final Stream<PcmFrame> pcm;
   final PlayerStream playerStream;
   final Stream<AudioFile?> playlist;
 
@@ -13,7 +12,6 @@ class PlayerUiStreams {
     required this.playing,
     required this.position,
     required this.duration,
-    required this.pcm,
     required this.playlist,
     required this.playerStream,
   });

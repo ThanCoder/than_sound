@@ -17,7 +17,6 @@ class UiContextCreator {
         playing: pc.stream.playing,
         position: pc.stream.position,
         duration: pc.stream.duration,
-        pcm: pc.stream.pcm,
         playerStream: pc.stream,
         playlist: pc.currentAudioChangeStream,
       ),

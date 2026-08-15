@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:t_widgets/t_widgets.dart';
 import 'package:than_sound/ui_platforms/ui/audio/audio_sliver_list.dart';
-import 'package:than_sound/ui_platforms/ui/audio/current_music_visualizer_widget.dart';
+import 'package:than_sound/ui_platforms/components/current_music_visualizer_widget.dart';
 import 'package:than_sound/ui_platforms/ui/audio/list_gps_button.dart';
 import 'package:than_sound/const_keys.dart';
 import 'package:than_sound/core/controllers/interfaces/i_controller.dart';

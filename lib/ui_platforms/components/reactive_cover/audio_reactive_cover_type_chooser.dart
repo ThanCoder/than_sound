@@ -1,7 +1,6 @@
 import 'package:cfb_store/cfb_store.dart';
 import 'package:dart_core_extensions/dart_core_extensions.dart';
 import 'package:flutter/material.dart';
-import 'package:t_widgets/t_widgets.dart';
 import 'package:than_sound/const_keys.dart';
 import 'package:than_sound/ui_platforms/components/reactive_cover/reactive_cover_types.dart';
 
