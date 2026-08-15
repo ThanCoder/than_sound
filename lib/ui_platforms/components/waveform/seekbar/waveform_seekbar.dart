@@ -57,7 +57,7 @@ class _WaveformSeekbarState extends State<WaveformSeekbar> {
     final wave = _waveform;
     if (wave == null) return;
 
-    final position = wave.duration * progress;
+    // final position = wave.duration * progress;
 
     // await widget.player.seek(position);
   }

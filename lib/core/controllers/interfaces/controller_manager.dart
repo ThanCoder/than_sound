@@ -1,11 +1,7 @@
 part of 'i_controller.dart';
 
 class ControllerManager {
-  ControllerManager._();
-
   static final Map<Type, IController> _controllers = {};
-
-  static final ControllerRef ref = ControllerRef._(_controllers);
 
   static void register<T extends IController>(T controller) {
     final type = T;
@@ -31,21 +27,5 @@ class ControllerManager {
 
   static bool has<T extends IController>() {
     return _controllers.containsKey(T);
-  }
-}
-
-class ControllerRef {
-  final Map<Type, IController> _controllers;
-
-  const ControllerRef._(this._controllers);
-
-  T read<T extends IController>() {
-    final controller = _controllers[T];
-
-    if (controller == null) {
-      throw FlutterError('$T ကို Register မလုပ်ရသေးပါ။');
-    }
-
-    return controller as T;
   }
 }

@@ -1,7 +1,6 @@
 import 'dart:math';
 import 'package:dart_core_extensions/dart_core_extensions.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:marquee/marquee.dart';
 import 'package:t_widgets/t_widgets.dart';
 import 'package:than_sound/core/models/audio_file.dart';
@@ -46,19 +45,20 @@ class _DefaultPlayerViewState extends State<_DefaultPlayerView> {
   }
 
   Widget _body() {
-    final isLight = context.isLightMode;
     final current = state.current;
 
     if (current == null) {
       return const SizedBox.shrink();
     }
-    final statusBarColor = isLight
-        ? Colors.white.withValues(alpha: .2)
-        : Colors.black.withValues(alpha: .4);
+    // final statusBarColor = isLight
+    //     ? Colors.white.withValues(alpha: .2)
+    //     : Colors.black.withValues(alpha: .4);
+    final statusBarColor = context.colorScheme.surface.withValues(alpha: .5);
     return Stack(
       fit: StackFit.expand,
       children: [
-        _background(current),
+        RepaintBoundary(child: _background(current)),
+
         _playerContent(current),
         Positioned(
           top: 0,
@@ -72,7 +72,7 @@ class _DefaultPlayerViewState extends State<_DefaultPlayerView> {
   }
 
   Widget _background(AudioFile current) {
-    final isLight = context.isLightMode;
+    final scheme = context.colorScheme;
 
     return Stack(
       fit: StackFit.expand,
@@ -85,21 +85,25 @@ class _DefaultPlayerViewState extends State<_DefaultPlayerView> {
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
               colors: [
-                isLight
-                    ? Colors.white.withValues(alpha: .45)
-                    : Colors.black.withValues(alpha: .45),
+                scheme.surface.withValues(alpha: .45),
+                scheme.surface.withValues(alpha: .72),
+                scheme.surface.withValues(alpha: .92),
+                // isLight
+                //     ? Colors.white.withValues(alpha: .45)
+                //     : Colors.black.withValues(alpha: .45),
 
-                isLight
-                    ? Colors.white.withValues(alpha: .72)
-                    : Colors.black.withValues(alpha: .72),
+                // isLight
+                //     ? Colors.white.withValues(alpha: .72)
+                //     : Colors.black.withValues(alpha: .72),
 
-                isLight
-                    ? Colors.white.withValues(alpha: .92)
-                    : Colors.black.withValues(alpha: .94),
+                // isLight
+                //     ? Colors.white.withValues(alpha: .92)
+                //     : Colors.black.withValues(alpha: .94),
               ],
             ),
           ),
         ),
+        // BackdropFilter(filter: .blur(sigmaX: 25, sigmaY: 25)),
       ],
     );
   }
@@ -111,6 +115,7 @@ class _DefaultPlayerViewState extends State<_DefaultPlayerView> {
         children: [
           // status bar
           SizedBox(height: statusbarHeight),
+
           _header(current),
 
           const SizedBox(height: 12),

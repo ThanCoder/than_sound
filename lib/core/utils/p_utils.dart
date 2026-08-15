@@ -65,6 +65,9 @@ class PUtils {
   }
 
   String getConfigPath([String? name]) {
+    if (!configDir.existsSync()) {
+      configDir.create(recursive: true);
+    }
     if (name == null) return configDir.path;
     return configDir.join(name);
   }

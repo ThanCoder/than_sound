@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:t_widgets/t_widgets.dart';
 import 'package:than_sound/ui_platforms/components/player_config_setting/loudness_config_setting.dart';
 import 'package:than_sound/ui_platforms/mobile/setting/bluetooth_control_setting.dart';
 
@@ -8,6 +9,7 @@ class AudioSettingPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: context.colorScheme.surface,
       appBar: AppBar(title: Text('Audio Setting')),
       body: SingleChildScrollView(
         child: Column(

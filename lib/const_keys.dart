@@ -1,5 +1,8 @@
 import 'package:than_sound/core/controllers/player/amplitude/amplitude_type.dart';
 
+const String appColorSeedKey = 'app-color-seed-key';
+const String appEnableColorSeedKey = 'app-use-color-seed-key';
+
 const String audioBackgroundBlurColorKeyName = 'audio-background-blur-color';
 const double audioSliverListItemHeight = 80;
 const String audioBluetoothControlKeyName = 'audio-bluetooth-control';

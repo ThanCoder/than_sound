@@ -121,9 +121,9 @@ class _AudioItemMenuState extends State<AudioItemMenu> {
 
           // Art Cover
           _MenuTile(
-            icon: Icons.color_lens_outlined,
-            title: 'Content Theme',
-            subtitle: 'Change or remove Content Theme',
+            icon: Icons.animation,
+            title: 'Content Animation',
+            subtitle: 'Change or remove Animation',
             onTap: () {
               context.pop();
               showModalBottomSheet(

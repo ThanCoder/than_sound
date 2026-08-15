@@ -47,6 +47,7 @@ class _MobileHomeScreenState extends State<MobileHomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: context.colorScheme.surface,
       extendBody: true,
       body: ValueListenableBuilder(
         valueListenable:
@@ -72,6 +73,9 @@ class _MobileHomeScreenState extends State<MobileHomeScreen> {
         },
       ),
       bottomNavigationBar: BottomNavigationBar(
+        backgroundColor: context.colorScheme.surfaceContainer,
+        selectedItemColor: context.colorScheme.primary,
+        unselectedItemColor: context.colorScheme.onSurfaceVariant,
         currentIndex: index,
         onTap: (value) {
           setState(() {

@@ -2,8 +2,9 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
-part 'i_controller_event.dart';
 part 'controller_manager.dart';
+
+abstract class IControllerEvent {}
 
 abstract class IController {
   final _eventController = StreamController<IControllerEvent>.broadcast();
@@ -14,5 +15,11 @@ abstract class IController {
 
   void addEvent(IControllerEvent event) {
     _eventController.add(event);
+  }
+}
+
+extension IControllerExt on Stream<IControllerEvent> {
+  Stream<T> whereType<T extends IControllerEvent>() {
+    return where((e) => e is T).cast<T>();
   }
 }

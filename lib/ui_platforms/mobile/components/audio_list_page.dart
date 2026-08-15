@@ -53,7 +53,9 @@ class _AudioListPageState extends State<AudioListPage> {
       stream: con.stream,
       builder: (context, asyncSnapshot) {
         return Scaffold(
+          backgroundColor: context.colorScheme.surface,
           appBar: AppBar(
+            backgroundColor: context.colorScheme.surfaceContainer,
             title: const Text(
               'ThanAudio',
               style: TextStyle(fontWeight: FontWeight.w700),

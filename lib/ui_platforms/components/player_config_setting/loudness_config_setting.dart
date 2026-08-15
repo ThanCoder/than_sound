@@ -2,8 +2,6 @@ import 'package:cfb_store/cfb_store.dart';
 import 'package:flutter/material.dart';
 import 'package:t_widgets/t_widgets.dart';
 import 'package:than_sound/const_keys.dart';
-import 'package:than_sound/core/controllers/interfaces/i_controller.dart';
-import 'package:than_sound/core/controllers/player/player_state_controller.dart';
 import 'package:than_sound/core/player_config/loudess_config.dart';
 
 class LoudnessConfigSetting extends StatefulWidget {

@@ -40,11 +40,11 @@ class AudioFloatWidget extends StatelessWidget {
     AudioFile current,
     PlayerStateController con,
   ) {
+    final col = ctx.colorScheme;
+
     return Container(
       decoration: BoxDecoration(
-        color: ctx.isDarkMode
-            ? const Color.fromARGB(19, 10, 10, 10)
-            : const Color.fromARGB(109, 232, 229, 229),
+        color: col.surfaceContainerHighest.withValues(alpha: .3),
         // color: Colors.transparent,
         borderRadius: .circular(4),
       ),
@@ -63,7 +63,7 @@ class AudioFloatWidget extends StatelessWidget {
                 ),
                 progressWidget(ctx, con, current),
                 IconButton(
-                  color: Colors.blue,
+                  color: col.primary.withValues(alpha: .80),
                   onPressed: () {
                     con.prev();
                   },
@@ -74,11 +74,12 @@ class AudioFloatWidget extends StatelessWidget {
                     con.toggle();
                   },
                   icon: Icon(
+                    color: col.primary,
                     con.state.playing ? Icons.pause : Icons.play_arrow,
                   ),
                 ),
                 IconButton(
-                  color: Colors.blue,
+                  color: col.primary.withValues(alpha: .80),
                   onPressed: () {
                     con.next();
                   },
@@ -97,6 +98,7 @@ class AudioFloatWidget extends StatelessWidget {
     PlayerStateController con,
     AudioFile current,
   ) {
+    final col = ctx.colorScheme;
     return Expanded(
       child: StreamBuilder(
         stream: con.stream.position,
@@ -115,9 +117,8 @@ class AudioFloatWidget extends StatelessWidget {
                 ),
               ),
               LinearProgressIndicator(
-                backgroundColor: ctx.isDarkMode
-                    ? const Color.fromARGB(200, 39, 88, 81)
-                    : const Color.fromARGB(200, 71, 163, 149),
+                backgroundColor: col.surfaceContainerHighest,
+                color: col.primary,
                 value:
                     con.state.position.inSeconds / con.state.duration.inSeconds,
               ),
@@ -137,16 +138,16 @@ class AudioFloatWidget extends StatelessWidget {
   }
 
   void showCloseDialog(BuildContext ctx) {
+    final col = ctx.colorScheme;
     ScaffoldMessenger.of(ctx).showSnackBar(
       SnackBar(
-        backgroundColor: ctx.isLightMode
-            ? null
-            : const Color.fromARGB(255, 13, 13, 13),
+        backgroundColor: col.surfaceContainerHighest,
+        closeIconColor: col.inversePrimary,
         content: Row(
           children: [
             Text(
               'Want To Hide Floating Widget?',
-              style: ctx.isLightMode ? null : TextStyle(color: Colors.white),
+              style: TextStyle(color: ctx.colorScheme.onSurface),
             ),
             Spacer(),
             TextButton(
@@ -157,7 +158,7 @@ class AudioFloatWidget extends StatelessWidget {
                         .value =
                     false;
               },
-              child: Text('Hide'),
+              child: Text('Hide', style: TextStyle(color: col.inverseSurface)),
             ),
           ],
         ),
