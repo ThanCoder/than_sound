@@ -67,8 +67,8 @@ class SortItem {
   static final durationSortItem = SortItem(
     id: 2,
     title: 'Duration',
-    trueTitle: "Long To Short",
-    falseTitle: "Short To Long",
+    trueTitle: "Short To Long",
+    falseTitle: "Long To Short",
     isTrue: true,
   );
 

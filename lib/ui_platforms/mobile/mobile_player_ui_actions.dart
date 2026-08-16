@@ -14,6 +14,7 @@ class MobilePlayerUiActions extends PlayerUiActions {
     required super.seek,
     required this.playlist,
     required this.sleepTimer,
-    required this.more, required this.volume,
+    required this.more,
+    required this.volume,
   });
 }

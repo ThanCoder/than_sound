@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:t_widgets/t_widgets.dart';
-import 'package:than_sound/ui_platforms/ui/favourite/favourite_count_view.dart';
+import 'package:than_sound/ui_platforms/components/favourite/favourite_count_view.dart';
 
 class LibPage extends StatelessWidget {
   const LibPage({super.key});

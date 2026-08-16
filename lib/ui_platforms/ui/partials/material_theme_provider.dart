@@ -2,6 +2,7 @@ import 'package:cfb_store/cfb_store.dart';
 import 'package:dart_core_extensions/dart_core_extensions.dart';
 import 'package:flutter/material.dart';
 import 'package:t_widgets/t_widgets.dart';
+import 'package:than_sound/const_keys.dart';
 
 enum MaterialThemeProviderType {
   system,
@@ -31,12 +32,12 @@ class MaterialThemeProvider extends StatefulWidget {
 
   static final themeTypeNotifier = ValueNotifier<MaterialThemeProviderType>(
     MaterialThemeProviderType.fromName(
-      CFBStore.getInstance.getString('app-theme'),
+      CFBStore.getInstance.getString(appThemeKey),
     ),
   );
   static void setTheme(MaterialThemeProviderType type) {
     themeTypeNotifier.value = type;
-    CFBStore.getInstance.putAndWriteAll('app-theme', type.name);
+    CFBStore.getInstance.putAndWriteAll(appThemeKey, type.name);
   }
 }
 
@@ -47,7 +48,7 @@ class _MaterialThemeProviderState extends State<MaterialThemeProvider>
     WidgetsBinding.instance.addObserver(this);
     MaterialThemeProvider.themeTypeNotifier.value =
         MaterialThemeProviderType.fromName(
-          CFBStore.getInstance.getString('app-theme'),
+          CFBStore.getInstance.getString(appThemeKey),
         );
     super.initState();
   }

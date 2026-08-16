@@ -4,12 +4,17 @@ import 'package:flutter/cupertino.dart';
 import 'package:mpv_audio_kit/mpv_audio_kit.dart';
 import 'package:than_sound/core/controllers/interfaces/i_controller.dart';
 import 'package:than_sound/core/controllers/player/listener/loudness_config_listener.dart';
+import 'package:than_sound/core/controllers/player/listener/player_sleep_timer_listener.dart';
 import 'package:than_sound/core/controllers/player/my_audio_handler.dart';
 import 'package:than_sound/core/models/audio_file.dart';
 
 enum AudioFileSourceType { none, allFileState, favouriteState }
 
-class PlayerStateController extends IController with LoudnessConfigListener {
+class PlayerStateController extends IController
+    with LoudnessConfigListener, PlayerSleepTimerListener {
+  @override
+  PlayerStateController get playerState => this;
+
   ValueNotifier<AudioFile?> get current => _audioHandler.currentNotifier;
   List<AudioFile> get files => _audioHandler.files;
 
@@ -28,10 +33,16 @@ class PlayerStateController extends IController with LoudnessConfigListener {
   @override
   void init() async {
     onLoudnessConfigListener();
+    onSleepTimerListener();
   }
 
   AudioFileSourceType get sourceType => _audioHandler.source;
   final showFloatWidget = ValueNotifier<bool>(false);
+
+  bool isCurrentFile(AudioFile file) {
+    if (current.value == null) return false;
+    return current.value!.path == file.path;
+  }
 
   Future<void> setTracks(
     List<AudioFile> files, {
@@ -39,6 +50,9 @@ class PlayerStateController extends IController with LoudnessConfigListener {
   }) async {
     _audioHandler.setTracks(files, source: source);
   }
+
+  bool get isLastTrack => _audioHandler.isLastTrack;
+  int get getNextSongIndex => _audioHandler.getNextSongIndex;
 
   Future<void> open(AudioFile file) async {
     await _audioHandler.open(file);

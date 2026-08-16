@@ -6,7 +6,7 @@ import 'package:than_sound/ui_platforms/ui/audio/thumbnail.dart';
 import 'package:than_sound/core/controllers/interfaces/i_controller.dart';
 import 'package:than_sound/core/controllers/player/player_state_controller.dart';
 import 'package:than_sound/core/models/audio_file.dart';
-import 'package:than_sound/ui_platforms/ui/favourite/favourite_button.dart';
+import 'package:than_sound/ui_platforms/components/favourite/favourite_button.dart';
 
 class ListItem extends StatelessWidget {
   final AudioFile file;

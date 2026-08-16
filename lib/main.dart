@@ -13,7 +13,7 @@ import 'package:than_sound/core/controllers/player/player_state_controller.dart'
 import 'package:than_sound/core/utils/p_utils.dart';
 import 'package:than_sound/main_app.dart';
 import 'package:mpv_audio_kit/mpv_audio_kit.dart';
-import 'package:than_sound/ui_platforms/ui/favourite/favourite_controller.dart';
+import 'package:than_sound/ui_platforms/components/favourite/favourite_controller.dart';
 import 'package:waveform_visualizer/waveform_visualizer.dart';
 
 void main() async {
@@ -42,16 +42,16 @@ void main() async {
   );
 
   if (Platform.isLinux) {
-    await ThanPkgLinux.getInstance.window.setMinWindowSize(
-      width: CFBStore.getInstance.getInt(
-        linuxWindowWidthKey,
-        linuxWindowMinWidth.toInt(),
-      ),
-      height: CFBStore.getInstance.getInt(
-        linuxWindowHeightKey,
-        linuxWindowMinHeight.toInt(),
-      ),
-    );
+    // await ThanPkgLinux.getInstance.window.setMinWindowSize(
+    //   width: CFBStore.getInstance.getInt(
+    //     linuxWindowWidthKey,
+    //     linuxWindowMinWidth.toInt(),
+    //   ),
+    //   height: CFBStore.getInstance.getInt(
+    //     linuxWindowHeightKey,
+    //     linuxWindowMinHeight.toInt(),
+    //   ),
+    // );
     await ThanPkgLinux.getInstance.window.setWindowSize(
       width: CFBStore.getInstance.getInt(
         linuxWindowWidthKey,

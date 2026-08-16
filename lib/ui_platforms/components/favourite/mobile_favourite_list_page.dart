@@ -4,16 +4,16 @@ import 'package:than_sound/core/controllers/interfaces/i_controller.dart';
 import 'package:than_sound/core/controllers/player/player_state_controller.dart';
 import 'package:than_sound/ui_platforms/ui/audio/audio_float_widget.dart';
 import 'package:than_sound/ui_platforms/ui/audio/audio_sliver_list.dart';
-import 'package:than_sound/ui_platforms/ui/favourite/favourite_controller.dart';
+import 'package:than_sound/ui_platforms/components/favourite/favourite_controller.dart';
 
-class FavouriteListPage extends StatefulWidget {
-  const FavouriteListPage({super.key});
+class MobileFavouriteListPage extends StatefulWidget {
+  const MobileFavouriteListPage({super.key});
 
   @override
-  State<FavouriteListPage> createState() => _FavouriteListPageState();
+  State<MobileFavouriteListPage> createState() => _MobileFavouriteListPageState();
 }
 
-class _FavouriteListPageState extends State<FavouriteListPage> {
+class _MobileFavouriteListPageState extends State<MobileFavouriteListPage> {
   @override
   void dispose() {
     controller.dispose();
@@ -85,4 +85,6 @@ class _FavouriteListPageState extends State<FavouriteListPage> {
       },
     );
   }
+
+  
 }

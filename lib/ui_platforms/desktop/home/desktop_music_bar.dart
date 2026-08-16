@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:dart_core_extensions/dart_core_extensions.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:than_sound/core/models/audio_file.dart';
 import 'package:than_sound/ui_platforms/ui/audio/thumbnail.dart';
 import 'package:than_sound/ui_platforms/ui/content/c_slider.dart';
@@ -13,8 +12,7 @@ import 'package:than_sound/ui_platforms/desktop/desktop_player_ui_actions.dart';
 
 class DesktopMusicBar extends StatefulWidget {
   final PlayerUiContext uiContext;
-  final void Function()? closeBar;
-  const DesktopMusicBar({super.key, required this.uiContext, this.closeBar});
+  const DesktopMusicBar({super.key, required this.uiContext});
 
   @override
   State<DesktopMusicBar> createState() => _DesktopMusicBarState();
@@ -32,32 +30,8 @@ class _DesktopMusicBarState extends State<DesktopMusicBar> {
   }
 
   @override
-  void dispose() {
-    focusNode.dispose();
-    super.dispose();
-  }
-
-  final focusNode = FocusNode();
-
-  @override
   Widget build(BuildContext context) {
-    return keyboardListener();
-  }
-
-  KeyboardListener keyboardListener() {
-    return KeyboardListener(
-      focusNode: focusNode,
-      autofocus: true,
-      onKeyEvent: (value) {
-        if (value is KeyDownEvent) {
-          if (value.logicalKey == .keyF) {}
-          if (value.logicalKey == .space) {
-            actions.playPause();
-          }
-        }
-      },
-      child: streamWidget(),
-    );
+    return streamWidget();
   }
 
   StreamBuilder<AudioFile?> streamWidget() {
@@ -79,7 +53,7 @@ class _DesktopMusicBarState extends State<DesktopMusicBar> {
                 children: [
                   InkWell(
                     onTap: () {
-                      widget.closeBar?.call();
+                      actions.closeBar();
                     },
                     child: Icon(Icons.close),
                   ),
@@ -172,57 +146,49 @@ class _DesktopMusicBarState extends State<DesktopMusicBar> {
 
         const SizedBox(height: 2),
 
-        Row(
-          children: [
-            SizedBox(
-              width: 35,
-              child: StreamBuilder(
-                stream: streams.position,
-                builder: (context, asyncSnapshot) {
-                  return Text(
+        StreamBuilder(
+          stream: streams.position,
+          initialData: state.position,
+          builder: (context, snapshot) {
+            final position = snapshot.data ?? Duration.zero;
+
+            final duration = state.duration;
+
+            final max = maxValue(duration.inMilliseconds.toDouble(), 1);
+
+            final value = position.inMilliseconds.toDouble().clamp(0.0, max);
+            return Row(
+              children: [
+                SizedBox(
+                  width: 35,
+                  child: Text(
                     state.position.formatClockLabel(),
                     textAlign: TextAlign.center,
                     style: TextStyle(fontSize: 11),
-                  );
-                },
-              ),
-            ),
+                  ),
+                ),
 
-            Expanded(
-              child: StreamBuilder(
-                stream: streams.position,
-                initialData: state.position,
-                builder: (context, snapshot) {
-                  final position = snapshot.data ?? Duration.zero;
-
-                  final duration = state.duration;
-
-                  final max = maxValue(duration.inMilliseconds.toDouble(), 1);
-
-                  final value = position.inMilliseconds.toDouble().clamp(
-                    0.0,
-                    max,
-                  );
-                  return CSlider(
+                Expanded(
+                  child: CSlider(
                     max: max,
                     value: value,
                     onChangeEnd: (value) {
                       actions.seek(Duration(milliseconds: value.toInt()));
                     },
-                  );
-                },
-              ),
-            ),
+                  ),
+                ),
 
-            SizedBox(
-              width: 35,
-              child: Text(
-                state.duration.formatClockLabel(),
-                textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 11),
-              ),
-            ),
-          ],
+                SizedBox(
+                  width: 35,
+                  child: Text(
+                    state.duration.formatClockLabel(),
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 11),
+                  ),
+                ),
+              ],
+            );
+          },
         ),
       ],
     );

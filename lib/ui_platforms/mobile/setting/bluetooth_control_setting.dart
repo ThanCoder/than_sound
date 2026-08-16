@@ -42,20 +42,19 @@ class BluetoothControlSetting extends StatelessWidget {
               ),
             ],
           ),
-          Expanded(
-            child: StreamBuilder(
-              stream: cf.events.where(
-                (e) => e is PutValue && e.key == audioBluetoothControlKeyName,
-              ),
-              builder: (context, asyncSnapshot) {
-                return Switch.adaptive(
-                  value: cf.getBool(audioBluetoothControlKeyName, true),
-                  onChanged: (value) {
-                    cf.putAndWriteAll(audioBluetoothControlKeyName, value);
-                  },
-                );
-              },
+          Spacer(),
+          StreamBuilder(
+            stream: cf.events.where(
+              (e) => e is PutValue && e.key == audioBluetoothControlKeyName,
             ),
+            builder: (context, asyncSnapshot) {
+              return Switch.adaptive(
+                value: cf.getBool(audioBluetoothControlKeyName, true),
+                onChanged: (value) {
+                  cf.putAndWriteAll(audioBluetoothControlKeyName, value);
+                },
+              );
+            },
           ),
         ],
       ),

@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:audio_service/audio_service.dart';
 import 'package:cfb_store/cfb_store.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:mpv_audio_kit/mpv_audio_kit.dart' hide MediaAction;
 import 'package:than_sound/const_keys.dart';
 import 'package:than_sound/core/controllers/all_audio/all_file_event.dart';
@@ -11,7 +12,8 @@ import 'package:than_sound/core/controllers/all_audio/all_file_state_controller.
 import 'package:than_sound/core/controllers/interfaces/i_controller.dart';
 import 'package:than_sound/core/controllers/player/player_state_controller.dart';
 import 'package:than_sound/core/models/audio_file.dart';
-import 'package:than_sound/ui_platforms/ui/favourite/favourite_controller.dart';
+import 'package:than_sound/ui_platforms/components/sleep_timer/sleep_timer_mode.dart';
+import 'package:than_sound/ui_platforms/components/favourite/favourite_controller.dart';
 
 class MyAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
   final _player = Player();
@@ -71,8 +73,7 @@ class MyAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
     _player.stream.playbackState.listen((event) {
       // print('playbackState: $event');
       if (event == .completed) {
-        // print('completed');
-        skipToNext();
+        _songEnd();
       }
     });
 
@@ -95,10 +96,43 @@ class MyAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
     });
   }
 
+  // songe end event
+  void _songEnd() async {
+    final next = getNextSongIndex;
+    if (next == -1) return;
+    // update ui
+    currentNotifier.value = files[next];
+
+    final timerType = SleepTimerMode.fromValue(
+      store.getString(playerSleepTimerTypeKey),
+    );
+    // timer
+    if (timerType != .none) {
+      return;
+    }
+    // play next song
+    await open(files[next]);
+  }
+
   AudioFile? findFile(AudioFile file) {
     final index = files.indexWhere((e) => e.id == file.id);
     if (index == -1) return null;
     return files[index];
+  }
+
+  int get getNextSongIndex {
+    final index = getCurrentIndex(currentNotifier.value);
+    if (index == -1) return -1;
+    final next = index + 1;
+    if (next >= files.length) return -1;
+    return next;
+  }
+
+  bool get isLastTrack {
+    final file = currentNotifier.value;
+    if (file == null) return false;
+    final index = getCurrentIndex(file);
+    return index == files.length - 1;
   }
 
   int getCurrentIndex(AudioFile? file) {
@@ -135,17 +169,15 @@ class MyAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
       debugPrint('[MyAudioHandler:open]: index:$index');
       return;
     }
-    currentNotifier.value = file;
     await _player.open(createMedia(file), play: true);
+    currentNotifier.value = file;
     addNotiMediaItem(file);
   }
 
   @override
   Future<void> skipToNext() async {
-    final index = getCurrentIndex(currentNotifier.value);
-    if (index == -1) return;
-    final next = index + 1;
-    if (next >= files.length) return;
+    final next = getNextSongIndex;
+    if (next == -1) return;
     currentNotifier.value = files[next];
     await open(files[next]);
   }

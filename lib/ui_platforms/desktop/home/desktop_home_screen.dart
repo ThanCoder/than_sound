@@ -2,14 +2,17 @@ import 'dart:async';
 
 import 'package:cfb_store/cfb_store.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:t_widgets/t_widgets.dart';
 import 'package:than_sound/const_keys.dart';
 import 'package:than_sound/core/controllers/interfaces/i_controller.dart';
 import 'package:than_sound/core/controllers/player/player_state_controller.dart';
 import 'package:than_sound/ui_platforms/components/current_music_visualizer_widget.dart';
-import 'package:than_sound/ui_platforms/desktop/components/desktop_list_page.dart';
+import 'package:than_sound/ui_platforms/desktop/home/desktop_list_page.dart';
+import 'package:than_sound/ui_platforms/components/sleep_timer/sleep_timer_page.dart';
 import 'package:than_sound/ui_platforms/player_theme/interfaces/player_ui_context.dart';
 import 'package:than_sound/ui_platforms/player_theme/ui_context_creator.dart';
-import 'package:than_sound/ui_platforms/desktop/components/desktop_music_bar.dart';
+import 'package:than_sound/ui_platforms/desktop/home/desktop_music_bar.dart';
 import 'package:than_sound/ui_platforms/desktop/desktop_player_ui_actions.dart';
 import 'package:than_sound/ui_platforms/mobile/lib_page.dart';
 import 'package:than_sound/ui_platforms/mobile/home/more_page.dart';
@@ -25,6 +28,7 @@ class _DesktopHomeScreenState extends State<DesktopHomeScreen> {
   @override
   void dispose() {
     _saveTimer?.cancel();
+    focusNode.dispose();
     super.dispose();
   }
 
@@ -51,7 +55,8 @@ class _DesktopHomeScreenState extends State<DesktopHomeScreen> {
     super.initState();
   }
 
-  PlayerStateController get playerController =>
+  final focusNode = FocusNode();
+  late final PlayerStateController playerController =
       ControllerManager.read<PlayerStateController>();
   late PlayerUiContext ctx;
   void init() {
@@ -63,42 +68,54 @@ class _DesktopHomeScreenState extends State<DesktopHomeScreen> {
         next: pc.next,
         previous: pc.prev,
         seek: pc.seek,
+        closeBar: () {
+          pc.showFloatWidget.value = false;
+        },
       ),
     );
-
-    //   playlist: showPlayList,
-    //   sleepTimer: () {},
-    //   more: (){},
   }
 
   int index = 0;
 
   final pc = ControllerManager.read<PlayerStateController>();
 
-  final pages = const [
-    // AudioListPage(listGpsButtonBottomPos: 10),
-    LibPage(),
-    MorePage(),
-  ];
+  final pages = const [];
 
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        this.constraints = constraints;
+    return Scaffold(
+      backgroundColor: context.colorScheme.surface,
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          this.constraints = constraints;
 
-        // print(constraints);
-        return Scaffold(
-          body: Column(
-            children: [
-              _body(),
+          // print(constraints);
+          return keyboardListener();
+        },
+      ),
+    );
+  }
 
-              //music bar
-              _musicBar(),
-            ],
-          ),
-        );
+  KeyboardListener keyboardListener() {
+    return KeyboardListener(
+      focusNode: focusNode,
+      autofocus: true,
+      onKeyEvent: (value) {
+        if (value is KeyDownEvent) {
+          if (value.logicalKey == .keyF) {}
+          if (value.logicalKey == .space) {
+            ctx.actions.playPause();
+          }
+        }
       },
+      child: Column(
+        children: [
+          _body(),
+
+          //music bar
+          _musicBar(),
+        ],
+      ),
     );
   }
 
@@ -110,24 +127,22 @@ class _DesktopHomeScreenState extends State<DesktopHomeScreen> {
 
           const VerticalDivider(width: 1),
 
-          Expanded(
-            child: Center(
-              child: ConstrainedBox(
-                constraints: BoxConstraints(maxWidth: 1000),
-                child: IndexedStack(
-                  index: index,
-                  children: [DesktopListPage(), ...pages],
-                ),
-              ),
-            ),
-          ),
+          Expanded(child: _pages()),
         ],
       ),
     );
   }
 
+  Widget _pages() {
+    return IndexedStack(
+      index: index,
+      children: [DesktopListPage(), LibPage(), MorePage(), SleepTimerPage()],
+    );
+  }
+
   Widget _buildNavigation() {
     return NavigationRail(
+      scrollable: true,
       selectedIndex: index,
       onDestinationSelected: (value) {
         setState(() {
@@ -151,18 +166,19 @@ class _DesktopHomeScreenState extends State<DesktopHomeScreen> {
           selectedIcon: Icon(Icons.grid_view_rounded),
           label: Text('More'),
         ),
+        NavigationRailDestination(
+          icon: Icon(Icons.timer),
+          selectedIcon: Icon(Icons.timer_rounded),
+          label: Text('Sleep Timer'),
+        ),
       ],
     );
   }
 
   Widget _musicBar() {
-    return StreamBuilder(
-      stream: ctx.streams.playlist,
-      builder: (context, asyncSnapshot) {
-        // return SizedBox.shrink();
-        if (ctx.state().current == null) {
-          return SizedBox.shrink();
-        }
+    return ValueListenableBuilder(
+      valueListenable: pc.current,
+      builder: (context, value, child) {
         return ValueListenableBuilder(
           valueListenable: pc.showFloatWidget,
           builder: (context, value, child) {
@@ -186,12 +202,7 @@ class _DesktopHomeScreenState extends State<DesktopHomeScreen> {
                 ],
               );
             }
-            return DesktopMusicBar(
-              uiContext: ctx,
-              closeBar: () {
-                pc.showFloatWidget.value = false;
-              },
-            );
+            return DesktopMusicBar(uiContext: ctx);
           },
         );
       },
