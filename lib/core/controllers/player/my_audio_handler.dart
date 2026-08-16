@@ -4,7 +4,6 @@ import 'dart:io';
 import 'package:audio_service/audio_service.dart';
 import 'package:cfb_store/cfb_store.dart';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:mpv_audio_kit/mpv_audio_kit.dart' hide MediaAction;
 import 'package:than_sound/const_keys.dart';
 import 'package:than_sound/core/controllers/all_audio/all_file_event.dart';

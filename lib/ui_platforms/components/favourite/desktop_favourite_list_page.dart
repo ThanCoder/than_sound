@@ -5,8 +5,6 @@ import 'package:than_sound/core/controllers/player/player_state_controller.dart'
 import 'package:than_sound/core/models/audio_file.dart';
 import 'package:than_sound/ui_platforms/desktop/components/desktop_audio_item_menu.dart';
 import 'package:than_sound/ui_platforms/desktop/components/desktop_audio_sliver_list.dart';
-import 'package:than_sound/ui_platforms/ui/audio/audio_float_widget.dart';
-import 'package:than_sound/ui_platforms/ui/audio/audio_sliver_list.dart';
 import 'package:than_sound/ui_platforms/components/favourite/favourite_controller.dart';
 
 class DesktopFavouriteListPage extends StatefulWidget {
