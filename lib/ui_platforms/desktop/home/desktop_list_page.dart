@@ -25,7 +25,6 @@ class _DesktopListPageState extends State<DesktopListPage> {
     allC.scanFromStorage(usedCache: usedCache);
   }
 
-  late final col = context.colorScheme;
   final scrollController = ScrollController();
 
   @override
@@ -36,6 +35,7 @@ class _DesktopListPageState extends State<DesktopListPage> {
 
   @override
   Widget build(BuildContext context) {
+    final col = context.colorScheme;
     return Scaffold(
       appBar: AppBar(
         title: Text('Than Audio'),
@@ -88,6 +88,7 @@ class _DesktopListPageState extends State<DesktopListPage> {
   }
 
   List<Widget> get actions {
+    final col = context.colorScheme;
     return [
       IconButton(
         color: col.primaryContainer,
@@ -121,7 +122,7 @@ class _DesktopListPageState extends State<DesktopListPage> {
         curve: Curves.linear,
       );
     } catch (e) {
-      showErrorDialog(context: context, message: e.toString());
+      showErrorDialog(context, e.toString());
     }
   }
 

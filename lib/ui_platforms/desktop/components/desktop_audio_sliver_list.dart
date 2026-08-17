@@ -59,7 +59,7 @@ class _DesktopAudioRow extends StatefulWidget {
 class _DesktopAudioRowState extends State<_DesktopAudioRow> {
   bool hovering = false;
 
-  late final col = context.colorScheme;
+
 
   @override
   Widget build(BuildContext context) {
@@ -127,6 +127,7 @@ class _DesktopAudioRowState extends State<_DesktopAudioRow> {
   }
 
   BoxDecoration _colorDecoration(AudioFile? current) {
+    final col = context.colorScheme;
     var currentCol = hovering
         ? col.surfaceContainerHighest
         : col.surfaceContainerHighest.withValues(alpha: .45);

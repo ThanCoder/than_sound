@@ -2,9 +2,10 @@ import 'dart:io';
 
 import 'package:dart_core_extensions/dart_core_extensions.dart';
 import 'package:flutter/material.dart';
+import 'package:t_widgets/t_widgets.dart';
 import 'package:than_sound/core/models/audio_file.dart';
 import 'package:than_sound/ui_platforms/ui/audio/thumbnail.dart';
-import 'package:than_sound/ui_platforms/ui/content/c_slider.dart';
+import 'package:than_sound/ui_platforms/components/c_slider.dart';
 import 'package:than_sound/ui_platforms/player_theme/interfaces/player_ui_context.dart';
 import 'package:than_sound/ui_platforms/player_theme/interfaces/player_ui_state.dart';
 import 'package:than_sound/ui_platforms/player_theme/interfaces/player_ui_streams.dart';
@@ -19,7 +20,7 @@ class DesktopMusicBar extends StatefulWidget {
 }
 
 class _DesktopMusicBarState extends State<DesktopMusicBar> {
-  PlayerUiState get state => widget.uiContext.state();
+  PlayerUiState get state => widget.uiContext.state;
   PlayerUiStreams get streams => widget.uiContext.streams;
   DesktopPlayerUiActions get actions =>
       widget.uiContext.actions as DesktopPlayerUiActions;
@@ -77,7 +78,9 @@ class _DesktopMusicBarState extends State<DesktopMusicBar> {
   }
 
   ClipRRect _cover(ColorScheme colorScheme) {
-    final coverFile = File(state.current?.cacheCoverPath ?? '');
+    final coverFile = File(
+      state.playerStateController.current.value!.cacheCoverPath,
+    );
     return ClipRRect(
       borderRadius: BorderRadius.circular(8),
       child: Container(
@@ -85,7 +88,7 @@ class _DesktopMusicBarState extends State<DesktopMusicBar> {
         height: 52,
         color: colorScheme.surfaceContainerHighest,
         child: coverFile.existsSync()
-            ? Thumbnail(file: state.current!)
+            ? Thumbnail(file: state.playerStateController.current.value!)
             : const Icon(Icons.music_note_rounded, size: 28),
       ),
     );
@@ -94,7 +97,7 @@ class _DesktopMusicBarState extends State<DesktopMusicBar> {
   Widget _songInfo() {
     // final colorScheme = Theme.of(context).colorScheme;
 
-    return Text(state.current!.autoTitle);
+    return Text(state.playerStateController.current.value!.autoTitle);
   }
 
   Widget _playerControls() {
@@ -126,7 +129,9 @@ class _DesktopMusicBarState extends State<DesktopMusicBar> {
                     tooltip: 'Play',
                     onPressed: actions.playPause,
                     icon: Icon(
-                      state.playing ? Icons.pause : Icons.play_arrow_rounded,
+                      state.playerStateController.state.playing
+                          ? Icons.pause
+                          : Icons.play_arrow_rounded,
                       color: Theme.of(context).colorScheme.onPrimary,
                     ),
                   );
@@ -148,11 +153,11 @@ class _DesktopMusicBarState extends State<DesktopMusicBar> {
 
         StreamBuilder(
           stream: streams.position,
-          initialData: state.position,
+          initialData: state.playerStateController.state.position,
           builder: (context, snapshot) {
             final position = snapshot.data ?? Duration.zero;
 
-            final duration = state.duration;
+            final duration = state.playerStateController.state.duration;
 
             final max = maxValue(duration.inMilliseconds.toDouble(), 1);
 
@@ -162,7 +167,8 @@ class _DesktopMusicBarState extends State<DesktopMusicBar> {
                 SizedBox(
                   width: 35,
                   child: Text(
-                    state.position.formatClockLabel(),
+                    state.playerStateController.state.position
+                        .formatClockLabel(),
                     textAlign: TextAlign.center,
                     style: TextStyle(fontSize: 11),
                   ),
@@ -181,7 +187,8 @@ class _DesktopMusicBarState extends State<DesktopMusicBar> {
                 SizedBox(
                   width: 35,
                   child: Text(
-                    state.duration.formatClockLabel(),
+                    state.playerStateController.state.duration
+                        .formatClockLabel(),
                     textAlign: TextAlign.center,
                     style: TextStyle(fontSize: 11),
                   ),
@@ -204,11 +211,7 @@ class _DesktopMusicBarState extends State<DesktopMusicBar> {
           icon: const Icon(Icons.repeat_rounded),
         ),
 
-        IconButton(
-          tooltip: 'Shuffle',
-          onPressed: () {},
-          icon: const Icon(Icons.shuffle_rounded),
-        ),
+        _shuffleButton(),
 
         const Icon(Icons.volume_up_outlined, size: 20),
 
@@ -220,6 +223,34 @@ class _DesktopMusicBarState extends State<DesktopMusicBar> {
           ),
         ),
       ],
+    );
+  }
+
+  IconButton _shuffleButton() {
+    final col = context.colorScheme;
+
+    return IconButton(
+      tooltip: 'Shuffle',
+      onPressed: () {
+        state.playerStateController.audioHandler.toggleShuffle();
+      },
+      icon: StreamBuilder(
+        stream: state.playerStateController.audioHandler.shuffleStream,
+        builder: (context, asyncSnapshot) {
+          final isShuffle = state.playerStateController.audioHandler.isShuffle;
+          return Container(
+            decoration: !isShuffle
+                ? null
+                : BoxDecoration(
+                    borderRadius: .circular(15),
+                    boxShadow: [
+                      .new(color: col.primary, blurRadius: 12, spreadRadius: 1),
+                    ],
+                  ),
+            child: const Icon(Icons.shuffle_rounded),
+          );
+        },
+      ),
     );
   }
 

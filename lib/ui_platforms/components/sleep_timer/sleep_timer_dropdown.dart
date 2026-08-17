@@ -2,6 +2,7 @@ import 'package:cfb_store/cfb_store.dart';
 import 'package:flutter/material.dart';
 import 'package:t_widgets/t_widgets.dart';
 import 'package:than_sound/const_keys.dart';
+import 'package:than_sound/core/utils/tem_storage.dart';
 import 'package:than_sound/ui_platforms/components/sleep_timer/sleep_timer_mode.dart';
 
 class SleepTimerDropdown extends StatelessWidget {
@@ -12,7 +13,7 @@ class SleepTimerDropdown extends StatelessWidget {
         (e) => DropdownMenuItem<SleepTimerMode>(value: e, child: Text(e.lable)),
       )
       .toList();
-  final cf = CFBStore.instance;
+  final cf = TemStorage.store;
 
   @override
   Widget build(BuildContext context) {

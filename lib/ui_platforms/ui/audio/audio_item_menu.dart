@@ -6,7 +6,7 @@ import 'package:than_sound/core/controllers/all_audio/all_file_state_controller.
 import 'package:than_sound/core/controllers/interfaces/i_controller.dart';
 import 'package:than_sound/core/models/audio_file.dart';
 import 'package:than_sound/ui_platforms/mobile/components/audio_content_theme_menu.dart';
-import 'package:than_sound/ui_platforms/ui/audio/art_cover_manager.dart';
+import 'package:than_sound/ui_platforms/pages/art_cover_manager_page.dart';
 import 'package:than_sound/ui_platforms/ui/audio/audio_info_menu.dart';
 
 class AudioItemMenu extends StatefulWidget {
@@ -111,7 +111,7 @@ class _AudioItemMenuState extends State<AudioItemMenu> {
 
               context.pushMaterialPageRoute(
                 builder: (mainCtx) {
-                  return ArtCoverManager(file: widget.file);
+                  return ArtCoverManagerPage(file: widget.file);
                 },
               );
             },

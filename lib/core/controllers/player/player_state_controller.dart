@@ -4,24 +4,21 @@ import 'package:flutter/cupertino.dart';
 import 'package:mpv_audio_kit/mpv_audio_kit.dart';
 import 'package:than_sound/core/controllers/interfaces/i_controller.dart';
 import 'package:than_sound/core/controllers/player/listener/loudness_config_listener.dart';
-import 'package:than_sound/core/controllers/player/listener/player_sleep_timer_listener.dart';
 import 'package:than_sound/core/controllers/player/my_audio_handler.dart';
 import 'package:than_sound/core/models/audio_file.dart';
 
 enum AudioFileSourceType { none, allFileState, favouriteState }
 
-class PlayerStateController extends IController
-    with LoudnessConfigListener, PlayerSleepTimerListener {
-  @override
-  PlayerStateController get playerState => this;
-
+class PlayerStateController extends IController with LoudnessConfigListener {
   ValueNotifier<AudioFile?> get current => _audioHandler.currentNotifier;
-  List<AudioFile> get files => _audioHandler.files;
+  List<AudioFile> get files => _audioHandler.playOrder;
+  List<AudioFile> get playOrder => _audioHandler.playOrder;
 
   final MyAudioHandler _audioHandler;
   PlayerStateController(this._audioHandler);
 
   PlayerState get state => _audioHandler.state;
+  MyAudioHandler get audioHandler => _audioHandler;
   @override
   Player get player => _audioHandler.player;
 
@@ -33,7 +30,6 @@ class PlayerStateController extends IController
   @override
   void init() async {
     onLoudnessConfigListener();
-    onSleepTimerListener();
   }
 
   AudioFileSourceType get sourceType => _audioHandler.source;

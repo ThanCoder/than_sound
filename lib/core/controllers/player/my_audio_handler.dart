@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:audio_service/audio_service.dart';
 import 'package:cfb_store/cfb_store.dart';
@@ -9,141 +8,97 @@ import 'package:than_sound/const_keys.dart';
 import 'package:than_sound/core/controllers/all_audio/all_file_event.dart';
 import 'package:than_sound/core/controllers/all_audio/all_file_state_controller.dart';
 import 'package:than_sound/core/controllers/interfaces/i_controller.dart';
+import 'package:than_sound/core/controllers/player/mixins/config_mixin.dart';
+import 'package:than_sound/core/controllers/player/mixins/extra_mixin.dart';
+import 'package:than_sound/core/controllers/player/mixins/player_sleep_timer_listener.dart';
 import 'package:than_sound/core/controllers/player/player_state_controller.dart';
 import 'package:than_sound/core/models/audio_file.dart';
 import 'package:than_sound/ui_platforms/components/sleep_timer/sleep_timer_mode.dart';
 import 'package:than_sound/ui_platforms/components/favourite/favourite_controller.dart';
 
-class MyAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
-  final _player = Player();
-  Player get player => _player;
+part 'mixins/player_listener_mixin.dart';
+part 'mixins/shuffle_mixin.dart';
 
-  FavouriteController get favouriteController =>
+class MyAudioHandler extends BaseAudioHandler
+    with
+        QueueHandler,
+        SeekHandler,
+        ConfigMixin,
+        PlayerListenerMixin,
+        ShuffleMixin,
+        ExtraMixin,
+        PlayerSleepTimerListener {
+  final _player = Player();
+  @override
+  Player get player => _player;
+  @override
+  MyAudioHandler get audioHandler => this;
+
+  late final FavouriteController favouriteController =
       ControllerManager.read<FavouriteController>();
-  AllFileStateController get allFileStateController =>
+  late final AllFileStateController allFileStateController =
       ControllerManager.read<AllFileStateController>();
 
+  @override
   PlayerState get state => _player.state;
   PlayerStream get stream => _player.stream;
   bool audioPaused = false;
 
   AudioFileSourceType _source = .none;
   AudioFileSourceType get source => _source;
-  List<AudioFile> _files = [];
 
-  List<AudioFile> get files => _files;
+  @override
+  List<AudioFile> playlist = [];
+  @override
+  List<AudioFile> playOrder = [];
+
+  bool get isShuffle => _isShuffle;
+  Stream<bool> get shuffleStream => _shuffleStreamController.stream;
+
+  @override
   final currentNotifier = ValueNotifier<AudioFile?>(null);
+
   final _currentAudioChangeContrller = StreamController<AudioFile?>.broadcast();
   Stream<AudioFile?> get currentAudioChangeStream =>
       _currentAudioChangeContrller.stream;
 
   final store = CFBStore.getInstance;
 
-  Future<void> initConfig() async {
-    await _player.setSpectrum(
-      const SpectrumSettings(
-        fftSize: 2048,
-        bandCount: 64,
-        bandLowHz: 20,
-        bandHighHz: 20000,
-        emitInterval: Duration(milliseconds: 33),
-        attackSmoothing: 0.7,
-        releaseSmoothing: 0.15,
-        minDb: -80,
-        maxDb: 0,
-        overlapFactor: 4,
-      ),
-    );
-  }
-
   void onListenPlayerEvents() {
-    _player.stream.position.listen((pos) {
-      playbackState.add(_transformEvent());
-    });
-
-    _player.stream.duration.listen((duration) {
-      playbackState.add(_transformEvent());
-    });
-
-    _player.stream.playbackState.listen((event) {
-      playbackState.add(_transformEvent());
-    });
-
-    _player.stream.playbackState.listen((event) {
-      // print('playbackState: $event');
-      if (event == .completed) {
-        _songEnd();
-      }
-    });
-
-    currentNotifier.addListener(
-      () => _currentAudioChangeContrller.add(currentNotifier.value),
-    );
+    onPlayerListenerMixin();
   }
 
   void onListenControllerEvent() {
-    allFileStateController.eventStream.listen((event) {
-      if (source != .allFileState) return;
-      if (event is AllFileAddEvent) {
-        _files.insert(0, event.file);
-      }
-      if (event is AllFileRemoveEvent) {
-        final index = _files.indexWhere((e) => e.id == event.file.id);
-        if (index == -1) return;
-        _files.removeAt(index);
-      }
-    });
+    onPlayerListenerMixinControllerEvents();
+    onPlayerSleepTimerListener();
   }
 
   // songe end event
-  void _songEnd() async {
+  void songEnd() async {
     final next = getNextSongIndex;
     if (next == -1) return;
-    // update ui
-    currentNotifier.value = files[next];
+    // timer
 
     final timerType = SleepTimerMode.fromValue(
       store.getString(playerSleepTimerTypeKey),
     );
-    // timer
     if (timerType != .none) {
       return;
     }
+
+    // update ui
+    currentNotifier.value = playOrder[next];
+
     // play next song
-    await open(files[next]);
-  }
-
-  AudioFile? findFile(AudioFile file) {
-    final index = files.indexWhere((e) => e.id == file.id);
-    if (index == -1) return null;
-    return files[index];
-  }
-
-  int get getNextSongIndex {
-    final index = getCurrentIndex(currentNotifier.value);
-    if (index == -1) return -1;
-    final next = index + 1;
-    if (next >= files.length) return -1;
-    return next;
-  }
-
-  bool get isLastTrack {
-    final file = currentNotifier.value;
-    if (file == null) return false;
-    final index = getCurrentIndex(file);
-    return index == files.length - 1;
-  }
-
-  int getCurrentIndex(AudioFile? file) {
-    if (file == null) return -1;
-    return files.indexWhere((e) => e.id == file.id);
+    await open(playOrder[next]);
   }
 
   Future<void> setTracks(
     List<AudioFile> files, {
     required AudioFileSourceType source,
   }) async {
-    _files = files;
+    playlist = files;
+    playOrder = [...playlist];
     _source = source;
     if (_player.state.playing || currentNotifier.value != null) return;
     await setAll(files, play: false);
@@ -154,7 +109,8 @@ class MyAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
     int index = 0,
     bool play = true,
   }) async {
-    _files = files;
+    playlist = files;
+    playOrder = files;
     if (currentNotifier.value == null) {
       currentNotifier.value = files[index];
     }
@@ -177,8 +133,8 @@ class MyAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
   Future<void> skipToNext() async {
     final next = getNextSongIndex;
     if (next == -1) return;
-    currentNotifier.value = files[next];
-    await open(files[next]);
+    currentNotifier.value = playOrder[next];
+    await open(playOrder[next]);
   }
 
   @override
@@ -187,19 +143,26 @@ class MyAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
     if (index == -1) return;
     final prev = index - 1;
     if (prev < 0) return;
-    currentNotifier.value = files[prev];
-    await open(files[prev]);
+    currentNotifier.value = playOrder[prev];
+    await open(playOrder[prev]);
   }
 
   // The most common callbacks:
   @override
   Future<void> play() async {
     // _player.state
-    if (_player.state.duration.inSeconds == _player.state.position.inSeconds) {
-      await _player.seek(Duration.zero);
+    try {
+      final pos = _player.state.position.inSeconds;
+      final dur = _player.state.duration.inSeconds;
+      if (dur != 0 && pos == dur) {
+        await _player.seek(Duration.zero);
+      }
+
+      _player.play();
+      audioPaused = false;
+    } catch (e) {
+      debugPrint('[MyAudioHandler:play]: $e');
     }
-    _player.play();
-    audioPaused = false;
   }
 
   @override
@@ -251,76 +214,5 @@ class MyAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
     if (!useBluetoothControl) return;
 
     return super.click(button);
-  }
-
-  void addNotiMediaItem(AudioFile file) {
-    mediaItem.add(createMediaItem(file, duration: file.meta.duration));
-  }
-
-  Media createMedia(AudioFile file) {
-    return Media(
-      File(file.path).uri.toString(),
-      extras: {
-        'id': file.id,
-        'title': file.autoTitle,
-        'artist': file.meta.artist,
-        'album': file.meta.album,
-        'duration': file.meta.duration,
-      },
-    );
-  }
-
-  MediaItem createMediaItem(AudioFile file, {Duration? duration}) {
-    var item = MediaItem(
-      id: file.id,
-      title: file.autoTitle,
-      album: file.meta.album,
-      artist: file.meta.artist,
-      genre: file.meta.genre,
-      duration: duration ?? file.meta.duration,
-      artUri: File(file.cacheCoverPath).uri,
-    );
-    return item;
-  }
-
-  PlaybackState _transformEvent() => .new(
-    controls: [
-      MediaControl.skipToPrevious,
-      state.playing ? MediaControl.pause : .play,
-      MediaControl.stop,
-      MediaControl.skipToNext,
-      if (currentNotifier.value != null &&
-          favouriteController.isExists(currentNotifier.value!))
-        MediaControl.custom(
-          androidIcon: "drawable/favorite",
-          label: 'Favorite',
-          name: 'favorite',
-        )
-      else
-        MediaControl.custom(
-          androidIcon: "drawable/favorite_outline",
-          label: 'UnFavorite',
-          name: 'favorite_outline',
-        ),
-    ],
-    systemActions: {
-      MediaAction.seek,
-      MediaAction.seekForward,
-      MediaAction.seekBackward,
-    },
-    androidCompactActionIndices: const [0, 1, 2],
-    processingState: processingState,
-    playing: state.playing,
-    updatePosition: state.position,
-    bufferedPosition: state.buffer,
-    // speed: state.cacheSpeed
-  );
-  AudioProcessingState get processingState {
-    if (state.completed) return .completed;
-    if (state.buffering) return .buffering;
-    if (state.playWhenReady || state.playing) return .ready;
-    // if (!state.playing) return .ready;
-    if (audioPaused) return .ready;
-    return .idle;
   }
 }

@@ -2,21 +2,22 @@ import 'dart:async';
 
 import 'package:cfb_store/cfb_store.dart';
 import 'package:than_sound/const_keys.dart';
-import 'package:than_sound/core/controllers/player/player_state_controller.dart';
+import 'package:than_sound/core/controllers/player/my_audio_handler.dart';
+import 'package:than_sound/core/utils/tem_storage.dart';
 import 'package:than_sound/ui_platforms/components/sleep_timer/sleep_timer_mode.dart';
 
 mixin PlayerSleepTimerListener {
-  PlayerStateController get playerState;
+  MyAudioHandler get audioHandler;
+  final _cf = TemStorage.store;
 
-  final cf = CFBStore.getInstance;
   StreamSubscription? _sub;
   bool _isInit = false;
 
-  void onSleepTimerListener() {
+  void onPlayerSleepTimerListener() {
     if (_isInit) return;
     _isInit = true;
 
-    cf.stream.put.listen((event) {
+    _cf.stream.put.listen((event) {
       if (event.key == playerSleepTimerTypeKey ||
           event.key == playerSleepTimerDurationSecondsKey) {
         _onListen();
@@ -28,7 +29,7 @@ mixin PlayerSleepTimerListener {
     _sub?.cancel();
     _sub = null;
     final type = SleepTimerMode.fromValue(
-      cf.getString(playerSleepTimerTypeKey),
+      _cf.getString(playerSleepTimerTypeKey),
     );
     switch (type) {
       case .none:
@@ -45,22 +46,22 @@ mixin PlayerSleepTimerListener {
   }
 
   void _endOfTrack() {
-    _sub = playerState.currentAudioChangeStream.listen((event) {
-      playerState.pause();
+    _sub = audioHandler.currentAudioChangeStream.listen((event) {
+      audioHandler.pause();
       _setTypeToNone();
     });
   }
 
   void _endOfPlaylist() {
-    _sub = playerState.currentAudioChangeStream.listen((event) {
-      if (playerState.getNextSongIndex == -1) {
-        playerState.pause();
+    _sub = audioHandler.currentAudioChangeStream.listen((event) {
+      if (audioHandler.getNextSongIndex == -1) {
+        audioHandler.pause();
         _setTypeToNone();
       }
     });
   }
 
   void _setTypeToNone() {
-    cf.put(playerSleepTimerTypeKey, SleepTimerMode.none.name);
+    _cf.put(playerSleepTimerTypeKey, SleepTimerMode.none.name);
   }
 }

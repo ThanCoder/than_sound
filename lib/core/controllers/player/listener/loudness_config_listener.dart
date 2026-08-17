@@ -24,12 +24,6 @@ mixin LoudnessConfigListener {
   StreamSubscription? _sub;
   void _loudnessListener(LoudessConfig config) {
     _sub?.cancel();
-    // print('start');
-    // print('volumeGain: ${player.state.volumeGain}');
-    // print('volumeGainMin: ${player.state.volumeGainMin}');
-    // print('volumeGainMax: ${player.state.volumeGainMax}');
-    // print('volumeMax: ${player.state.volumeMax}');
-    // player.setVolumeGain(gainDb)
 
     if (!config.enabled) {
       player.setVolumeGain(0.0);

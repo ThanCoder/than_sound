@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:t_widgets/t_widgets.dart';
 
-void showErrorDialog(BuildContext context, String message) {
+void showSuccessDialog(BuildContext context, String message) {
   showDialog(
     context: context,
-    builder: (context) => ErrorAlertDialog(message: message),
+    builder: (context) => SuccessAlertDialog(message: message),
   );
 }
 
-class ErrorAlertDialog extends StatelessWidget {
+class SuccessAlertDialog extends StatelessWidget {
   final String message;
-  const ErrorAlertDialog({super.key, required this.message});
+  const SuccessAlertDialog({super.key, required this.message});
 
   @override
   Widget build(BuildContext context) {
@@ -18,17 +18,17 @@ class ErrorAlertDialog extends StatelessWidget {
 
     return AlertDialog.adaptive(
       scrollable: true,
-      title: Text('Error', style: TextStyle(color: col.error)),
-      backgroundColor: col.errorContainer,
+      title: Text('Success', style: TextStyle(color: col.primary)),
+      backgroundColor: col.surfaceContainer,
       content: SelectableText(
         message,
-        style: TextStyle(color: col.onErrorContainer),
+        style: TextStyle(color: col.onSurfaceVariant),
       ),
       actions: [
         FilledButton(
           style: FilledButton.styleFrom(
-            backgroundColor: col.error,
-            foregroundColor: col.onError,
+            backgroundColor: col.surface,
+            foregroundColor: col.onSurface,
           ),
           onPressed: () {
             context.pop();

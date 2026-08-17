@@ -9,7 +9,7 @@ import 'package:than_sound/core/controllers/player/player_state_controller.dart'
 import 'package:than_sound/ui_platforms/components/favourite/favourite_controller.dart';
 import 'package:than_sound/ui_platforms/mobile/home/audio_list_page.dart';
 import 'package:than_sound/ui_platforms/mobile/lib_page.dart';
-import 'package:than_sound/ui_platforms/mobile/home/more_page.dart';
+import 'package:than_sound/ui_platforms/pages/more_page.dart';
 
 class MobileHomeScreen extends StatefulWidget {
   const MobileHomeScreen({super.key});

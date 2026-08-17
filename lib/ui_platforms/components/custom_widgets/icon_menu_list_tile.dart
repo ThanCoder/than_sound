@@ -13,8 +13,8 @@ class IconMenuListTile extends StatefulWidget {
 
   final String title;
   final String subTitle;
-  final IconData leadIcon;
-  final IconData trailingIcon;
+  final Widget leadIcon;
+  final Widget trailingIcon;
   final void Function()? onTap;
 
   @override
@@ -22,11 +22,11 @@ class IconMenuListTile extends StatefulWidget {
 }
 
 class _IconMenuListTileState extends State<IconMenuListTile> {
-  late final col = context.colorScheme;
   bool isSelected = false;
 
   @override
   Widget build(BuildContext context) {
+    final col = context.colorScheme;
     return GestureDetector(
       onTap: widget.onTap,
       child: MouseRegion(
@@ -51,9 +51,12 @@ class _IconMenuListTileState extends State<IconMenuListTile> {
                 padding: .all(5),
                 decoration: BoxDecoration(
                   color: col.primaryContainer,
-                  borderRadius: .circular(15),
+                  borderRadius: .circular(12),
                 ),
-                child: Icon(widget.leadIcon, color: col.onPrimaryContainer),
+                child: ColorFiltered(
+                  colorFilter: .mode(col.onPrimaryContainer, .dstIn),
+                  child: widget.leadIcon,
+                ),
               ),
               SizedBox(width: 10),
               Column(
@@ -79,7 +82,10 @@ class _IconMenuListTileState extends State<IconMenuListTile> {
                 ],
               ),
               Spacer(),
-              Icon(widget.trailingIcon, color: col.onPrimaryFixedVariant),
+              ColorFiltered(
+                colorFilter: .mode(col.onPrimaryFixedVariant, .dstIn),
+                child: widget.trailingIcon,
+              ),
             ],
           ),
         ),

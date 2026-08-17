@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:t_widgets/t_widgets.dart';
 import 'package:than_sound/core/controllers/interfaces/i_controller.dart';
 import 'package:than_sound/core/controllers/player/player_state_controller.dart';
-import 'package:than_sound/ui_platforms/ui/content/c_slider.dart';
+import 'package:than_sound/ui_platforms/components/c_slider.dart';
 
 class SoundVolumeMenu extends StatefulWidget {
   const SoundVolumeMenu({super.key});

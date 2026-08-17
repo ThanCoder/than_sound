@@ -11,6 +11,7 @@ class LibPage extends StatelessWidget {
       backgroundColor: context.colorScheme.surface,
       appBar: AppBar(
         backgroundColor: context.colorScheme.surfaceContainer,
+        foregroundColor: context.colorScheme.onSurfaceVariant,
         title: Text("Library"),
       ),
       body: Padding(

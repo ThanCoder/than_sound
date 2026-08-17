@@ -15,7 +15,7 @@ import 'package:than_sound/ui_platforms/player_theme/ui_context_creator.dart';
 import 'package:than_sound/ui_platforms/desktop/home/desktop_music_bar.dart';
 import 'package:than_sound/ui_platforms/desktop/desktop_player_ui_actions.dart';
 import 'package:than_sound/ui_platforms/mobile/lib_page.dart';
-import 'package:than_sound/ui_platforms/mobile/home/more_page.dart';
+import 'package:than_sound/ui_platforms/pages/more_page.dart';
 
 class DesktopHomeScreen extends StatefulWidget {
   const DesktopHomeScreen({super.key});
@@ -34,15 +34,19 @@ class _DesktopHomeScreenState extends State<DesktopHomeScreen> {
 
   BoxConstraints? constraints;
   Timer? _saveTimer;
+
   void saveSizeConfig() {
     if (constraints == null) return;
     CFBStore.getInstance
         .put(linuxWindowWidthKey, constraints!.maxWidth)
         .put(linuxWindowHeightKey, constraints!.maxHeight)
         .writeAll();
+    debugPrint(
+      '[_DesktopHomeScreenState:saveSizeConfig]: Save window size config',
+    );
   }
 
-  void saveTimer() {
+  void saveWindowSizeTimer() {
     _saveTimer?.cancel();
     _saveTimer = Timer(Duration(seconds: 3), () {
       saveSizeConfig();
@@ -88,7 +92,7 @@ class _DesktopHomeScreenState extends State<DesktopHomeScreen> {
       body: LayoutBuilder(
         builder: (context, constraints) {
           this.constraints = constraints;
-
+          saveWindowSizeTimer();
           // print(constraints);
           return keyboardListener();
         },

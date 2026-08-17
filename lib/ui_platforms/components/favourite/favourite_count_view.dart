@@ -18,10 +18,10 @@ class FavouriteCountView extends StatefulWidget {
 
 class _FavouriteCountViewState extends State<FavouriteCountView> {
   final con = ControllerManager.read<FavouriteController>();
-  late final colorScheme = Theme.of(context).colorScheme;
 
   @override
   Widget build(BuildContext context) {
+    final col = Theme.of(context).colorScheme;
     return InkWell(
       onTap: () {
         if (Platform.isAndroid) {
@@ -33,21 +33,21 @@ class _FavouriteCountViewState extends State<FavouriteCountView> {
             builder: (mainCtx) => DesktopFavouriteListPage(),
           );
         } else {
-          showErrorDialog(context: context, message: "Not Supported Platform!");
+          showErrorDialog(context,"Not Supported Platform!");
         }
       },
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 10),
         decoration: BoxDecoration(
-          color: colorScheme.surfaceContainerHighest,
+          color: col.surfaceContainerHighest,
           borderRadius: .circular(15),
-          border: .all(color: colorScheme.outlineVariant.withValues(alpha: .5)),
+          border: .all(color: col.outlineVariant.withValues(alpha: .5)),
         ),
         child: Row(
           children: [
             SvgPicture.asset(
               'assets/svg/music-note-slider-svgrepo-com.svg',
-              colorFilter: .mode(colorScheme.onPrimaryContainer, .srcIn),
+              colorFilter: .mode(col.onPrimaryContainer, .srcIn),
             ),
             SizedBox(width: 10),
             Expanded(
@@ -63,7 +63,7 @@ class _FavouriteCountViewState extends State<FavouriteCountView> {
                   '${con.files.length}',
                   style: TextStyle(fontSize: 20, fontWeight: .bold),
                 );
-              }
+              },
             ),
           ],
         ),

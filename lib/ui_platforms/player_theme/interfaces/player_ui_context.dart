@@ -3,7 +3,7 @@ import 'package:than_sound/ui_platforms/player_theme/interfaces/player_ui_state.
 import 'package:than_sound/ui_platforms/player_theme/interfaces/player_ui_streams.dart';
 
 class PlayerUiContext {
-  final PlayerUiState Function() state;
+  final PlayerUiState state;
   final PlayerUiStreams streams;
   final PlayerUiActions actions;
 

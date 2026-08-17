@@ -1,22 +1,27 @@
 import 'dart:io';
 
 import 'package:dart_core_extensions/dart_core_extensions.dart';
+import 'package:desktop_drop/desktop_drop.dart';
+import 'package:file_type_plus/file_type_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:t_widgets/t_widgets.dart';
 import 'package:than_audiotag/than_audiotag.dart';
 import 'package:than_sound/core/models/audio_file.dart';
 import 'package:than_sound/core/utils/app_utils.dart';
+import 'package:than_sound/ui_platforms/components/dialog/error_alert_dialog.dart';
+import 'package:than_sound/ui_platforms/components/dialog/snack_alert.dart';
+import 'package:than_sound/ui_platforms/components/dialog/success_alert_dialog.dart';
 
-class ArtCoverManager extends StatefulWidget {
+class ArtCoverManagerPage extends StatefulWidget {
   final AudioFile file;
-  const ArtCoverManager({super.key, required this.file});
+  const ArtCoverManagerPage({super.key, required this.file});
 
   @override
-  State<ArtCoverManager> createState() => _ArtCoverManagerState();
+  State<ArtCoverManagerPage> createState() => _ArtCoverManagerState();
 }
 
-class _ArtCoverManagerState extends State<ArtCoverManager> {
+class _ArtCoverManagerState extends State<ArtCoverManagerPage> {
   late File coverFile;
 
   bool isLoading = false;
@@ -29,33 +34,42 @@ class _ArtCoverManagerState extends State<ArtCoverManager> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          'Art Cover Manager',
-          style: TextStyle(fontWeight: FontWeight.w700),
+    final col = context.colorScheme;
+
+    return DropTarget(
+      enable: true,
+      onDragDone: onDrop,
+      child: Scaffold(
+        backgroundColor: col.surface,
+        appBar: AppBar(
+          backgroundColor: col.surfaceContainer,
+          foregroundColor: col.onSurface,
+          title: const Text(
+            'Art Cover Manager',
+            style: TextStyle(fontWeight: FontWeight.w700),
+          ),
+          scrolledUnderElevation: 0,
         ),
-        scrolledUnderElevation: 0,
-      ),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.fromLTRB(20, 20, 20, 30),
-          child: Column(
-            children: [
-              _title(),
+        body: SafeArea(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.fromLTRB(20, 20, 20, 30),
+            child: Column(
+              children: [
+                _title(),
 
-              const SizedBox(height: 24),
+                const SizedBox(height: 24),
 
-              coverImage(),
+                coverImage(),
 
-              const SizedBox(height: 24),
+                const SizedBox(height: 24),
 
-              _info(),
+                _info(),
 
-              const SizedBox(height: 28),
+                const SizedBox(height: 28),
 
-              buttonWidget,
-            ],
+                buttonWidget,
+              ],
+            ),
           ),
         ),
       ),
@@ -304,7 +318,7 @@ class _ArtCoverManagerState extends State<ArtCoverManager> {
         isLoading = false;
       });
 
-      showTMessageDialogError(context, e.toString());
+      showErrorDialog(context, e.toString());
     }
   }
 
@@ -328,7 +342,7 @@ class _ArtCoverManagerState extends State<ArtCoverManager> {
 
       if (!mounted) return;
 
-      showTMessageDialog(context, 'Saved: $outpath');
+      showSuccessDialog(context, 'Saved: $outpath');
     } catch (e) {
       if (!mounted) return;
 
@@ -389,5 +403,51 @@ class _ArtCoverManagerState extends State<ArtCoverManager> {
     setState(() {
       isLoading = false;
     });
+  }
+
+  void onDrop(DropDoneDetails details) async {
+    try {
+      final files = details.files;
+      if (files.isEmpty) return;
+      final type = FileType.fromPath(files.first.path);
+      if (type != .image) {
+        showErrorDialog(context, 'Image File Required!\n`${type.value}`');
+        return;
+      }
+
+      setState(() {
+        isLoading = true;
+      });
+
+      bool oldImage = coverFile.existsSync();
+      final imageData = await files.first.readAsBytes();
+
+      final tag = ThanAudioTag.open(widget.file.path);
+      tag.writeCover(imageData);
+      tag.close();
+
+      await coverFile.writeAsBytes(imageData);
+
+      if (oldImage) {
+        AppUtils.clearImageCache();
+        await Future.delayed(const Duration(seconds: 1));
+      }
+
+      if (!mounted) return;
+
+      setState(() {
+        isLoading = false;
+      });
+
+      showSnackbar(context, 'Changed Image!');
+    } catch (e) {
+      if (!mounted) return;
+
+      setState(() {
+        isLoading = false;
+      });
+
+      showErrorDialog(context, e.toString());
+    }
   }
 }

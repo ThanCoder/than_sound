@@ -1,7 +1,7 @@
-import 'package:cfb_store/cfb_store.dart';
 import 'package:flutter/material.dart';
 import 'package:t_widgets/t_widgets.dart';
 import 'package:than_sound/const_keys.dart';
+import 'package:than_sound/core/utils/tem_storage.dart';
 import 'package:than_sound/ui_platforms/components/sleep_timer/sleep_timer_dropdown.dart';
 import 'package:than_sound/ui_platforms/components/sleep_timer/sleep_timer_mode.dart';
 
@@ -13,11 +13,11 @@ class SleepTimerPage extends StatefulWidget {
 }
 
 class _SleepTimerPageState extends State<SleepTimerPage> {
-  final cf = CFBStore.instance;
-  late final col = context.colorScheme;
+  final cf = TemStorage.store;
 
   @override
   Widget build(BuildContext context) {
+    final col = context.colorScheme;
     return Scaffold(
       backgroundColor: context.colorScheme.surface,
       body: Container(
@@ -36,6 +36,7 @@ class _SleepTimerPageState extends State<SleepTimerPage> {
   }
 
   Container _header() {
+    final col = context.colorScheme;
     return Container(
       padding: .all(10),
       decoration: BoxDecoration(
@@ -50,6 +51,7 @@ class _SleepTimerPageState extends State<SleepTimerPage> {
   }
 
   Widget _body() {
+    final col = context.colorScheme;
     return StreamBuilder(
       stream: cf.stream.put.where((e) => e.key == playerSleepTimerTypeKey),
       builder: (context, snapshot) {
@@ -57,7 +59,7 @@ class _SleepTimerPageState extends State<SleepTimerPage> {
           cf.getString(playerSleepTimerTypeKey),
         );
         if (type == .duration) {
-          return Text('clock');
+          return sleepTimerClock();
         }
         if (type == .endOfPlaylist) {
           return Text(
@@ -86,5 +88,9 @@ class _SleepTimerPageState extends State<SleepTimerPage> {
         );
       },
     );
+  }
+
+  Widget sleepTimerClock() {
+    return TimePickerDialog(initialTime: .now());
   }
 }

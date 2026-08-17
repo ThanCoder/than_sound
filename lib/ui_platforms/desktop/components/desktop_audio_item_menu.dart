@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:t_widgets/t_widgets.dart';
 import 'package:than_sound/core/models/audio_file.dart';
 import 'package:than_sound/ui_platforms/components/custom_widgets/icon_menu_list_tile.dart';
+import 'package:than_sound/ui_platforms/pages/art_cover_manager_page.dart';
+import 'package:than_sound/ui_platforms/pages/audio_info_page.dart';
 
 class DesktopAudioItemMenu extends StatefulWidget {
   final AudioFile file;
@@ -12,10 +14,9 @@ class DesktopAudioItemMenu extends StatefulWidget {
 }
 
 class _DesktopAudioItemMenuState extends State<DesktopAudioItemMenu> {
-  late final col = context.colorScheme;
-
   @override
   Widget build(BuildContext context) {
+    final col = context.colorScheme;
     return AlertDialog.adaptive(
       scrollable: true,
       backgroundColor: col.surfaceContainer,
@@ -31,14 +32,26 @@ class _DesktopAudioItemMenuState extends State<DesktopAudioItemMenu> {
           IconMenuListTile(
             title: 'Audio Info',
             subTitle: 'view audio metadata and file infomation...',
-            leadIcon: Icons.audiotrack_outlined,
-            trailingIcon: Icons.arrow_right,
+            leadIcon: Icon(Icons.audiotrack_outlined),
+            trailingIcon: Icon(Icons.arrow_right),
+            onTap: () {
+              context.pop();
+              context.pushMaterialPageRoute(
+                builder: (mainCtx) => AudioInfoPage(file: widget.file),
+              );
+            },
           ),
           IconMenuListTile(
-            title: 'Info',
-            subTitle: '',
-            leadIcon: Icons.info,
-            trailingIcon: Icons.arrow_right,
+            title: 'Cover Art',
+            subTitle: 'Manage Audio Cover Art',
+            leadIcon: Icon(Icons.art_track),
+            trailingIcon: Icon(Icons.arrow_right),
+            onTap: () {
+              context.pop();
+              context.pushMaterialPageRoute(
+                builder: (mainCtx) => ArtCoverManagerPage(file: widget.file),
+              );
+            },
           ),
         ],
       ),

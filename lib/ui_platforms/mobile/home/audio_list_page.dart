@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:t_widgets/t_widgets.dart' hide SortButton;
+import 'package:t_widgets/t_widgets.dart';
 import 'package:than_sound/core/models/audio_file.dart';
 import 'package:than_sound/ui_platforms/ui/audio/audio_list_header.dart';
 import 'package:than_sound/ui_platforms/ui/audio/audio_sliver_list.dart';

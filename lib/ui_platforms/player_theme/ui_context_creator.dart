@@ -7,12 +7,7 @@ class UiContextCreator {
   static PlayerUiContext create({required PlayerUiActions actions}) {
     final pc = ControllerManager.read<PlayerStateController>();
     return .new(
-      state: () => .new(
-        current: pc.current.value,
-        playing: pc.state.playing,
-        position: pc.state.position,
-        duration: pc.state.duration,
-      ),
+      state: .new(playerStateController: pc),
       streams: .new(
         playing: pc.stream.playing,
         position: pc.stream.position,

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:t_widgets/t_widgets.dart' hide MaterialThemeProviderChooser;
+import 'package:t_widgets/t_widgets.dart';
 import 'package:than_sound/core/utils/p_utils.dart';
 import 'package:than_sound/ui_platforms/mobile/setting/audio_setting_page.dart';
 import 'package:than_sound/ui_platforms/mobile/setting/ui_theme_setting_page.dart';

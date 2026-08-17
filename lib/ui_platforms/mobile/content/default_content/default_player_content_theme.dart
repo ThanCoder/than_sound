@@ -8,7 +8,7 @@ import 'package:than_sound/exts.dart';
 import 'package:than_sound/ui_platforms/components/reactive_cover/audio_reactive_cover_switcher.dart';
 import 'package:than_sound/ui_platforms/components/waveform/waveform_widget/waveform.dart';
 import 'package:than_sound/ui_platforms/ui/audio/thumbnail.dart';
-import 'package:than_sound/ui_platforms/ui/content/c_slider.dart';
+import 'package:than_sound/ui_platforms/components/c_slider.dart';
 import 'package:than_sound/ui_platforms/components/favourite/favourite_button.dart';
 import 'package:than_sound/ui_platforms/player_theme/interfaces/i_player_theme.dart';
 import 'package:than_sound/ui_platforms/player_theme/interfaces/player_ui_context.dart';
@@ -33,7 +33,7 @@ class _DefaultPlayerView extends StatefulWidget {
 
 class _DefaultPlayerViewState extends State<_DefaultPlayerView> {
   PlayerUiContext get ctx => widget.ctx;
-  PlayerUiState get state => widget.ctx.state();
+  PlayerUiState get state => widget.ctx.state;
   MobilePlayerUiActions get actions =>
       widget.ctx.actions as MobilePlayerUiActions;
 
@@ -45,7 +45,7 @@ class _DefaultPlayerViewState extends State<_DefaultPlayerView> {
   }
 
   Widget _body() {
-    final current = state.current;
+    final current = state.playerStateController.current.value;
 
     if (current == null) {
       return const SizedBox.shrink();
@@ -144,7 +144,7 @@ class _DefaultPlayerViewState extends State<_DefaultPlayerView> {
           Expanded(
             child: StreamBuilder<bool>(
               stream: ctx.streams.playing,
-              initialData: state.playing,
+              initialData: state.playerStateController.state.playing,
               builder: (context, snapshot) {
                 final playing = snapshot.data ?? false;
 
@@ -275,7 +275,7 @@ class _DefaultPlayerViewState extends State<_DefaultPlayerView> {
       height: 65,
       width: double.infinity,
       child: Waveform(
-        playingState: state.playing,
+        playingState: state.playerStateController.state.playing,
         playing: ctx.streams.playing,
         playerStream: ctx.streams.playerStream,
       ),
@@ -291,7 +291,7 @@ class _DefaultPlayerViewState extends State<_DefaultPlayerView> {
 
         StreamBuilder<bool>(
           stream: ctx.streams.playing,
-          initialData: state.playing,
+          initialData: state.playerStateController.state.playing,
           builder: (context, snapshot) {
             final playing = snapshot.data ?? false;
 
@@ -358,11 +358,11 @@ class _DefaultPlayerViewState extends State<_DefaultPlayerView> {
   Widget _progress() {
     return StreamBuilder<Duration>(
       stream: ctx.streams.position,
-      initialData: state.position,
+      initialData: state.playerStateController.state.position,
       builder: (context, snapshot) {
         final position = snapshot.data ?? Duration.zero;
 
-        final duration = state.duration;
+        final duration = state.playerStateController.state.duration;
 
         final max = maxValue(duration.inMilliseconds.toDouble(), 1);
 
@@ -401,7 +401,7 @@ class _DefaultPlayerViewState extends State<_DefaultPlayerView> {
   }
 
   Widget _actions() {
-    final current = state.current;
+    final current = state.playerStateController.current.value;
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
