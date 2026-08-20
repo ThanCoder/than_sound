@@ -1,7 +1,9 @@
 import 'dart:async';
 import 'dart:io';
+import 'dart:isolate';
 
 import 'package:cfb_store/cfb_store.dart';
+import 'package:dart_core_extensions/dart_core_extensions.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:than_sound/core/controllers/all_audio/all_file_event.dart';
 import 'package:than_sound/core/controllers/all_audio/all_state.dart';
@@ -9,6 +11,7 @@ import 'package:than_sound/core/controllers/interfaces/i_controller.dart';
 import 'package:than_sound/core/controllers/player/player_state_controller.dart';
 import 'package:than_sound/core/extensions/audio_file_extensions.dart';
 import 'package:than_sound/core/models/audio_file.dart';
+import 'package:than_sound/core/models/audio_meta.dart';
 import 'package:than_sound/core/scanner/audio_scanner.dart';
 import 'package:than_sound/ui_platforms/ui/partials/sort_provider.dart';
 
@@ -33,6 +36,11 @@ class AllFileStateController extends IController {
   static final cacheStore = CFBStore();
   static const String sortIdKey = 'sort-id-key';
   static const String sortValueKey = 'sort-value-key';
+
+  @override
+  void init() {
+    scanFromStorage();
+  }
 
   Future<void> scanFromStorage({bool usedCache = true}) async {
     try {
@@ -131,11 +139,6 @@ class AllFileStateController extends IController {
     _playerStateController.setTracks(files, source: .allFileState);
   }
 
-  @override
-  void init() {
-    scanFromStorage();
-  }
-
   Future<void> deleteAudioFile(AudioFile file) async {
     try {
       // check current songe
@@ -167,4 +170,33 @@ class AllFileStateController extends IController {
       debugPrint('[AllFileStateController:deleteAudioFile]: $e');
     }
   }
+
+  Future<void> updateMetadata(AudioFile file) async {
+    try {
+      final index = files.indexWhere((e) => e.path == file.path);
+      if (index == -1) {
+        debugPrint(
+          '[AllFileStateController:updateMetadata]: not index: $index',
+        );
+        return;
+      }
+      final path = file.path;
+      final cacheCoverPath = path.join('${file.id}.png');
+
+      final meta = await Isolate.run(() {
+        final meta = AudioMeta(path);
+        meta.openMeta(cacheCoverPath);
+        return meta;
+      });
+      final newF = file.copyWith(meta: meta);
+      files[index] = newF;
+      // update noti
+      _con.add(_state);
+      addEvent(AllFileStateControllerUpdateMeta(newF));
+    } catch (e) {
+      debugPrint('[AllFileStateController:updateMetadata]: $e');
+    }
+  }
+
+  List<String> get tags => AudioMeta.tags;
 }

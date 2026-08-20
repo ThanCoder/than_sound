@@ -9,6 +9,7 @@ import 'package:t_widgets/t_widgets.dart';
 import 'package:than_audiotag/than_audiotag.dart';
 import 'package:than_sound/core/models/audio_file.dart';
 import 'package:than_sound/core/utils/app_utils.dart';
+import 'package:than_sound/ui_platforms/components/dialog/confirm_alert_dialog.dart';
 import 'package:than_sound/ui_platforms/components/dialog/error_alert_dialog.dart';
 import 'package:than_sound/ui_platforms/components/dialog/snack_alert.dart';
 import 'package:than_sound/ui_platforms/components/dialog/success_alert_dialog.dart';
@@ -107,7 +108,7 @@ class _ArtCoverManagerState extends State<ArtCoverManagerPage> {
     final colors = Theme.of(context).colorScheme;
 
     return GestureDetector(
-      onTap: isLoading ? null : chooseImage,
+      onTap: isLoading ? null : writeImage,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
         width: 260,
@@ -271,7 +272,7 @@ class _ArtCoverManagerState extends State<ArtCoverManagerPage> {
   // Logic
   // ----------------------------
 
-  void chooseImage() async {
+  void writeImage() async {
     try {
       setState(() {
         isLoading = true;
@@ -297,7 +298,7 @@ class _ArtCoverManagerState extends State<ArtCoverManagerPage> {
       tag.writeCover(imageData);
       tag.close();
 
-      await coverFile.writeAsBytes(imageData);
+      await coverFile.writeAsBytes(imageData, flush: true);
 
       if (oldImage) {
         AppUtils.clearImageCache();
@@ -350,45 +351,46 @@ class _ArtCoverManagerState extends State<ArtCoverManagerPage> {
     }
   }
 
-  void delete() {
-    showTConfirmDialog(
+  void delete() async {
+    final confirmed = await showConfirmDialog(
       context,
-      contentText: 'Want To Delete?',
-      cancelText: 'No!',
-      submitText: 'Delete Forever!',
-      onSubmit: () async {
-        try {
-          setState(() {
-            isLoading = true;
-          });
-
-          final tag = ThanAudioTag.open(widget.file.path);
-
-          tag.removeCover(save: true);
-          tag.close();
-
-          await coverFile.deleteSafe();
-
-          AppUtils.clearImageCache();
-
-          await Future.delayed(const Duration(seconds: 1));
-
-          if (!mounted) return;
-
-          setState(() {
-            isLoading = false;
-          });
-        } catch (e) {
-          if (!mounted) return;
-
-          setState(() {
-            isLoading = false;
-          });
-
-          showTMessageDialogError(context, e.toString());
-        }
-      },
+      'Want To Delete?',
+      confirmText: 'Delete!',
+      closeText: 'No!',
+      confirmColor: context.colorScheme.error,
+      confirmForegroundColor: context.colorScheme.onError,
     );
+    if (!confirmed) return;
+    try {
+      setState(() {
+        isLoading = true;
+      });
+
+      final tag = ThanAudioTag.open(widget.file.path);
+
+      tag.removeCover(save: true);
+      tag.close();
+
+      await coverFile.deleteSafe();
+
+      AppUtils.clearImageCache();
+
+      await Future.delayed(const Duration(seconds: 1));
+
+      if (!mounted) return;
+
+      setState(() {
+        isLoading = false;
+      });
+    } catch (e) {
+      if (!mounted) return;
+
+      setState(() {
+        isLoading = false;
+      });
+
+      showTMessageDialogError(context, e.toString());
+    }
   }
 
   void refreshImage() async {

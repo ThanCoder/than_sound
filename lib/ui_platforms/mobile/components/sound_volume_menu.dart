@@ -25,9 +25,9 @@ class _SoundVolumeMenuState extends State<SoundVolumeMenu> {
               return _VolumeWidget(
                 value: py.state.volume,
                 max: 100,
-                onChangeEnd: py.setVolume,
+                onChanged: py.setVolume,
                 icon: Icon(Icons.volume_up_rounded),
-                title: 'Player Volume',
+                title: 'Player',
               );
             },
           ),
@@ -36,10 +36,10 @@ class _SoundVolumeMenuState extends State<SoundVolumeMenu> {
             builder: (context, asyncSnapshot) {
               return _VolumeWidget(
                 value: py.state.volumeGain,
-                max: py.state.volumeMax,
-                onChangeEnd: py.setVolumeGain,
+                max: 100,
+                onChanged: py.setVolumeGain,
                 icon: Icon(Icons.volume_up_rounded),
-                title: 'Gain Volume',
+                title: 'Gain',
               );
             },
           ),
@@ -64,27 +64,30 @@ class _SoundVolumeMenuState extends State<SoundVolumeMenu> {
 }
 
 class _VolumeWidget extends StatelessWidget {
+  const _VolumeWidget({
+    required this.value,
+    required this.max,
+    this.onChangeEnd,
+    required this.title,
+    required this.icon,
+    this.onChanged,
+  }) : min = 0.0;
+
   final double value;
   final double min;
   final double max;
   final String title;
   final Widget icon;
-  final void Function(double value) onChangeEnd;
-  const _VolumeWidget({
-    required this.value,
-    required this.max,
-    required this.onChangeEnd,
-    required this.title,
-    required this.icon,
-  }) : min = 0.0;
+  final void Function(double value)? onChangeEnd;
+  final void Function(double value)? onChanged;
 
   @override
   Widget build(BuildContext context) {
     final col = context.colorScheme;
     return Container(
-      padding: .symmetric(vertical: 4, horizontal: 5),
+      padding: .symmetric(vertical: 8, horizontal: 10),
       decoration: BoxDecoration(
-        color: col.surfaceContainerHighest.withValues(alpha: .45),
+        color: col.surfaceContainer,
         borderRadius: .circular(15),
       ),
       child: Column(
@@ -93,19 +96,18 @@ class _VolumeWidget extends StatelessWidget {
           Row(
             spacing: 5,
             children: [
-              Container(
-                decoration: BoxDecoration(
-                  color: col.primary.withValues(alpha: .45),
-                  borderRadius: .circular(15),
-                ),
-                child: icon,
-              ),
               Text(title, style: TextStyle(fontSize: 17, fontWeight: .w600)),
             ],
           ),
 
           SizedBox(height: 5),
-          CSlider(min: min, max: max, value: value, onChangeEnd: onChangeEnd),
+          CSlider(
+            min: min,
+            max: max,
+            value: value,
+            onChangeEnd: onChangeEnd,
+            onChanged: onChanged,
+          ),
           SizedBox(height: 2),
           Padding(
             padding: .symmetric(horizontal: 8),

@@ -7,31 +7,23 @@ class AudioContentThemeMenu extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
+    // final colorScheme = Theme.of(context).colorScheme;
     return SingleChildScrollView(
-      child: Column(
-        children: [
-          // Handle
-          Center(
-            child: Container(
-              width: 40,
-              height: 4,
-              decoration: BoxDecoration(
-                color: colorScheme.onSurfaceVariant.withValues(alpha: .35),
-                borderRadius: BorderRadius.circular(10),
-              ),
-            ),
-          ),
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          spacing: 5,
+          children: [
+            const SizedBox(height: 20),
 
-          const SizedBox(height: 20),
+            // Rective Cover
+            AudioReactiveCoverTypeChooser(),
+            //WaveForm Chooser
+            WaveFormChooser(),
 
-          // Rective Cover
-          AudioReactiveCoverTypeChooser(),
-          //WaveForm Chooser
-          WaveFormChooser(),
-
-          SizedBox(height: 40),
-        ],
+            SizedBox(height: 40),
+          ],
+        ),
       ),
     );
   }

@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:than_audiotag/than_audiotag.dart';
 
 class AudioMeta {
+  static List<String> tags = ['artist', 'album', 'genre', 'year', 'format'];
   final String path;
   AudioMeta(
     this.path, {

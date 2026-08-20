@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:t_widgets/t_widgets.dart';
 import 'package:than_sound/core/controllers/interfaces/i_controller.dart';
 import 'package:than_sound/core/controllers/player/player_state_controller.dart';
-import 'package:than_sound/ui_platforms/ui/audio/audio_float_widget.dart';
-import 'package:than_sound/ui_platforms/ui/audio/audio_sliver_list.dart';
+import 'package:than_sound/ui_platforms/mobile/components/audio_float_widget.dart';
+import 'package:than_sound/ui_platforms/mobile/components/audio_sliver_list.dart';
 import 'package:than_sound/ui_platforms/components/favourite/favourite_controller.dart';
 
 class MobileFavouriteListPage extends StatefulWidget {

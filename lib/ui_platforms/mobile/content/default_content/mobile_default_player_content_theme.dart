@@ -7,7 +7,7 @@ import 'package:than_sound/core/models/audio_file.dart';
 import 'package:than_sound/exts.dart';
 import 'package:than_sound/ui_platforms/components/reactive_cover/audio_reactive_cover_switcher.dart';
 import 'package:than_sound/ui_platforms/components/waveform/waveform_widget/waveform.dart';
-import 'package:than_sound/ui_platforms/ui/audio/thumbnail.dart';
+import 'package:than_sound/ui_platforms/mobile/components/audio_thumbnail.dart';
 import 'package:than_sound/ui_platforms/components/c_slider.dart';
 import 'package:than_sound/ui_platforms/components/favourite/favourite_button.dart';
 import 'package:than_sound/ui_platforms/player_theme/interfaces/i_player_theme.dart';
@@ -15,7 +15,7 @@ import 'package:than_sound/ui_platforms/player_theme/interfaces/player_ui_contex
 import 'package:than_sound/ui_platforms/player_theme/interfaces/player_ui_state.dart';
 import 'package:than_sound/ui_platforms/mobile/mobile_player_ui_actions.dart';
 
-class DefaultPlayerContentTheme extends IPlayerTheme {
+class MobileDefaultPlayerContentTheme extends IPlayerTheme {
   @override
   Widget build(BuildContext context, PlayerUiContext ctx) {
     return _DefaultPlayerView(ctx: ctx);
@@ -50,9 +50,6 @@ class _DefaultPlayerViewState extends State<_DefaultPlayerView> {
     if (current == null) {
       return const SizedBox.shrink();
     }
-    // final statusBarColor = isLight
-    //     ? Colors.white.withValues(alpha: .2)
-    //     : Colors.black.withValues(alpha: .4);
     final statusBarColor = context.colorScheme.surface.withValues(alpha: .5);
     return Stack(
       fit: StackFit.expand,
@@ -77,7 +74,7 @@ class _DefaultPlayerViewState extends State<_DefaultPlayerView> {
     return Stack(
       fit: StackFit.expand,
       children: [
-        Positioned.fill(child: Thumbnail(file: current)),
+        Positioned.fill(child: AudioThumbnail(file: current)),
 
         Container(
           decoration: BoxDecoration(
@@ -88,17 +85,6 @@ class _DefaultPlayerViewState extends State<_DefaultPlayerView> {
                 scheme.surface.withValues(alpha: .45),
                 scheme.surface.withValues(alpha: .72),
                 scheme.surface.withValues(alpha: .92),
-                // isLight
-                //     ? Colors.white.withValues(alpha: .45)
-                //     : Colors.black.withValues(alpha: .45),
-
-                // isLight
-                //     ? Colors.white.withValues(alpha: .72)
-                //     : Colors.black.withValues(alpha: .72),
-
-                // isLight
-                //     ? Colors.white.withValues(alpha: .92)
-                //     : Colors.black.withValues(alpha: .94),
               ],
             ),
           ),
@@ -235,7 +221,7 @@ class _DefaultPlayerViewState extends State<_DefaultPlayerView> {
         ),
         child: ClipRRect(
           borderRadius: BorderRadius.circular(24),
-          child: Thumbnail(file: current),
+          child: AudioThumbnail(file: current),
         ),
       ),
     );
@@ -283,6 +269,8 @@ class _DefaultPlayerViewState extends State<_DefaultPlayerView> {
   }
 
   Widget _controls() {
+    final col = context.colorScheme;
+
     return Column(
       children: [
         _progress(),
@@ -298,47 +286,65 @@ class _DefaultPlayerViewState extends State<_DefaultPlayerView> {
             return Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
+                StreamBuilder(
+                  stream:
+                      state.playerStateController.audioHandler.shuffleStream,
+                  builder: (context, asyncSnapshot) {
+                    final isShuffle =
+                        state.playerStateController.audioHandler.isShuffle;
+                    return _controlButton(
+                      icon: isShuffle
+                          ? Icons.shuffle_on_rounded
+                          : Icons.shuffle,
+                      size: 25,
+                      onPressed: () {
+                        state.playerStateController.audioHandler
+                            .toggleShuffle();
+                      },
+                    );
+                  },
+                ),
                 _controlButton(
                   icon: Icons.skip_previous_rounded,
                   size: 48,
                   onPressed: actions.previous,
                 ),
 
-                const SizedBox(width: 28),
+                const SizedBox(width: 20),
 
                 Container(
                   width: 68,
                   height: 68,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: Theme.of(context).colorScheme.primary,
+                    color: col.primary,
                     boxShadow: [
                       BoxShadow(
                         blurRadius: 20,
                         offset: const Offset(0, 8),
-                        color: Theme.of(
-                          context,
-                        ).colorScheme.primary.withValues(alpha: .25),
+                        color: col.primary.withValues(alpha: .35),
+                        spreadRadius: 2,
                       ),
                     ],
                   ),
                   child: IconButton(
                     onPressed: actions.playPause,
                     iconSize: 36,
-                    color: Theme.of(context).colorScheme.onPrimary,
+                    color: col.onPrimary,
                     icon: Icon(
                       playing ? Icons.pause_rounded : Icons.play_arrow_rounded,
                     ),
                   ),
                 ),
 
-                const SizedBox(width: 28),
-
+                const SizedBox(width: 20),
                 _controlButton(
                   icon: Icons.skip_next_rounded,
                   size: 48,
                   onPressed: actions.next,
                 ),
+
+                _controlButton(icon: Icons.replay, size: 25),
               ],
             );
           },
@@ -350,7 +356,7 @@ class _DefaultPlayerViewState extends State<_DefaultPlayerView> {
   Widget _controlButton({
     required IconData icon,
     required double size,
-    required VoidCallback onPressed,
+    VoidCallback? onPressed,
   }) {
     return IconButton(onPressed: onPressed, iconSize: size, icon: Icon(icon));
   }
@@ -370,12 +376,15 @@ class _DefaultPlayerViewState extends State<_DefaultPlayerView> {
 
         return Column(
           children: [
-            CSlider(
-              max: max,
-              value: value,
-              onChangeEnd: (value) {
-                actions.seek(Duration(milliseconds: value.toInt()));
-              },
+            SliderTheme(
+              data: SliderThemeData(thumbShape: .noThumb),
+              child: CSlider(
+                max: max,
+                value: value,
+                onChangeEnd: (value) {
+                  actions.seek(Duration(milliseconds: value.toInt()));
+                },
+              ),
             ),
 
             Padding(

@@ -4,6 +4,8 @@ import 'package:than_sound/core/controllers/all_audio/all_file_state_controller.
 import 'package:than_sound/core/controllers/interfaces/i_controller.dart';
 import 'package:than_sound/core/models/audio_file.dart';
 
+class FavouriteControllerReset extends IControllerEvent {}
+
 class FavouriteControllerAddEvent extends IControllerEvent {
   final AudioFile file;
   FavouriteControllerAddEvent(this.file);
@@ -26,6 +28,10 @@ class FavouriteController extends IController {
   @override
   void init() {
     allFileStateController.eventStream.listen((event) {
+      if (event is AllFileResetEvent) {
+        cacheList.clear();
+        addEvent(FavouriteControllerReset());
+      }
       if (event is AllFileAddEvent) {
         add(event.file);
       }

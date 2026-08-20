@@ -12,6 +12,6 @@ enum ReactiveCoverType {
   };
 
   static ReactiveCoverType fromValue(String val) {
-    return values.firstWhere((e) => e.name == val, orElse: () => subtle);
+    return values.firstWhere((e) => e.name == val, orElse: () => none);
   }
 }

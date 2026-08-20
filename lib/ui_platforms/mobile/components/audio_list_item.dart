@@ -2,18 +2,18 @@ import 'package:dart_core_extensions/dart_core_extensions.dart';
 import 'package:flutter/material.dart';
 import 'package:than_sound/const_keys.dart';
 import 'package:than_sound/ui_platforms/components/current_music_visualizer_widget.dart';
-import 'package:than_sound/ui_platforms/ui/audio/thumbnail.dart';
+import 'package:than_sound/ui_platforms/mobile/components/audio_thumbnail.dart';
 import 'package:than_sound/core/controllers/interfaces/i_controller.dart';
 import 'package:than_sound/core/controllers/player/player_state_controller.dart';
 import 'package:than_sound/core/models/audio_file.dart';
 import 'package:than_sound/ui_platforms/components/favourite/favourite_button.dart';
 
-class ListItem extends StatelessWidget {
+class AudioListItem extends StatelessWidget {
   final AudioFile file;
   final void Function(AudioFile file) onClicked;
   final void Function(AudioFile file)? onMenuClicked;
 
-  const ListItem({
+  const AudioListItem({
     super.key,
     required this.file,
     required this.onClicked,
@@ -81,7 +81,7 @@ class ListItem extends StatelessWidget {
   Widget _cover(BuildContext context) {
     return ClipRRect(
       borderRadius: BorderRadius.circular(10),
-      child: SizedBox(width: 68, height: 68, child: Thumbnail(file: file)),
+      child: SizedBox(width: 68, height: 68, child: AudioThumbnail(file: file)),
     );
   }
 

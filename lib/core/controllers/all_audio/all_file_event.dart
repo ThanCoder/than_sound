@@ -1,6 +1,8 @@
 import 'package:than_sound/core/controllers/interfaces/i_controller.dart';
 import 'package:than_sound/core/models/audio_file.dart';
 
+class AllFileLoaded extends IControllerEvent {}
+
 class AllFileAddEvent extends IControllerEvent {
   final AudioFile file;
   AllFileAddEvent(this.file);
@@ -12,3 +14,8 @@ class AllFileRemoveEvent extends IControllerEvent {
 }
 
 class AllFileResetEvent extends IControllerEvent {}
+
+class AllFileStateControllerUpdateMeta extends IControllerEvent {
+  final AudioFile file;
+  AllFileStateControllerUpdateMeta(this.file);
+}

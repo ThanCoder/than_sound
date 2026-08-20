@@ -2,11 +2,11 @@ import 'package:dart_core_extensions/dart_core_extensions.dart';
 import 'package:flutter/material.dart';
 import 'package:than_sound/core/controllers/interfaces/i_controller.dart';
 import 'package:than_sound/core/controllers/player/player_state_controller.dart';
-import 'package:than_sound/ui_platforms/mobile/content/default_content/sound_volume_menu.dart';
-import 'package:than_sound/ui_platforms/ui/audio/audio_item_menu.dart';
+import 'package:than_sound/ui_platforms/mobile/components/sound_volume_menu.dart';
+import 'package:than_sound/ui_platforms/mobile/components/audio_item_menu.dart';
 import 'package:than_sound/ui_platforms/components/player_playlist.dart';
 import 'package:than_sound/ui_platforms/player_theme/interfaces/player_ui_context.dart';
-import 'package:than_sound/ui_platforms/mobile/content/default_content/default_player_content_theme.dart';
+import 'package:than_sound/ui_platforms/mobile/content/default_content/mobile_default_player_content_theme.dart';
 import 'package:than_sound/ui_platforms/player_theme/ui_context_creator.dart';
 import 'package:than_sound/ui_platforms/mobile/mobile_player_ui_actions.dart';
 
@@ -26,7 +26,7 @@ class _PlayerContentThemeProviderScreenState
     super.initState();
   }
 
-  PlayerStateController get playerController =>
+  final PlayerStateController playerController =
       ControllerManager.read<PlayerStateController>();
   late PlayerUiContext ctx;
   void init() {
@@ -53,7 +53,7 @@ class _PlayerContentThemeProviderScreenState
       body: ValueListenableBuilder(
         valueListenable: playerController.current,
         builder: (context, value, child) {
-          return DefaultPlayerContentTheme().build(context, ctx);
+          return MobileDefaultPlayerContentTheme().build(context, ctx);
         },
       ),
     );
@@ -70,7 +70,7 @@ class _PlayerContentThemeProviderScreenState
       showDragHandle: true,
       useSafeArea: true,
       builder: (context) {
-        return FractionallySizedBox(heightFactor: .82, child: PlayerPlaylist());
+        return FractionallySizedBox(heightFactor: .90, child: PlayerPlaylist());
       },
     );
   }
@@ -81,8 +81,10 @@ class _PlayerContentThemeProviderScreenState
       isScrollControlled: true,
       showDragHandle: true,
       useSafeArea: true,
-      builder: (context) =>
-          AudioItemMenu(file: playerController.current.value!),
+      builder: (context) => AudioItemMenu(
+        file: playerController.current.value!,
+        showContentAnimation: true,
+      ),
     );
   }
 

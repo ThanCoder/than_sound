@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:than_sound/core/extensions/date_time_ext.dart';
 import 'package:than_sound/core/models/audio_file.dart';
 
 class AudioInfoMenu extends StatelessWidget {
@@ -169,7 +170,8 @@ class AudioInfoMenu extends StatelessWidget {
                   _InfoTile(
                     icon: Icons.calendar_today_outlined,
                     label: 'Year',
-                    value: '${meta.year}',
+                    value:
+                        '${meta.year.toString().parseYyyyMMdd()?.yyyyMMdd(sprator: '-')}',
                   ),
               ],
             ),

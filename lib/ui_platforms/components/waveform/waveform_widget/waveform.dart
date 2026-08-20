@@ -5,6 +5,7 @@ import 'package:cfb_store/cfb_store.dart';
 import 'package:flutter/material.dart';
 import 'package:mpv_audio_kit/mpv_audio_kit.dart';
 import 'package:than_sound/const_keys.dart';
+import 'package:than_sound/ui_platforms/components/reactive_cover/reactive_cover_types.dart';
 import 'package:than_sound/ui_platforms/components/waveform/waveform_widget/wave_form_chooser.dart';
 import 'package:waveform_visualizer/waveform_visualizer.dart';
 
@@ -56,7 +57,7 @@ class _WaveformState extends State<Waveform> {
       WaveFormType.fromValue(config.getString(audioContentWaveFormTypeKey));
 
   void _initWaveform() {
-    if (_playing && currentType != .none) {
+    if (_playing) {
       _waveformController.start();
     }
 
@@ -70,10 +71,12 @@ class _WaveformState extends State<Waveform> {
       }
     });
 
-    _configSub = config.events.listen((event) {
-      if (event is! PutValue) return;
-      if (event.key != audioContentWaveFormTypeKey) return;
-      if (currentType == .none) {
+    _configSub = config.stream.put.listen((event) {
+      if (event.key != audioContentUseReactiveCoverTypeKey) return;
+      final reactiveCoverType = ReactiveCoverType.fromValue(
+        CFBStore.getInstance.getString(audioContentUseReactiveCoverTypeKey),
+      );
+      if (reactiveCoverType == .none) {
         _pcmSub?.cancel();
         _waveformController.stop();
         return;

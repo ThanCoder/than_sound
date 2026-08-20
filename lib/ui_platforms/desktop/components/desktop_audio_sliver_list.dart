@@ -5,7 +5,7 @@ import 'package:than_sound/const_keys.dart';
 import 'package:than_sound/core/models/audio_file.dart';
 import 'package:than_sound/ui_platforms/components/current_music_visualizer_widget.dart';
 import 'package:than_sound/ui_platforms/components/favourite/favourite_button.dart';
-import 'package:than_sound/ui_platforms/ui/audio/thumbnail.dart';
+import 'package:than_sound/ui_platforms/mobile/components/audio_thumbnail.dart';
 
 class DesktopAudioSliverList extends StatelessWidget {
   const DesktopAudioSliverList({
@@ -146,7 +146,7 @@ class _DesktopAudioRowState extends State<_DesktopAudioRow> {
       height: 56,
       child: ClipRRect(
         borderRadius: BorderRadius.circular(8),
-        child: Thumbnail(file: widget.file),
+        child: AudioThumbnail(file: widget.file),
       ),
     );
   }

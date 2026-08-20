@@ -1,17 +1,22 @@
 import 'package:flutter/material.dart';
 
 class CSlider extends StatefulWidget {
+  const CSlider({
+    super.key,
+    this.min = 0.0,
+    required this.max,
+    required this.value,
+    this.onChangeEnd,
+    this.onChanged,
+    this.secondaryTrackValue,
+  });
+
   final double min;
   final double max;
   final double value;
-  final void Function(double value) onChangeEnd;
-  const CSlider({
-    super.key,
-    this.min=0.0,
-    required this.max,
-    required this.value,
-    required this.onChangeEnd,
-  });
+  final double? secondaryTrackValue;
+  final void Function(double value)? onChanged;
+  final void Function(double value)? onChangeEnd;
 
   @override
   State<CSlider> createState() => _CSliderState();
@@ -44,7 +49,10 @@ class _CSliderState extends State<CSlider> {
       min: widget.min,
       max: widget.max,
       value: val,
+      secondaryTrackValue: widget.secondaryTrackValue,
+      allowedInteraction: .slideOnly,
       onChanged: (value) {
+        widget.onChanged?.call(val);
         setState(() {
           val = value;
         });
@@ -54,7 +62,7 @@ class _CSliderState extends State<CSlider> {
       },
       onChangeEnd: (value) {
         hold = false;
-        widget.onChangeEnd(value);
+        widget.onChangeEnd?.call(value);
       },
     );
   }

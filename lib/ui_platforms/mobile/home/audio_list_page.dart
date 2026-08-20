@@ -3,8 +3,9 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:t_widgets/t_widgets.dart';
 import 'package:than_sound/core/models/audio_file.dart';
+import 'package:than_sound/ui_platforms/components/dialog/confirm_alert_dialog.dart';
 import 'package:than_sound/ui_platforms/ui/audio/audio_list_header.dart';
-import 'package:than_sound/ui_platforms/ui/audio/audio_sliver_list.dart';
+import 'package:than_sound/ui_platforms/mobile/components/audio_sliver_list.dart';
 import 'package:than_sound/ui_platforms/ui/audio/list_gps_button.dart';
 import 'package:than_sound/const_keys.dart';
 import 'package:than_sound/core/controllers/all_audio/all_file_state_controller.dart';
@@ -249,20 +250,17 @@ class _AudioListPageState extends State<AudioListPage> {
     final pCon = ControllerManager.read<PlayerStateController>();
     final current = pCon.current.value;
     if (current != null && current.id == file.id && pCon.state.playing) {
-      showTConfirmDialog(
+      final confirmed = await showConfirmDialog(
         context,
-        contentText: 'Want To Restart!',
-        submitText: 'Restart',
-        cancelText: 'No!',
-        onSubmit: () async {
-          await pCon.setTracks(
-            ControllerManager.read<AllFileStateController>().files,
-            source: .allFileState,
-          );
-          // print('item: $file');
-          pCon.open(file);
-        },
+        'Want to Song Restart!',
       );
+      if (confirmed) {
+        await pCon.setTracks(
+          ControllerManager.read<AllFileStateController>().files,
+          source: .allFileState,
+        );
+        pCon.open(file);
+      }
       return;
     }
     await pCon.setTracks(

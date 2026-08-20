@@ -7,17 +7,21 @@ import 'package:than_sound/core/controllers/interfaces/i_controller.dart';
 import 'package:than_sound/core/models/audio_file.dart';
 import 'package:than_sound/ui_platforms/mobile/components/audio_content_theme_menu.dart';
 import 'package:than_sound/ui_platforms/pages/art_cover_manager_page.dart';
-import 'package:than_sound/ui_platforms/ui/audio/audio_info_menu.dart';
+import 'package:than_sound/ui_platforms/pages/equalizers/audio_eq_home_page.dart';
+import 'package:than_sound/ui_platforms/pages/audio_medatata_editor_page.dart';
+import 'package:than_sound/ui_platforms/components/audio_info_menu.dart';
 
 class AudioItemMenu extends StatefulWidget {
-  final AudioFile file;
-  final bool showDeleteAction;
-
   const AudioItemMenu({
     super.key,
     required this.file,
     this.showDeleteAction = false,
+    this.showContentAnimation = false,
   });
+
+  final AudioFile file;
+  final bool showDeleteAction;
+  final bool showContentAnimation;
 
   @override
   State<AudioItemMenu> createState() => _AudioItemMenuState();
@@ -100,6 +104,20 @@ class _AudioItemMenuState extends State<AudioItemMenu> {
               );
             },
           ),
+          // Audio Info
+          _MenuTile(
+            icon: Icons.edit_document,
+            title: 'Audio Info Editor',
+            subtitle: 'edit audio metadata and file information',
+            onTap: () {
+              context.pop();
+
+              context.pushMaterialPageRoute(
+                builder: (mainCtx) =>
+                    AudioMedatataEditorPage(file: widget.file),
+              );
+            },
+          ),
 
           // Art Cover
           _MenuTile(
@@ -119,22 +137,41 @@ class _AudioItemMenuState extends State<AudioItemMenu> {
 
           const SizedBox(height: 4),
 
-          // Art Cover
+          // Audio Equalizer
           _MenuTile(
-            icon: Icons.animation,
-            title: 'Content Animation',
-            subtitle: 'Change or remove Animation',
+            icon: Icons.equalizer,
+            title: 'Audio Equalizer',
+            subtitle: 'Change or Modify audio',
             onTap: () {
               context.pop();
-              showModalBottomSheet(
-                context: context,
-                isScrollControlled: true,
-                useSafeArea: true,
-                showDragHandle: false,
-                builder: (context) => AudioContentThemeMenu(),
+
+              context.pushMaterialPageRoute(
+                builder: (mainCtx) {
+                  return AudioEqHomePage();
+                },
               );
             },
           ),
+
+          const SizedBox(height: 4),
+
+          // Content Animation
+          if (widget.showContentAnimation)
+            _MenuTile(
+              icon: Icons.animation,
+              title: 'Content Animation',
+              subtitle: 'Change or remove Animation',
+              onTap: () {
+                context.pop();
+                showModalBottomSheet(
+                  context: context,
+                  isScrollControlled: true,
+                  useSafeArea: true,
+                  showDragHandle: true,
+                  builder: (context) => AudioContentThemeMenu(),
+                );
+              },
+            ),
 
           const SizedBox(height: 4),
 

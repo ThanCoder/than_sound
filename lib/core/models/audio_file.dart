@@ -1,3 +1,4 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:than_sound/core/models/audio_meta.dart';
 
 class AudioFile {
@@ -53,5 +54,26 @@ class AudioFile {
   String toString() {
     return 'id: $id - \nname: $name \nautoTitle: $autoTitle';
   }
-}
 
+  AudioFile copyWith({
+    String? name,
+    String? id,
+    String? path,
+    String? dirname,
+    DateTime? date,
+    AudioMeta? meta,
+    int? size,
+    String? cacheCoverPath,
+  }) {
+    return AudioFile(
+      name: name ?? this.name,
+      id: id ?? this.id,
+      path: path ?? this.path,
+      dirname: dirname ?? this.dirname,
+      date: date ?? this.date,
+      meta: meta ?? this.meta,
+      size: size ?? this.size,
+      cacheCoverPath: cacheCoverPath ?? this.cacheCoverPath,
+    );
+  }
+}

@@ -18,6 +18,7 @@ import 'package:than_sound/ui_platforms/components/favourite/favourite_controlle
 
 part 'mixins/player_listener_mixin.dart';
 part 'mixins/shuffle_mixin.dart';
+part 'mixins/equalizer_logic.dart';
 
 class MyAudioHandler extends BaseAudioHandler
     with
@@ -27,7 +28,8 @@ class MyAudioHandler extends BaseAudioHandler
         PlayerListenerMixin,
         ShuffleMixin,
         ExtraMixin,
-        PlayerSleepTimerListener {
+        PlayerSleepTimerListener,
+        EqualizerLogic {
   final _player = Player();
   @override
   Player get player => _player;

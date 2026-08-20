@@ -4,9 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:than_sound/core/models/audio_file.dart';
 
-class Thumbnail extends StatelessWidget {
+class AudioThumbnail extends StatelessWidget {
   final AudioFile file;
-  const Thumbnail({super.key, required this.file});
+  const AudioThumbnail({super.key, required this.file});
 
   @override
   Widget build(BuildContext context) {

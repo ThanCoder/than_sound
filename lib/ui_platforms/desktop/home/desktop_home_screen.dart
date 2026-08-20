@@ -14,7 +14,7 @@ import 'package:than_sound/ui_platforms/player_theme/interfaces/player_ui_contex
 import 'package:than_sound/ui_platforms/player_theme/ui_context_creator.dart';
 import 'package:than_sound/ui_platforms/desktop/home/desktop_music_bar.dart';
 import 'package:than_sound/ui_platforms/desktop/desktop_player_ui_actions.dart';
-import 'package:than_sound/ui_platforms/mobile/lib_page.dart';
+import 'package:than_sound/ui_platforms/mobile/home/library/lib_page.dart';
 import 'package:than_sound/ui_platforms/pages/more_page.dart';
 
 class DesktopHomeScreen extends StatefulWidget {

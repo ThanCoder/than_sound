@@ -3,12 +3,13 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:t_widgets/t_widgets.dart';
 import 'package:than_pkg_android/than_pkg_android.dart';
-import 'package:than_sound/ui_platforms/ui/audio/audio_float_widget.dart';
+import 'package:than_sound/ui_platforms/mobile/components/audio_float_widget.dart';
 import 'package:than_sound/core/controllers/interfaces/i_controller.dart';
 import 'package:than_sound/core/controllers/player/player_state_controller.dart';
 import 'package:than_sound/ui_platforms/components/favourite/favourite_controller.dart';
 import 'package:than_sound/ui_platforms/mobile/home/audio_list_page.dart';
-import 'package:than_sound/ui_platforms/mobile/lib_page.dart';
+import 'package:than_sound/ui_platforms/mobile/home/library/lib_page.dart';
+import 'package:than_sound/ui_platforms/mobile/home/search/mobile_search_page.dart';
 import 'package:than_sound/ui_platforms/pages/more_page.dart';
 
 class MobileHomeScreen extends StatefulWidget {
@@ -57,7 +58,12 @@ class _MobileHomeScreenState extends State<MobileHomeScreen> {
             children: [
               IndexedStack(
                 index: index,
-                children: [AudioListPage(), LibPage(), MorePage()],
+                children: [
+                  AudioListPage(),
+                  MobileSearchPage(),
+                  LibPage(),
+                  MorePage(),
+                ],
               ),
 
               // float widget
@@ -83,13 +89,20 @@ class _MobileHomeScreenState extends State<MobileHomeScreen> {
           });
         },
         items: [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home_outlined),
+            label: 'Home',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.search_outlined),
+            label: 'Search',
+          ),
           BottomNavigationBarItem(
             icon: Icon(Icons.library_music_outlined),
             label: 'Library',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.grid_view_rounded),
+            icon: Icon(Icons.grid_view_outlined),
             label: 'More',
           ),
         ],

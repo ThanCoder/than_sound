@@ -7,7 +7,7 @@ import 'package:than_sound/core/controllers/player/listener/loudness_config_list
 import 'package:than_sound/core/controllers/player/my_audio_handler.dart';
 import 'package:than_sound/core/models/audio_file.dart';
 
-enum AudioFileSourceType { none, allFileState, favouriteState }
+enum AudioFileSourceType { none, allFileState, favouriteState, libState }
 
 class PlayerStateController extends IController with LoudnessConfigListener {
   ValueNotifier<AudioFile?> get current => _audioHandler.currentNotifier;

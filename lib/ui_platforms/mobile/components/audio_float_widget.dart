@@ -1,7 +1,7 @@
 import 'package:dart_core_extensions/dart_core_extensions.dart';
 import 'package:flutter/material.dart';
 import 'package:t_widgets/t_widgets.dart';
-import 'package:than_sound/ui_platforms/ui/audio/thumbnail.dart';
+import 'package:than_sound/ui_platforms/mobile/components/audio_thumbnail.dart';
 import 'package:than_sound/core/controllers/interfaces/i_controller.dart';
 import 'package:than_sound/core/controllers/player/player_state_controller.dart';
 import 'package:than_sound/core/models/audio_file.dart';
@@ -12,25 +12,41 @@ class AudioFloatWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final col = context.colorScheme;
     final con = ControllerManager.read<PlayerStateController>();
-    return InkWell(
+    return GestureDetector(
       onTap: () => goContent(context),
       onLongPress: () => showCloseDialog(context),
       onSecondaryTap: () => showCloseDialog(context),
-      child: ValueListenableBuilder(
-        valueListenable: con.current,
-        builder: (context, current, child) {
-          if (current == null || !con.showFloatWidget.value) {
-            return SizedBox.shrink();
-          }
+      child: ClipRRect(
+        child: BackdropFilter(
+          filter: .blur(sigmaX: 10, sigmaY: 10),
+          child: Container(
+            padding: .all(8),
+            decoration: BoxDecoration(
+              color: col.surfaceContainerHighest.withValues(alpha: .45),
+              borderRadius: .only(
+                topLeft: .circular(15),
+                topRight: .circular(15),
+              ),
+            ),
+            child: ValueListenableBuilder(
+              valueListenable: con.current,
+              builder: (context, current, child) {
+                if (current == null || !con.showFloatWidget.value) {
+                  return SizedBox.shrink();
+                }
 
-          return StreamBuilder(
-            stream: con.stream.playing,
-            builder: (context, asyncSnapshot) {
-              return contentWidget(context, current, con);
-            },
-          );
-        },
+                return StreamBuilder(
+                  stream: con.stream.playing,
+                  builder: (context, asyncSnapshot) {
+                    return contentWidget(context, current, con);
+                  },
+                );
+              },
+            ),
+          ),
+        ),
       ),
     );
   }
@@ -41,55 +57,46 @@ class AudioFloatWidget extends StatelessWidget {
     PlayerStateController con,
   ) {
     final col = ctx.colorScheme;
-
-    return Container(
-      decoration: BoxDecoration(
-        color: col.surfaceContainerHighest.withValues(alpha: .3),
-        // color: Colors.transparent,
-        borderRadius: .circular(4),
-      ),
-      child: ClipRRect(
-        child: BackdropFilter(
-          filter: .blur(sigmaX: 10, sigmaY: 10),
-          child: Padding(
-            padding: const EdgeInsets.all(4.0),
-            child: Row(
-              spacing: 3,
-              children: [
-                SizedBox(
-                  width: 50,
-                  height: 50,
-                  child: Thumbnail(file: current),
-                ),
-                progressWidget(ctx, con, current),
-                IconButton(
-                  color: col.primary.withValues(alpha: .80),
-                  onPressed: () {
-                    con.prev();
-                  },
-                  icon: Icon(Icons.skip_previous),
-                ),
-                IconButton(
-                  onPressed: () {
-                    con.toggle();
-                  },
-                  icon: Icon(
-                    color: col.primary,
-                    con.state.playing ? Icons.pause : Icons.play_arrow,
-                  ),
-                ),
-                IconButton(
-                  color: col.primary.withValues(alpha: .80),
-                  onPressed: () {
-                    con.next();
-                  },
-                  icon: Icon(Icons.skip_next),
-                ),
-              ],
+    return Row(
+      spacing: 3,
+      children: [
+        SizedBox(width: 50, height: 50, child: AudioThumbnail(file: current)),
+        progressWidget(ctx, con, current),
+        IconButton(
+          color: col.primary.withValues(alpha: .80),
+          onPressed: () {
+            con.prev();
+          },
+          icon: Icon(Icons.skip_previous),
+        ),
+        Container(
+          decoration: BoxDecoration(
+            boxShadow: [
+              .new(
+                color: col.primary.withValues(alpha: .35),
+                blurRadius: 30,
+                spreadRadius: 0,
+              ),
+            ],
+          ),
+          child: IconButton(
+            onPressed: () {
+              con.toggle();
+            },
+            icon: Icon(
+              color: col.primary,
+              con.state.playing ? Icons.pause : Icons.play_arrow,
             ),
           ),
         ),
-      ),
+        IconButton(
+          color: col.primary.withValues(alpha: .80),
+          onPressed: () {
+            con.next();
+          },
+          icon: Icon(Icons.skip_next),
+        ),
+      ],
     );
   }
 
@@ -105,6 +112,7 @@ class AudioFloatWidget extends StatelessWidget {
         builder: (context, asyncSnapshot) {
           return Column(
             spacing: 2,
+            crossAxisAlignment: .start,
             children: [
               Text(
                 current.autoTitle,
@@ -117,8 +125,8 @@ class AudioFloatWidget extends StatelessWidget {
                 ),
               ),
               LinearProgressIndicator(
-                backgroundColor: col.surfaceContainerHighest,
-                color: col.primary,
+                backgroundColor: col.primary.withValues(alpha: .45),
+                color: col.onPrimary,
                 value:
                     con.state.position.inSeconds / con.state.duration.inSeconds,
               ),
