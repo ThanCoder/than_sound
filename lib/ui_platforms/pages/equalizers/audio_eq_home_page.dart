@@ -29,9 +29,17 @@ class _AudioEqHomePageState extends State<AudioEqHomePage> {
           ListTile(
             tileColor: col.surfaceContainer,
             shape: RoundedRectangleBorder(borderRadius: .circular(15)),
-            leading: Icon(
-              Icons.equalizer_outlined,
-              color: col.primaryContainer,
+            leading: Container(
+              padding: .all(5),
+              decoration: BoxDecoration(
+                color: col.primaryContainer,
+                borderRadius: .circular(10),
+                boxShadow: [.new(color: col.primary, blurRadius: 12)],
+              ),
+              child: Icon(
+                Icons.equalizer_outlined,
+                color: col.onPrimaryContainer,
+              ),
             ),
             title: Text(
               'Bass',

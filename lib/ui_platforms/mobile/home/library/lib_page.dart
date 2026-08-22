@@ -5,7 +5,7 @@ import 'package:than_sound/core/controllers/interfaces/i_controller.dart';
 import 'package:than_sound/core/models/audio_file.dart';
 import 'package:than_sound/ui_platforms/components/favourite/favourite_count_view.dart';
 import 'package:than_sound/ui_platforms/mobile/components/audio_thumbnail.dart';
-import 'package:than_sound/ui_platforms/mobile/home/library/audio_grop_page.dart';
+import 'package:than_sound/ui_platforms/mobile/home/library/audio_group_page.dart';
 import 'package:than_sound/ui_platforms/mobile/home/library/lib_tag_type.dart';
 import 'package:than_sound/ui_platforms/mobile/home/library/tag_header.dart';
 
@@ -59,15 +59,21 @@ class _LibPageState extends State<LibPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: context.colorScheme.surface,
-      appBar: AppBar(
-        backgroundColor: context.colorScheme.surfaceContainer,
-        foregroundColor: context.colorScheme.onSurfaceVariant,
-        title: Text("Library"),
-      ),
+      // appBar: AppBar(
+      //   backgroundColor: context.colorScheme.surfaceContainer,
+      //   foregroundColor: context.colorScheme.onSurfaceVariant,
+      //   title: Text("Library"),
+      // ),
       body: Padding(
         padding: const EdgeInsets.all(4),
         child: CustomScrollView(
           slivers: [
+            SliverAppBar(
+              backgroundColor: context.colorScheme.surfaceContainer,
+              foregroundColor: context.colorScheme.onSurfaceVariant,
+              title: Text("Library"),
+            ),
+            SliverToBoxAdapter(child: SizedBox(height: 10)),
             SliverGrid.list(
               gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
                 maxCrossAxisExtent: 250,
@@ -117,7 +123,7 @@ class _LibPageState extends State<LibPage> {
     return GestureDetector(
       onTap: () {
         context.pushMaterialPageRoute(
-          builder: (mainCtx) => AudioGropPage(group: group),
+          builder: (mainCtx) => AudioGroupPage(group: group),
         );
       },
       child: ClipRRect(

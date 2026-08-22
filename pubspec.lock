@@ -2,7 +2,7 @@
 # See https://dart.dev/tools/pub/glossary#lockfile
 packages:
   android_libcpp_shared:
-    dependency: "direct main"
+    dependency: transitive
     description:
       name: android_libcpp_shared
       sha256: eefa60d36972d1b12f566ff94431a97f2666a6c28bd6fa6184e81f88968708e5

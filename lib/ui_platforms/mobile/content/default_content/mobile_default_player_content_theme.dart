@@ -89,7 +89,12 @@ class _DefaultPlayerViewState extends State<_DefaultPlayerView> {
             ),
           ),
         ),
-        // BackdropFilter(filter: .blur(sigmaX: 25, sigmaY: 25)),
+        // ClipRect(
+        //   child: BackdropFilter(
+        //     filter: .blur(sigmaX: 1, sigmaY: 1),
+        //     child: const SizedBox.expand(),
+        //   ),
+        // ),
       ],
     );
   }

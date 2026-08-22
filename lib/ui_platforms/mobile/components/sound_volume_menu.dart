@@ -36,7 +36,7 @@ class _SoundVolumeMenuState extends State<SoundVolumeMenu> {
             builder: (context, asyncSnapshot) {
               return _VolumeWidget(
                 value: py.state.volumeGain,
-                max: 100,
+                max: 30,
                 onChanged: py.setVolumeGain,
                 icon: Icon(Icons.volume_up_rounded),
                 title: 'Gain',
@@ -115,8 +115,8 @@ class _VolumeWidget extends StatelessWidget {
               mainAxisAlignment: .spaceBetween,
               children: [
                 Text('${min.toInt()}%'),
-                Text(value.toStringAsFixed(1)),
-                Text('${max.toInt()}%'),
+                Text('${((value / max) * 100).toStringAsFixed(0)}%'),
+                Text('100%'),
               ],
             ),
           ),

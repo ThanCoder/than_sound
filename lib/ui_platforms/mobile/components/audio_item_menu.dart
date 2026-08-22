@@ -5,6 +5,7 @@ import 'package:t_widgets/t_widgets.dart';
 import 'package:than_sound/core/controllers/all_audio/all_file_state_controller.dart';
 import 'package:than_sound/core/controllers/interfaces/i_controller.dart';
 import 'package:than_sound/core/models/audio_file.dart';
+import 'package:than_sound/ui_platforms/components/dialog/confirm_alert_dialog.dart';
 import 'package:than_sound/ui_platforms/mobile/components/audio_content_theme_menu.dart';
 import 'package:than_sound/ui_platforms/pages/art_cover_manager_page.dart';
 import 'package:than_sound/ui_platforms/pages/equalizers/audio_eq_home_page.dart';
@@ -31,7 +32,32 @@ class _AudioItemMenuState extends State<AudioItemMenu> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
+    final col = theme.colorScheme;
+
+    void deleteConfirm() async {
+      // showTConfirmDialog(
+      //   context,
+      //   contentText: 'Are You Sure?\nသေချာပြီလား?\n${widget.file.autoTitle}',
+      //   submitText: 'Delete Forever',
+      //   onSubmit: () {
+      //     ControllerManager.read<AllFileStateController>().deleteAudioFile(
+      //       widget.file,
+      //     );
+      //   },
+      // );
+      final confirmed = await showConfirmDialog(
+        context,
+        'Want To Delete?\n${widget.file.autoTitle}',
+        confirmColor: col.error,
+        confirmForegroundColor: col.onError,
+        closeText: 'No!',
+        confirmText: 'Delete Forever!',
+      );
+      if (!confirmed) return;
+      ControllerManager.read<AllFileStateController>().deleteAudioFile(
+        widget.file,
+      );
+    }
 
     return ConstrainedBox(
       constraints: const BoxConstraints(minHeight: 130),
@@ -66,7 +92,7 @@ class _AudioItemMenuState extends State<AudioItemMenu> {
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: theme.textTheme.bodySmall?.copyWith(
-                          color: colorScheme.onSurfaceVariant,
+                          color: col.onSurfaceVariant,
                         ),
                       ),
                     ],
@@ -80,7 +106,7 @@ class _AudioItemMenuState extends State<AudioItemMenu> {
             height: 1,
             indent: 20,
             endIndent: 20,
-            color: colorScheme.outlineVariant.withValues(alpha: .5),
+            color: col.outlineVariant.withValues(alpha: .5),
           ),
 
           const SizedBox(height: 6),
@@ -179,7 +205,7 @@ class _AudioItemMenuState extends State<AudioItemMenu> {
             height: 1,
             indent: 20,
             endIndent: 20,
-            color: colorScheme.outlineVariant.withValues(alpha: .5),
+            color: col.outlineVariant.withValues(alpha: .5),
           ),
 
           const SizedBox(height: 4),
@@ -200,19 +226,6 @@ class _AudioItemMenuState extends State<AudioItemMenu> {
           const SizedBox(height: 8),
         ],
       ),
-    );
-  }
-
-  void deleteConfirm() {
-    showTConfirmDialog(
-      context,
-      contentText: 'Are You Sure?\nသေချာပြီလား?\n${widget.file.autoTitle}',
-      submitText: 'Delete Forever',
-      onSubmit: () {
-        ControllerManager.read<AllFileStateController>().deleteAudioFile(
-          widget.file,
-        );
-      },
     );
   }
 }

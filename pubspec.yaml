@@ -25,7 +25,6 @@ dependencies:
   lottie: ^3.5.1
   than_audiotag:
     path: /home/thancoder/projects/dart_plugins/than_audiotag
-  android_libcpp_shared: ^0.2.0
   audio_session: ^0.2.4
   audio_service: ^0.18.18
   waveform_visualizer: ^1.0.0

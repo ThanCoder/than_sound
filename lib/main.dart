@@ -4,6 +4,7 @@ import 'package:audio_service/audio_service.dart';
 import 'package:audio_session/audio_session.dart';
 import 'package:cfb_store/cfb_store.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:than_pkg_linux/than_pkg_linux.dart';
 import 'package:than_sound/const_keys.dart';
 import 'package:than_sound/core/controllers/all_audio/all_file_state_controller.dart';
@@ -18,6 +19,7 @@ import 'package:waveform_visualizer/waveform_visualizer.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  // debugRepaintRainbowEnabled = true;
 
   // SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
 

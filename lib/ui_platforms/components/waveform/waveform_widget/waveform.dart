@@ -124,7 +124,7 @@ class _WaveformState extends State<Waveform> {
             waveColor: Theme.of(context).colorScheme.primary,
             backgroundColor: Colors.transparent,
             waveformStyle: currentStyle,
-            showGradient: true,
+            // showGradient: true,
           ),
         );
       },

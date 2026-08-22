@@ -18,6 +18,18 @@ class _AudioBassEqPageState extends State<AudioBassEqPage> {
   final py =
       ControllerManager.read<PlayerStateController>().audioHandler.player;
 
+  @override
+  void initState() {
+    final bass = py.state.audioEffects.bass;
+    if (bass != null) {
+      enable = bass.enabled;
+      gain = bass.g;
+      frequency = bass.f;
+      setState(() {});
+    }
+    super.initState();
+  }
+
   double gain = 6;
   double frequency = 100;
   bool enable = false;
