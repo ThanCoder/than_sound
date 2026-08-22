@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:than_audiotag/than_audiotag.dart';
@@ -21,6 +23,10 @@ class AudioThumbnail extends StatelessWidget {
         // }
         final data = snapshot.data;
         if (data != null && data.isOk) {
+          final f = File(file.cacheCoverPath);
+          if (!f.existsSync()) {
+            f.writeAsBytes(data.unwrap());
+          }
           return Image.memory(
             data.unwrap(),
             fit: .cover,

@@ -317,7 +317,7 @@ class _ArtCoverManagerState extends State<ArtCoverManagerPage> {
 
       final outpath = downloadPath.join(coverFile.name);
 
-      await File(outpath).writeAsBytes(bytes!);
+      await File(outpath).writeAsBytes(bytes);
 
       if (!mounted) return;
 
