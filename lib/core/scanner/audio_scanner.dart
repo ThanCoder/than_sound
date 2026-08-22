@@ -64,6 +64,8 @@ class AudioScanner {
           }
           final id = FileUtils.getFileIdSync(entry.path);
 
+          
+
           final meta = AudioMeta(entry.path);
           final cacheCoverPath = PathBuf(cachePath).join('$id.png').path;
           meta.openMeta(cacheCoverPath);

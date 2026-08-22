@@ -1,5 +1,5 @@
 import 'dart:io';
-
+import 'dart:typed_data';
 import 'package:dart_core_extensions/dart_core_extensions.dart';
 import 'package:desktop_drop/desktop_drop.dart';
 import 'package:file_type_plus/file_type_plus.dart';
@@ -9,6 +9,7 @@ import 'package:t_widgets/t_widgets.dart';
 import 'package:than_audiotag/than_audiotag.dart';
 import 'package:than_sound/core/models/audio_file.dart';
 import 'package:than_sound/core/utils/app_utils.dart';
+import 'package:than_sound/ui_platforms/components/audio_thumbnail.dart';
 import 'package:than_sound/ui_platforms/components/dialog/confirm_alert_dialog.dart';
 import 'package:than_sound/ui_platforms/components/dialog/error_alert_dialog.dart';
 import 'package:than_sound/ui_platforms/components/dialog/snack_alert.dart';
@@ -54,22 +55,32 @@ class _ArtCoverManagerState extends State<ArtCoverManagerPage> {
         body: SafeArea(
           child: SingleChildScrollView(
             padding: const EdgeInsets.fromLTRB(20, 20, 20, 30),
-            child: Column(
-              children: [
-                _title(),
+            child: FutureBuilder(
+              future: TagPictureWorker.instance.getImageBytes(widget.file.path),
+              builder: (context, snapshot) {
+                final data = snapshot.data;
+                final exists = data != null && data.isOk;
+                Uint8List? bytes;
+                if (exists) {
+                  bytes = data.unwrap();
+                }
+                return Column(
+                  children: [
+                    _title(),
 
-                const SizedBox(height: 24),
+                    const SizedBox(height: 24),
+                    coverImage(),
 
-                coverImage(),
+                    const SizedBox(height: 24),
 
-                const SizedBox(height: 24),
+                    _info(),
 
-                _info(),
+                    const SizedBox(height: 28),
 
-                const SizedBox(height: 28),
-
-                buttonWidget,
-              ],
+                    buttonWidget(exists, bytes),
+                  ],
+                );
+              },
             ),
           ),
         ),
@@ -130,60 +141,8 @@ class _ArtCoverManagerState extends State<ArtCoverManagerPage> {
         ),
         child: ClipRRect(
           borderRadius: BorderRadius.circular(19),
-          child: isLoading
-              ? _loadingCover()
-              : Image.file(
-                  coverFile,
-                  fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) {
-                    return _emptyCover();
-                  },
-                ),
+          child: AudioThumbnail(file: widget.file),
         ),
-      ),
-    );
-  }
-
-  Widget _loadingCover() {
-    final colors = Theme.of(context).colorScheme;
-
-    return Container(
-      color: colors.surfaceContainerHighest,
-      child: Center(child: CircularProgressIndicator.adaptive()),
-    );
-  }
-
-  Widget _emptyCover() {
-    final colors = Theme.of(context).colorScheme;
-
-    return Container(
-      color: colors.surfaceContainerHighest,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(
-            Icons.image_not_supported_outlined,
-            size: 64,
-            color: colors.onSurfaceVariant,
-          ),
-
-          const SizedBox(height: 10),
-
-          Text(
-            'No Art Cover',
-            style: TextStyle(
-              color: colors.onSurfaceVariant,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-
-          const SizedBox(height: 4),
-
-          Text(
-            'Tap to choose an image',
-            style: TextStyle(fontSize: 11, color: colors.onSurfaceVariant),
-          ),
-        ],
       ),
     );
   }
@@ -216,9 +175,7 @@ class _ArtCoverManagerState extends State<ArtCoverManagerPage> {
     );
   }
 
-  Widget get buttonWidget {
-    final exists = coverFile.existsSync();
-
+  Widget buttonWidget(bool exists, Uint8List? bytes) {
     return Wrap(
       alignment: WrapAlignment.center,
       spacing: 10,
@@ -237,7 +194,7 @@ class _ArtCoverManagerState extends State<ArtCoverManagerPage> {
             icon: Icons.file_download_outlined,
             label: 'Save',
             color: Theme.of(context).colorScheme.primary,
-            onPressed: isLoading ? null : saveImage,
+            onPressed: isLoading ? null : () => saveImage(bytes),
           ),
 
         _actionButton(
@@ -278,8 +235,6 @@ class _ArtCoverManagerState extends State<ArtCoverManagerPage> {
         isLoading = true;
       });
 
-      bool oldImage = coverFile.existsSync();
-
       final picker = ImagePicker();
       final res = await picker.pickImage(source: ImageSource.gallery);
 
@@ -294,16 +249,38 @@ class _ArtCoverManagerState extends State<ArtCoverManagerPage> {
 
       final imageData = await res.readAsBytes();
 
-      final tag = ThanAudioTag.open(widget.file.path);
-      tag.writeCover(imageData);
-      tag.close();
+      final t = TTag();
+      final tRes = t.openFile(widget.file.path);
 
-      await coverFile.writeAsBytes(imageData, flush: true);
-
-      if (oldImage) {
-        AppUtils.clearImageCache();
-        await Future.delayed(const Duration(seconds: 1));
+      if (tRes.isErr) {
+        if (!mounted) return;
+        setState(() {
+          isLoading = false;
+        });
+        showErrorDialog(context, tRes.unwrapError().toString());
+        return;
       }
+
+      final picRes = t.writePictureData(
+        .new(
+          description: '',
+          mimeType: 'image/jpeg',
+          pictureType: 'cover',
+          data: imageData,
+        ),
+      );
+      if (picRes.isErr) {
+        t.close();
+        if (!mounted) return;
+        setState(() {
+          isLoading = false;
+        });
+        showErrorDialog(context, picRes.unwrapError());
+        return;
+      }
+      t.close();
+      AppUtils.clearImageCache();
+      await Future.delayed(const Duration(seconds: 1));
 
       if (!mounted) return;
 
@@ -323,23 +300,24 @@ class _ArtCoverManagerState extends State<ArtCoverManagerPage> {
     }
   }
 
-  void saveImage() async {
+  void saveImage(Uint8List? bytes) async {
     try {
+      if (bytes == null) {
+        showErrorDialog(context, 'Uint8List? bytes is null!');
+        return;
+      }
       final downloadPath = await AppUtils.getPlatformDownloadPath();
 
       if (downloadPath == null) {
         if (!mounted) return;
 
-        showTMessageDialogError(
-          context,
-          'AppUtils.getPlatformDownloadPath error',
-        );
+        showErrorDialog(context, 'AppUtils.getPlatformDownloadPath error');
         return;
       }
 
       final outpath = downloadPath.join(coverFile.name);
 
-      await coverFile.copy(outpath);
+      await File(outpath).writeAsBytes(bytes!);
 
       if (!mounted) return;
 
@@ -365,13 +343,27 @@ class _ArtCoverManagerState extends State<ArtCoverManagerPage> {
       setState(() {
         isLoading = true;
       });
+      final t = TTag();
+      final tRes = t.openFile(widget.file.path);
 
-      final tag = ThanAudioTag.open(widget.file.path);
-
-      tag.removeCover(save: true);
-      tag.close();
-
-      await coverFile.deleteSafe();
+      if (tRes.isErr) {
+        if (!mounted) return;
+        setState(() {
+          isLoading = false;
+        });
+        showErrorDialog(context, tRes.unwrapError().toString());
+        return;
+      }
+      final picRes = t.removePicture();
+      if (picRes.isErr) {
+        t.close();
+        if (!mounted) return;
+        setState(() {
+          isLoading = false;
+        });
+        showErrorDialog(context, tRes.unwrapError().toString());
+        return;
+      }
 
       AppUtils.clearImageCache();
 

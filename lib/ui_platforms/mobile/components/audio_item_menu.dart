@@ -35,16 +35,6 @@ class _AudioItemMenuState extends State<AudioItemMenu> {
     final col = theme.colorScheme;
 
     void deleteConfirm() async {
-      // showTConfirmDialog(
-      //   context,
-      //   contentText: 'Are You Sure?\nသေချာပြီလား?\n${widget.file.autoTitle}',
-      //   submitText: 'Delete Forever',
-      //   onSubmit: () {
-      //     ControllerManager.read<AllFileStateController>().deleteAudioFile(
-      //       widget.file,
-      //     );
-      //   },
-      // );
       final confirmed = await showConfirmDialog(
         context,
         'Want To Delete?\n${widget.file.autoTitle}',
@@ -59,173 +49,169 @@ class _AudioItemMenuState extends State<AudioItemMenu> {
       );
     }
 
-    return ConstrainedBox(
-      constraints: const BoxConstraints(minHeight: 130),
-      child: TScrollableColumn(
-        children: [
-          // Header
-          Padding(
-            padding: const EdgeInsets.fromLTRB(20, 12, 20, 16),
-            child: Row(
-              children: [
-                _Cover(path: widget.file.cacheCoverPath),
+    return TScrollableColumn(
+      children: [
+        // Header
+        Padding(
+          padding: const EdgeInsets.fromLTRB(20, 12, 20, 16),
+          child: Row(
+            children: [
+              _Cover(path: widget.file.cacheCoverPath),
 
-                const SizedBox(width: 14),
+              const SizedBox(width: 14),
 
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        widget.file.autoTitle,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        style: theme.textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.w700,
-                        ),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      widget.file.autoTitle,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: theme.textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.w700,
                       ),
+                    ),
 
-                      const SizedBox(height: 4),
+                    const SizedBox(height: 4),
 
-                      Text(
-                        widget.file.name,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: theme.textTheme.bodySmall?.copyWith(
-                          color: col.onSurfaceVariant,
-                        ),
+                    Text(
+                      widget.file.name,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: col.onSurfaceVariant,
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
+        ),
 
-          Divider(
-            height: 1,
-            indent: 20,
-            endIndent: 20,
-            color: col.outlineVariant.withValues(alpha: .5),
-          ),
+        Divider(
+          height: 1,
+          indent: 20,
+          endIndent: 20,
+          color: col.outlineVariant.withValues(alpha: .5),
+        ),
 
-          const SizedBox(height: 6),
+        const SizedBox(height: 6),
 
-          // Audio Info
+        // Audio Info
+        _MenuTile(
+          icon: Icons.audiotrack_rounded,
+          title: 'Audio Info',
+          subtitle: 'View audio metadata and file information',
+          onTap: () {
+            context.pop();
+
+            showModalBottomSheet(
+              context: context,
+              isScrollControlled: true,
+              useSafeArea: true,
+              showDragHandle: true,
+              builder: (context) {
+                return AudioInfoMenu(file: widget.file);
+              },
+            );
+          },
+        ),
+        // Audio edit
+        _MenuTile(
+          icon: Icons.edit_document,
+          title: 'Audio Info Editor',
+          subtitle: 'edit audio metadata and file information',
+          onTap: () {
+            context.pop();
+
+            context.pushMaterialPageRoute(
+              builder: (mainCtx) => AudioMedatataEditorPage(file: widget.file),
+            );
+          },
+        ),
+
+        // Art Cover
+        _MenuTile(
+          icon: Icons.art_track_rounded,
+          title: 'Manage Art Cover',
+          subtitle: 'Change or remove album artwork',
+          onTap: () {
+            context.pop();
+
+            context.pushMaterialPageRoute(
+              builder: (mainCtx) {
+                return ArtCoverManagerPage(file: widget.file);
+              },
+            );
+          },
+        ),
+
+        const SizedBox(height: 4),
+
+        // Audio Equalizer
+        _MenuTile(
+          icon: Icons.equalizer,
+          title: 'Audio Equalizer',
+          subtitle: 'Change or Modify audio',
+          onTap: () {
+            context.pop();
+
+            context.pushMaterialPageRoute(
+              builder: (mainCtx) {
+                return AudioEqHomePage();
+              },
+            );
+          },
+        ),
+
+        const SizedBox(height: 4),
+
+        // Content Animation
+        if (widget.showContentAnimation)
           _MenuTile(
-            icon: Icons.audiotrack_rounded,
-            title: 'Audio Info',
-            subtitle: 'View audio metadata and file information',
+            icon: Icons.animation,
+            title: 'Content Animation',
+            subtitle: 'Change or remove Animation',
             onTap: () {
               context.pop();
-
               showModalBottomSheet(
                 context: context,
                 isScrollControlled: true,
                 useSafeArea: true,
-                showDragHandle: false,
-                builder: (context) {
-                  return AudioInfoMenu(file: widget.file);
-                },
+                showDragHandle: true,
+                builder: (context) => AudioContentThemeMenu(),
               );
             },
           ),
-          // Audio Info
+
+        const SizedBox(height: 4),
+
+        Divider(
+          height: 1,
+          indent: 20,
+          endIndent: 20,
+          color: col.outlineVariant.withValues(alpha: .5),
+        ),
+
+        const SizedBox(height: 4),
+
+        // Delete
+        if (widget.showDeleteAction)
           _MenuTile(
-            icon: Icons.edit_document,
-            title: 'Audio Info Editor',
-            subtitle: 'edit audio metadata and file information',
+            icon: Icons.delete_outline_rounded,
+            title: 'Delete',
+            subtitle: 'Permanently delete this audio file',
+            destructive: true,
             onTap: () {
               context.pop();
-
-              context.pushMaterialPageRoute(
-                builder: (mainCtx) =>
-                    AudioMedatataEditorPage(file: widget.file),
-              );
+              deleteConfirm();
             },
           ),
 
-          // Art Cover
-          _MenuTile(
-            icon: Icons.art_track_rounded,
-            title: 'Manage Art Cover',
-            subtitle: 'Change or remove album artwork',
-            onTap: () {
-              context.pop();
-
-              context.pushMaterialPageRoute(
-                builder: (mainCtx) {
-                  return ArtCoverManagerPage(file: widget.file);
-                },
-              );
-            },
-          ),
-
-          const SizedBox(height: 4),
-
-          // Audio Equalizer
-          _MenuTile(
-            icon: Icons.equalizer,
-            title: 'Audio Equalizer',
-            subtitle: 'Change or Modify audio',
-            onTap: () {
-              context.pop();
-
-              context.pushMaterialPageRoute(
-                builder: (mainCtx) {
-                  return AudioEqHomePage();
-                },
-              );
-            },
-          ),
-
-          const SizedBox(height: 4),
-
-          // Content Animation
-          if (widget.showContentAnimation)
-            _MenuTile(
-              icon: Icons.animation,
-              title: 'Content Animation',
-              subtitle: 'Change or remove Animation',
-              onTap: () {
-                context.pop();
-                showModalBottomSheet(
-                  context: context,
-                  isScrollControlled: true,
-                  useSafeArea: true,
-                  showDragHandle: true,
-                  builder: (context) => AudioContentThemeMenu(),
-                );
-              },
-            ),
-
-          const SizedBox(height: 4),
-
-          Divider(
-            height: 1,
-            indent: 20,
-            endIndent: 20,
-            color: col.outlineVariant.withValues(alpha: .5),
-          ),
-
-          const SizedBox(height: 4),
-
-          // Delete
-          if (widget.showDeleteAction)
-            _MenuTile(
-              icon: Icons.delete_outline_rounded,
-              title: 'Delete',
-              subtitle: 'Permanently delete this audio file',
-              destructive: true,
-              onTap: () {
-                context.pop();
-                deleteConfirm();
-              },
-            ),
-
-          const SizedBox(height: 8),
-        ],
-      ),
+        const SizedBox(height: 8),
+      ],
     );
   }
 }

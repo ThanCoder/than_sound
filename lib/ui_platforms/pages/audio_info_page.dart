@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:than_sound/core/models/audio_file.dart';
+import 'package:than_sound/ui_platforms/components/audio_info_menu.dart';
 
 class AudioInfoPage extends StatelessWidget {
   const AudioInfoPage({super.key, required this.file});
@@ -11,7 +12,7 @@ class AudioInfoPage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(title: Text('Info: ${file.autoTitle}')),
-      body: SingleChildScrollView(child: Column(children: [])),
+      body: AudioInfoMenu(file: file),
     );
   }
 }

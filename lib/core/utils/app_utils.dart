@@ -16,7 +16,7 @@ class AppUtils {
     } else if (Platform.isLinux) {
       final path = await ThanPkgLinux.getInstance.pathHandler
           .getDownloadsDirectory();
-      if (path != null) return null;
+      if (path == null) return null;
       return path;
     }
     return null;

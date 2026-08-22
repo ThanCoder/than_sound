@@ -163,39 +163,46 @@ class _AudioMedatataEditorPageState extends State<AudioMedatataEditorPage> {
     );
   }
 
-  TextField _year() {
-    return TextField(
-      controller: yearController,
-      readOnly: true,
-      style: TextStyle(fontSize: 14, color: col.onSurface),
-      decoration: InputDecoration(
-        label: Text('Year'),
-        border: const OutlineInputBorder(),
-        suffixIcon: const Icon(Icons.calendar_today),
+  Widget _year() {
+    return Container(
+      padding: .symmetric(vertical: 8, horizontal: 4),
+      decoration: BoxDecoration(
+        color: col.surfaceContainer,
+        borderRadius: .circular(15),
       ),
-      onTap: () async {
-        var current = DateTime.now();
-        if (yearController.text.isNotEmpty) {
-          final work = yearController.text.parseYyyyMMdd();
-          if (work != null) {
-            current = work;
+      child: TextField(
+        controller: yearController,
+        readOnly: true,
+        style: TextStyle(fontSize: 14, color: col.onSurface),
+        decoration: InputDecoration(
+          label: Text('Year'),
+          border: const OutlineInputBorder(),
+          suffixIcon: const Icon(Icons.calendar_today),
+        ),
+        onTap: () async {
+          var current = DateTime.now();
+          if (yearController.text.isNotEmpty) {
+            final work = yearController.text.parseYyyyMMdd();
+            if (work != null) {
+              current = work;
+            }
           }
-        }
 
-        final newD = await showDatePicker(
-          context: context,
-          firstDate: DateTime(2000),
-          lastDate: DateTime(2100),
-          initialDate: current,
-        );
-        if (newD == null) return;
-        yearController.text = newD.yyyyMMdd();
-        if (!changed) {
-          setState(() {
-            changed = true;
-          });
-        }
-      },
+          final newD = await showDatePicker(
+            context: context,
+            firstDate: DateTime(2000),
+            lastDate: DateTime(2100),
+            initialDate: current,
+          );
+          if (newD == null) return;
+          yearController.text = newD.yyyyMMdd();
+          if (!changed) {
+            setState(() {
+              changed = true;
+            });
+          }
+        },
+      ),
     );
   }
 

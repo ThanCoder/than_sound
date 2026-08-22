@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:dart_core_extensions/dart_core_extensions.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:than_audiotag/than_audiotag.dart';
@@ -49,29 +47,36 @@ class AudioMeta {
 
   void openMeta(String cachePath) {
     try {
-      final file = ThanAudioTag.open(path);
-      title = file.tag.title;
-      album = file.tag.album;
-      artist = file.tag.artist;
-      comment = file.tag.comment;
-      genre = file.tag.genre;
-      track = file.tag.track;
-      year = file.tag.year;
-      duration = file.properties.durationAsDuration;
-      bitrate = file.properties.bitrate;
-      channels = file.properties.channels;
-      sampleRate = file.properties.sampleRate;
+      final file = TTag();
 
-      if (file.cover != null) {
-        coverMimeType = file.cover!.mimeType;
-        description = file.cover!.description;
-        pictureType = file.cover!.pictureType;
-        final cacheFile = File(cachePath);
-        if (!cacheFile.existsSync()) {
-          cacheFile.writeAsBytesSync(file.cover!.data);
-        }
+      final fRes = file.openFile(path);
+      if (fRes.isErr) {
+        return;
       }
+      final tagRes = file.tag;
+      if (tagRes.isErr) {
+        return;
+      }
+      final tag = tagRes.unwrap();
 
+      title = tag.title;
+      album = tag.album;
+      artist = tag.artist;
+      comment = tag.comment;
+      genre = tag.genre;
+      track = tag.track;
+      year = tag.year;
+      // prpos
+      final pRes = file.readProperties;
+      if (pRes.isErr) {
+        file.close();
+        return;
+      }
+      final props = pRes.unwrap();
+      duration = Duration(seconds: props.duration);
+      bitrate = props.bitrate;
+      channels = props.channels;
+      sampleRate = props.samplerate;
       file.close();
     } catch (e) {
       debugPrint('[Dev: AudioMeta:openMeta]: $e');
