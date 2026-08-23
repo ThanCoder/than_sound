@@ -3,7 +3,7 @@ import 'package:t_widgets/t_widgets.dart';
 import 'package:than_sound/core/controllers/all_audio/all_file_state_controller.dart';
 import 'package:than_sound/core/controllers/interfaces/i_controller.dart';
 import 'package:than_sound/core/models/audio_file.dart';
-import 'package:than_sound/ui_platforms/components/favourite/favourite_count_view.dart';
+import 'package:than_sound/ui_platforms/pages/favourite/favourite_count_view.dart';
 import 'package:than_sound/ui_platforms/components/audio_thumbnail.dart';
 import 'package:than_sound/ui_platforms/pages/library/audio_group_page.dart';
 import 'package:than_sound/ui_platforms/pages/library/lib_tag_type.dart';

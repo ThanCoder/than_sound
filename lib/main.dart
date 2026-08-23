@@ -13,7 +13,7 @@ import 'package:than_sound/core/controllers/player/player_state_controller.dart'
 import 'package:than_sound/core/utils/p_utils.dart';
 import 'package:than_sound/main_app.dart';
 import 'package:mpv_audio_kit/mpv_audio_kit.dart';
-import 'package:than_sound/ui_platforms/components/favourite/favourite_controller.dart';
+import 'package:than_sound/ui_platforms/pages/favourite/favourite_controller.dart';
 import 'package:than_sound/ui_platforms/pages/music_tracker/music_tracker_controller.dart';
 import 'package:waveform_visualizer/waveform_visualizer.dart';
 
@@ -38,9 +38,6 @@ void main() async {
   );
   await AllFileStateController.cacheStore.open(
     PUtils.instance.getCachePath('app.audio.cache.files.cfb'),
-  );
-  await FavouriteController.store.open(
-    PUtils.instance.getExternalConfigPath('app.audio.favourite.cfb'),
   );
 
   if (Platform.isLinux) {

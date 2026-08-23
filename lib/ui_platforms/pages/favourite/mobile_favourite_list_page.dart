@@ -4,7 +4,7 @@ import 'package:than_sound/core/controllers/interfaces/i_controller.dart';
 import 'package:than_sound/core/controllers/player/player_state_controller.dart';
 import 'package:than_sound/ui_platforms/mobile/components/audio_float_widget.dart';
 import 'package:than_sound/ui_platforms/mobile/components/audio_sliver_list.dart';
-import 'package:than_sound/ui_platforms/components/favourite/favourite_controller.dart';
+import 'package:than_sound/ui_platforms/pages/favourite/favourite_controller.dart';
 
 class MobileFavouriteListPage extends StatefulWidget {
   const MobileFavouriteListPage({super.key});
@@ -22,10 +22,7 @@ class _MobileFavouriteListPageState extends State<MobileFavouriteListPage> {
   }
 
   final controller = ScrollController();
-
-  Future<void> init({bool usedCache = true}) async {
-    // final con = ControllerManager.read<FavouriteController>();
-  }
+  final con = ControllerManager.read<FavouriteController>();
 
   @override
   Widget build(BuildContext context) {
@@ -42,12 +39,15 @@ class _MobileFavouriteListPageState extends State<MobileFavouriteListPage> {
       builder: (context, snapshot) {
         if (con.files.isEmpty) {
           return Center(
-            child: RefreshButton(text: Text('List Empty!'), onClicked: init),
+            child: RefreshButton(
+              text: Text('List Empty!'),
+              onClicked: con.load,
+            ),
           );
         }
         final pCon = ControllerManager.read<PlayerStateController>();
         return RefreshIndicator.adaptive(
-          onRefresh: () => init(usedCache: false),
+          onRefresh: con.load,
           child: Stack(
             children: [
               CustomScrollView(

@@ -46,8 +46,8 @@ class _PlayerPlaylistState extends State<PlayerPlaylist> {
         ),
 
         Positioned(
-          right: 5,
-          bottom: 5,
+          right: 15,
+          bottom: 50,
           child: ListGpsButton(onClicked: goListGps),
         ),
       ],

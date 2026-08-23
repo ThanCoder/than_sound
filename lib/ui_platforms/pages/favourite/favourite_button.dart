@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:than_sound/core/controllers/interfaces/i_controller.dart';
 import 'package:than_sound/core/models/audio_file.dart';
-import 'package:than_sound/ui_platforms/components/favourite/favourite_controller.dart';
+import 'package:than_sound/ui_platforms/pages/favourite/favourite_controller.dart';
 
 class FavouriteButton extends StatelessWidget {
   final AudioFile file;
@@ -18,7 +18,7 @@ class FavouriteButton extends StatelessWidget {
       child: MouseRegion(
         cursor: SystemMouseCursors.click,
         child: StreamBuilder(
-          stream: con.events,
+          stream: con.event.whereType<FavouriteControllerValueChanged>(),
           builder: (context, asyncSnapshot) {
             if (con.isExists(file)) {
               return Icon(Icons.favorite_outlined, size: size);

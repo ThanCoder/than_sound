@@ -65,95 +65,6 @@ class _MobileSearchPageState extends State<MobileSearchPage> {
     });
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: col.surface,
-      appBar: AppBar(title: Text('Search')),
-      body: CustomScrollView(
-        slivers: [
-          SliverToBoxAdapter(
-            child: !isSearch ? null : LinearProgressIndicator(),
-          ),
-          SliverToBoxAdapter(
-            child: SearchBar(
-              hintText: 'Search',
-              focusNode: focusNode,
-              controller: controller,
-              leading: Icon(Icons.search),
-              trailing: [
-                IconButton(
-                  onPressed: () {
-                    controller.text = '';
-                    result.clear();
-                    setState(() {
-                      showNotfoundResult = false;
-                    });
-                  },
-                  icon: Icon(Icons.clear_all_outlined),
-                ),
-              ],
-              onTapOutside: (event) {
-                focusNode.unfocus();
-                if (showNotfoundResult != false) {
-                  setState(() {
-                    showNotfoundResult = false;
-                  });
-                }
-              },
-              onChanged: onChanged,
-            ),
-          ),
-          if (result.isEmpty && showNotfoundResult)
-            SliverFillRemaining(
-              child: Center(
-                child: Container(
-                  height: 150,
-                  padding: .symmetric(vertical: 18, horizontal: 20),
-                  decoration: BoxDecoration(
-                    color: col.surfaceContainer,
-                    borderRadius: .circular(15),
-                  ),
-                  child: Column(
-                    mainAxisAlignment: .center,
-                    children: [
-                      Text(
-                        'Audio Not Found!',
-                        style: TextStyle(
-                          color: col.onSurface,
-                          fontWeight: .w700,
-                          fontSize: 18,
-                        ),
-                      ),
-                      SizedBox(height: 20),
-                      IconButton(
-                        style: IconButton.styleFrom(
-                          backgroundColor: col.surfaceContainer,
-                          foregroundColor: col.onSurface,
-                        ),
-                        onPressed: () {
-                          setState(() {
-                            showNotfoundResult = false;
-                          });
-                          focusNode.requestFocus();
-                        },
-                        icon: Icon(
-                          Icons.search_outlined,
-                          size: 36,
-                          color: col.primary,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          AudioSliverList(list: result, onClicked: openConfrmAndPlay),
-        ],
-      ),
-    );
-  }
-
   void openConfrmAndPlay(AudioFile file) async {
     final pCon = ControllerManager.read<PlayerStateController>();
     final current = pCon.current.value;
@@ -177,5 +88,97 @@ class _MobileSearchPageState extends State<MobileSearchPage> {
     );
     // print('item: $file');
     pCon.open(file);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: col.surface,
+      appBar: AppBar(title: Text('Search')),
+      body: CustomScrollView(
+        slivers: [
+          SliverToBoxAdapter(
+            child: !isSearch ? null : LinearProgressIndicator(),
+          ),
+          _searchbar(),
+          if (result.isEmpty && showNotfoundResult) _result(),
+          if (result.isEmpty && controller.text.isEmpty)
+            SliverFillRemaining(
+              child: Center(
+                child: Text(
+                  'Looking for a song?',
+                  style: TextStyle(
+                    fontWeight: .w700,
+                    fontSize: 18,
+                    color: col.onSurface,
+                  ),
+                ),
+              ),
+            ),
+          AudioSliverList(list: result, onClicked: openConfrmAndPlay),
+        ],
+      ),
+    );
+  }
+
+  SliverFillRemaining _result() {
+    return SliverFillRemaining(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        spacing: 8,
+        children: [
+          Icon(Icons.search_off),
+          SizedBox(height: 12),
+          Text(
+            'No songs found',
+            style: TextStyle(
+              fontWeight: .w600,
+              fontSize: 16,
+              color: col.onSurface,
+            ),
+          ),
+          Text(
+            'Try searching for something else',
+            style: TextStyle(
+              fontWeight: .w400,
+              fontSize: 14,
+              color: col.onSurfaceVariant,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  SliverToBoxAdapter _searchbar() {
+    return SliverToBoxAdapter(
+      child: SearchBar(
+        hintText: 'Search',
+        focusNode: focusNode,
+        controller: controller,
+        leading: Icon(Icons.search),
+        trailing: [
+          IconButton(
+            onPressed: () {
+              controller.text = '';
+              result.clear();
+              setState(() {
+                showNotfoundResult = false;
+              });
+            },
+            icon: Icon(Icons.clear_all_outlined),
+          ),
+        ],
+        onTapOutside: (event) {
+          focusNode.unfocus();
+          if (showNotfoundResult != false) {
+            setState(() {
+              showNotfoundResult = false;
+            });
+          }
+        },
+        onChanged: onChanged,
+      ),
+    );
   }
 }

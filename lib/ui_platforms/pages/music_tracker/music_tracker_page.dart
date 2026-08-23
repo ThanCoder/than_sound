@@ -82,65 +82,68 @@ class _MusicTrackerPageState extends State<MusicTrackerPage> {
 
     return Scaffold(
       appBar: AppBar(title: const Text('Listening Activity')),
-      body: CustomScrollView(
-        slivers: [
-          SliverPadding(
-            padding: const EdgeInsets.all(16),
-            sliver: SliverList.list(
-              children: [
-                // ===== SUMMARY =====
-                Text(
-                  'Your listening stats',
-                  style: Theme.of(context).textTheme.titleLarge,
-                ),
+      body: RefreshIndicator.adaptive(
+        onRefresh: con.load,
+        child: CustomScrollView(
+          slivers: [
+            SliverPadding(
+              padding: const EdgeInsets.all(16),
+              sliver: SliverList.list(
+                children: [
+                  // ===== SUMMARY =====
+                  Text(
+                    'Your listening stats',
+                    style: Theme.of(context).textTheme.titleLarge,
+                  ),
 
-                const SizedBox(height: 12),
+                  const SizedBox(height: 12),
 
-                _header(totalListening, totalPlays, totalCompleted),
+                  _header(totalListening, totalPlays, totalCompleted),
 
-                const SizedBox(height: 32),
+                  const SizedBox(height: 32),
 
-                // ===== MOST PLAYED =====
-                _SectionTitle(
-                  icon: Icons.local_fire_department_outlined,
-                  title: 'Most Played',
-                ),
+                  // ===== MOST PLAYED =====
+                  _SectionTitle(
+                    icon: Icons.local_fire_department_outlined,
+                    title: 'Most Played',
+                  ),
 
-                const SizedBox(height: 12),
+                  const SizedBox(height: 12),
 
-                ...mostPlayed
-                    .take(5)
-                    .map(
-                      (stat) => _SongStatTile(
-                        rank: mostPlayed.indexOf(stat) + 1,
-                        stat: stat,
-                        trailing: '${stat.playCount} plays',
-                        audio: con.filesMap[stat.trackId]!,
-                        onTap: onClicked,
+                  ...mostPlayed
+                      .take(5)
+                      .map(
+                        (stat) => _SongStatTile(
+                          rank: mostPlayed.indexOf(stat) + 1,
+                          stat: stat,
+                          trailing: '${stat.playCount} plays',
+                          audio: con.filesMap[stat.trackId]!,
+                          onTap: onClicked,
+                        ),
                       ),
-                    ),
 
-                const SizedBox(height: 28),
+                  const SizedBox(height: 28),
 
-                // ===== RECENTLY PLAYED =====
-                _SectionTitle(icon: Icons.history, title: 'Recently Played'),
+                  // ===== RECENTLY PLAYED =====
+                  _SectionTitle(icon: Icons.history, title: 'Recently Played'),
 
-                const SizedBox(height: 12),
+                  const SizedBox(height: 12),
 
-                ...recentlyPlayed
-                    .take(10)
-                    .map(
-                      (stat) => _SongStatTile(
-                        stat: stat,
-                        trailing: _timeAgo(stat.lastPlayedAt!),
-                        audio: con.filesMap[stat.trackId]!,
-                        onTap: onClicked,
+                  ...recentlyPlayed
+                      .take(10)
+                      .map(
+                        (stat) => _SongStatTile(
+                          stat: stat,
+                          trailing: _timeAgo(stat.lastPlayedAt!),
+                          audio: con.filesMap[stat.trackId]!,
+                          onTap: onClicked,
+                        ),
                       ),
-                    ),
-              ],
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

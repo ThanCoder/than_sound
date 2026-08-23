@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:t_widgets/t_widgets.dart';
+import 'package:than_pkg_android/than_pkg_android.dart';
 import 'package:than_sound/core/models/audio_file.dart';
 import 'package:than_sound/ui_platforms/components/dialog/confirm_alert_dialog.dart';
 import 'package:than_sound/ui_platforms/ui/audio/audio_list_header.dart';
@@ -27,23 +28,94 @@ class AudioListPage extends StatefulWidget {
 }
 
 class _AudioListPageState extends State<AudioListPage> {
-  final controller = ScrollController();
-
-  Future<void> init({bool usedCache = true}) async {
-    final con = ControllerManager.read<AllFileStateController>();
-    await con.scanFromStorage(usedCache: usedCache);
-    if (!mounted) return;
-
-    ControllerManager.read<PlayerStateController>().setTracks(
-      con.files,
-      source: .allFileState,
-    );
+  @override
+  void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      init();
+    });
+    super.initState();
   }
 
   @override
   void dispose() {
     controller.dispose();
     super.dispose();
+  }
+
+  final controller = ScrollController();
+
+  Future<void> init({bool usedCache = true}) async {
+    try {
+      if (Platform.isAndroid) {
+        final pkg = ThanPkgAndroid.getInstance.storagePermissionHandler;
+        if (!await pkg.isStoragePermissionGranted()) {
+          await pkg.requestStoragePermission();
+
+          return;
+        }
+
+        final con = ControllerManager.read<AllFileStateController>();
+        await con.scanFromStorage(usedCache: usedCache);
+        if (!mounted) return;
+
+        ControllerManager.read<PlayerStateController>().setTracks(
+          con.files,
+          source: .allFileState,
+        );
+      }
+    } catch (e) {
+      if (!mounted) return;
+      showTMessageDialogError(context, e.toString());
+    }
+  }
+
+  void goListGps() {
+    try {
+      final con = ControllerManager.read<PlayerStateController>();
+      final current = con.current.value;
+      if (current == null) return;
+      final allCon = ControllerManager.read<AllFileStateController>();
+      final index = allCon.files.indexWhere((e) => e.id == current.id);
+      if (index == -1) return;
+      final size = MediaQuery.of(context).size;
+      final offset = (audioSliverListItemHeight * index) - (size.height * 0.3);
+
+      controller.animateTo(
+        offset.clamp(
+          controller.position.minScrollExtent,
+          controller.position.maxScrollExtent,
+        ),
+        duration: Duration(milliseconds: 300),
+        curve: Curves.easeOut,
+      );
+    } catch (e) {
+      showTMessageDialogError(context, e.toString());
+    }
+  }
+
+  void openConfrmAndPlay(AudioFile file) async {
+    final pCon = ControllerManager.read<PlayerStateController>();
+    final current = pCon.current.value;
+    if (current != null && current.id == file.id && pCon.state.playing) {
+      final confirmed = await showConfirmDialog(
+        context,
+        'Want to Song Restart!',
+      );
+      if (confirmed) {
+        await pCon.setTracks(
+          ControllerManager.read<AllFileStateController>().files,
+          source: .allFileState,
+        );
+        pCon.open(file);
+      }
+      return;
+    }
+    await pCon.setTracks(
+      ControllerManager.read<AllFileStateController>().files,
+      source: .allFileState,
+    );
+    // print('item: $file');
+    pCon.open(file);
   }
 
   @override
@@ -78,7 +150,7 @@ class _AudioListPageState extends State<AudioListPage> {
               else if (pCon.current.value != null)
                 Positioned(
                   right: widget.listGpsButtonRightPos ?? 10,
-                  bottom: pCon.showFloatWidget.value ? 130 : 70,
+                  bottom: pCon.showFloatWidget.value ? 100 : 50,
                   child: ListGpsButton(onClicked: goListGps),
                 ),
             ],
@@ -220,54 +292,5 @@ class _AudioListPageState extends State<AudioListPage> {
         ],
       ),
     );
-  }
-
-  void goListGps() {
-    try {
-      final con = ControllerManager.read<PlayerStateController>();
-      final current = con.current.value;
-      if (current == null) return;
-      final allCon = ControllerManager.read<AllFileStateController>();
-      final index = allCon.files.indexWhere((e) => e.id == current.id);
-      if (index == -1) return;
-      final size = MediaQuery.of(context).size;
-      final offset = (audioSliverListItemHeight * index) - (size.height * 0.3);
-
-      controller.animateTo(
-        offset.clamp(
-          controller.position.minScrollExtent,
-          controller.position.maxScrollExtent,
-        ),
-        duration: Duration(milliseconds: 300),
-        curve: Curves.easeOut,
-      );
-    } catch (e) {
-      showTMessageDialogError(context, e.toString());
-    }
-  }
-
-  void openConfrmAndPlay(AudioFile file) async {
-    final pCon = ControllerManager.read<PlayerStateController>();
-    final current = pCon.current.value;
-    if (current != null && current.id == file.id && pCon.state.playing) {
-      final confirmed = await showConfirmDialog(
-        context,
-        'Want to Song Restart!',
-      );
-      if (confirmed) {
-        await pCon.setTracks(
-          ControllerManager.read<AllFileStateController>().files,
-          source: .allFileState,
-        );
-        pCon.open(file);
-      }
-      return;
-    }
-    await pCon.setTracks(
-      ControllerManager.read<AllFileStateController>().files,
-      source: .allFileState,
-    );
-    // print('item: $file');
-    pCon.open(file);
   }
 }

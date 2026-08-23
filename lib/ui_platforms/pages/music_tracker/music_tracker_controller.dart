@@ -27,9 +27,7 @@ class MusicTrackerController extends IController {
     await _cf.open(
       PUtils.instance.getExternalConfigPath('music.tracker.config.cfb'),
     );
-    _allC.event.whereType<AllFileResetEvent>().listen((_) {
-      _load();
-    });
+    _allC.event.whereType<AllFileResetEvent>().listen((_) => load());
 
     final stopW = Stopwatch();
 
@@ -58,7 +56,8 @@ class MusicTrackerController extends IController {
     _init = true;
   }
 
-  void _load() {
+  Future<void> load() async {
+    await _cf.reload();
     filesMap.clear();
     statusMap.clear();
 

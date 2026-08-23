@@ -28,6 +28,8 @@ dependencies:
   flutter_colorpicker: ^1.1.0
   image_picker: ^1.2.3
   file_type_plus: ^1.1.0
+  than_audiotag: ^0.3.0
+  package_info_plus: ^10.2.1
   dart_core_extensions:
     git:  
       url: https://github.com/ThanCoder/dart_core_extensions.git
@@ -40,8 +42,7 @@ dependencies:
   t_server:
     git: 
       url: https://github.com/ThanCoder/t_server.git
-  than_audiotag: ^0.3.0
-  package_info_plus: ^10.2.1
+
 
 # Latest Git commit သေချာယူချင်ရင်—
 

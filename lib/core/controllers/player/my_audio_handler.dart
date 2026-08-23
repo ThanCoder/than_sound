@@ -14,7 +14,7 @@ import 'package:than_sound/core/controllers/player/mixins/player_sleep_timer_lis
 import 'package:than_sound/core/controllers/player/player_state_controller.dart';
 import 'package:than_sound/core/models/audio_file.dart';
 import 'package:than_sound/ui_platforms/components/sleep_timer/sleep_timer_mode.dart';
-import 'package:than_sound/ui_platforms/components/favourite/favourite_controller.dart';
+import 'package:than_sound/ui_platforms/pages/favourite/favourite_controller.dart';
 
 part 'mixins/player_listener_mixin.dart';
 part 'mixins/shuffle_mixin.dart';

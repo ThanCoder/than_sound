@@ -4,7 +4,7 @@ import 'package:t_widgets/t_widgets.dart';
 import 'package:than_sound/const_keys.dart';
 import 'package:than_sound/core/models/audio_file.dart';
 import 'package:than_sound/ui_platforms/components/current_music_visualizer_widget.dart';
-import 'package:than_sound/ui_platforms/components/favourite/favourite_button.dart';
+import 'package:than_sound/ui_platforms/pages/favourite/favourite_button.dart';
 import 'package:than_sound/ui_platforms/components/audio_thumbnail.dart';
 
 class DesktopAudioSliverList extends StatelessWidget {

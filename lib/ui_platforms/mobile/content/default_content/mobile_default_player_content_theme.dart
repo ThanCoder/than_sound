@@ -9,7 +9,7 @@ import 'package:than_sound/ui_platforms/components/reactive_cover/audio_reactive
 import 'package:than_sound/ui_platforms/components/waveform/waveform_widget/waveform.dart';
 import 'package:than_sound/ui_platforms/components/audio_thumbnail.dart';
 import 'package:than_sound/ui_platforms/components/c_slider.dart';
-import 'package:than_sound/ui_platforms/components/favourite/favourite_button.dart';
+import 'package:than_sound/ui_platforms/pages/favourite/favourite_button.dart';
 import 'package:than_sound/ui_platforms/player_theme/interfaces/i_player_theme.dart';
 import 'package:than_sound/ui_platforms/player_theme/interfaces/player_ui_context.dart';
 import 'package:than_sound/ui_platforms/player_theme/interfaces/player_ui_state.dart';

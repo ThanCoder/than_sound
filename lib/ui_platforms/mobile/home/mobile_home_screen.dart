@@ -1,12 +1,8 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:t_widgets/t_widgets.dart';
-import 'package:than_pkg_android/than_pkg_android.dart';
 import 'package:than_sound/ui_platforms/mobile/components/audio_float_widget.dart';
 import 'package:than_sound/core/controllers/interfaces/i_controller.dart';
 import 'package:than_sound/core/controllers/player/player_state_controller.dart';
-import 'package:than_sound/ui_platforms/components/favourite/favourite_controller.dart';
 import 'package:than_sound/ui_platforms/mobile/home/audio_list_page.dart';
 import 'package:than_sound/ui_platforms/pages/library/lib_page.dart';
 import 'package:than_sound/ui_platforms/pages/music_tracker/music_tracker_page.dart';
@@ -24,24 +20,6 @@ class _MobileHomeScreenState extends State<MobileHomeScreen> {
   @override
   void initState() {
     super.initState();
-    init();
-  }
-
-  void init() async {
-    try {
-      if (Platform.isAndroid) {
-        final pkg = ThanPkgAndroid.getInstance.storagePermissionHandler;
-        if (!await pkg.isStoragePermissionGranted()) {
-          ControllerManager.read<FavouriteController>().needToRefetch = true;
-          await pkg.requestStoragePermission();
-
-          return;
-        }
-      }
-    } catch (e) {
-      if (!mounted) return;
-      showTMessageDialogError(context, e.toString());
-    }
   }
 
   int index = 0;

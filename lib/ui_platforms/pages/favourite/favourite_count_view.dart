@@ -5,9 +5,9 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:t_widgets/t_widgets.dart';
 import 'package:than_sound/core/controllers/interfaces/i_controller.dart';
 import 'package:than_sound/ui_platforms/components/dialog/error_alert_dialog.dart';
-import 'package:than_sound/ui_platforms/components/favourite/desktop_favourite_list_page.dart';
-import 'package:than_sound/ui_platforms/components/favourite/favourite_controller.dart';
-import 'package:than_sound/ui_platforms/components/favourite/mobile_favourite_list_page.dart';
+import 'package:than_sound/ui_platforms/pages/favourite/desktop_favourite_list_page.dart';
+import 'package:than_sound/ui_platforms/pages/favourite/favourite_controller.dart';
+import 'package:than_sound/ui_platforms/pages/favourite/mobile_favourite_list_page.dart';
 
 class FavouriteCountView extends StatefulWidget {
   const FavouriteCountView({super.key});
@@ -57,7 +57,7 @@ class _FavouriteCountViewState extends State<FavouriteCountView> {
               ),
             ),
             StreamBuilder(
-              stream: con.events,
+              stream: con.event.whereType<FavouriteControllerValueChanged>(),
               builder: (context, asyncSnapshot) {
                 return Text(
                   '${con.files.length}',
