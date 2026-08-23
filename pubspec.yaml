@@ -12,10 +12,6 @@ dependencies:
     sdk: flutter
   cupertino_icons: ^1.0.8
   mpv_audio_kit: ^0.4.4
-  dart_core_extensions:
-    path: /home/thancoder/projects/dart_plugins/dart_core_extensions
-  t_widgets:
-    path: /home/thancoder/projects/dart_plugins/t_widgets
   marquee: ^2.3.0
   crypto: ^3.0.7
   cfb_store: ^0.7.0
@@ -23,8 +19,6 @@ dependencies:
   than_pkg_android: ^0.6.1
   desktop_drop: ^0.7.1
   lottie: ^3.5.1
-  than_audiotag:
-    path: /home/thancoder/projects/dart_plugins/than_audiotag
   audio_session: ^0.2.4
   audio_service: ^0.18.18
   waveform_visualizer: ^1.0.0
@@ -34,7 +28,25 @@ dependencies:
   flutter_colorpicker: ^1.1.0
   image_picker: ^1.2.3
   file_type_plus: ^1.1.0
+  dart_core_extensions:
+    git:  
+      url: https://github.com/ThanCoder/dart_core_extensions.git
+  t_widgets:
+    git:
+      url: https://github.com/ThanCoder/t_widgets.git
+  t_pdf_reader:
+    git:
+      url: https://github.com/ThanCoder/t_pdf_reader.git
+  t_server:
+    git: 
+      url: https://github.com/ThanCoder/t_server.git
+  than_audiotag: ^0.3.0
 
+# Latest Git commit သေချာယူချင်ရင်—
+
+# flutter pub upgrade --unlock-transitive
+
+# flutter pub upgrade dart_core_extensions t_widgets t_pdf_reader t_server
 
 dev_dependencies:
   flutter_test:

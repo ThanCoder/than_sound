@@ -1,7 +1,7 @@
 import 'package:dart_core_extensions/dart_core_extensions.dart';
 import 'package:flutter/material.dart';
-import 'package:than_sound/ui_platforms/mobile/home/library/tag_widget.dart';
-import 'package:than_sound/ui_platforms/mobile/home/library/lib_tag_type.dart';
+import 'package:than_sound/ui_platforms/pages/library/tag_widget.dart';
+import 'package:than_sound/ui_platforms/pages/library/lib_tag_type.dart';
 
 class TagHeader extends StatelessWidget {
   const TagHeader({super.key, required this.currentTag});

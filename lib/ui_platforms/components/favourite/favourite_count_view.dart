@@ -33,7 +33,7 @@ class _FavouriteCountViewState extends State<FavouriteCountView> {
             builder: (mainCtx) => DesktopFavouriteListPage(),
           );
         } else {
-          showErrorDialog(context,"Not Supported Platform!");
+          showErrorDialog(context, "Not Supported Platform!");
         }
       },
       child: Container(

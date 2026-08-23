@@ -10,7 +10,8 @@ class MobileFavouriteListPage extends StatefulWidget {
   const MobileFavouriteListPage({super.key});
 
   @override
-  State<MobileFavouriteListPage> createState() => _MobileFavouriteListPageState();
+  State<MobileFavouriteListPage> createState() =>
+      _MobileFavouriteListPageState();
 }
 
 class _MobileFavouriteListPageState extends State<MobileFavouriteListPage> {
@@ -37,7 +38,7 @@ class _MobileFavouriteListPageState extends State<MobileFavouriteListPage> {
   Widget get bodyWidget {
     final con = ControllerManager.read<FavouriteController>();
     return StreamBuilder(
-      stream: con.eventStream,
+      stream: con.event,
       builder: (context, snapshot) {
         if (con.files.isEmpty) {
           return Center(
@@ -85,6 +86,4 @@ class _MobileFavouriteListPageState extends State<MobileFavouriteListPage> {
       },
     );
   }
-
-  
 }

@@ -26,8 +26,8 @@ class FavouriteController extends IController {
   bool needToRefetch = false;
 
   @override
-  void init() {
-    allFileStateController.eventStream.listen((event) {
+ Future<void> init() async{
+    allFileStateController.event.listen((event) {
       if (event is AllFileResetEvent) {
         cacheList.clear();
         addEvent(FavouriteControllerReset());

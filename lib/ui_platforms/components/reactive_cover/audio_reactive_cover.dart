@@ -117,9 +117,7 @@ class _AudioReactiveCoverState extends State<AudioReactiveCover> {
   }
 }
 
-
-
-  /*
+/*
     const SpectrumSettings(
         minDb: -80,
         maxDb: 0,
@@ -195,11 +193,10 @@ class _AudioReactiveCoverState extends State<AudioReactiveCover> {
 
 /**************Nice****************** */
 
-
-    /********old************** */
-    // var bass = 0.0;
-    // for (var i = 0; i < count; i++) {
-    //   bass += bands[i];
-    // }
-    // bass /= count;
-    /********old************** */
+/********old************** */
+// var bass = 0.0;
+// for (var i = 0; i < count; i++) {
+//   bass += bands[i];
+// }
+// bass /= count;
+/********old************** */

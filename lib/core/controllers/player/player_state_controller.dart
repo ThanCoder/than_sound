@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:mpv_audio_kit/mpv_audio_kit.dart';
 import 'package:than_sound/core/controllers/interfaces/i_controller.dart';
 import 'package:than_sound/core/controllers/player/listener/loudness_config_listener.dart';
@@ -8,6 +8,21 @@ import 'package:than_sound/core/controllers/player/my_audio_handler.dart';
 import 'package:than_sound/core/models/audio_file.dart';
 
 enum AudioFileSourceType { none, allFileState, favouriteState, libState }
+
+class PlayerStateControllerSongEnd extends IControllerEvent {
+  final AudioFile file;
+  const PlayerStateControllerSongEnd(this.file);
+}
+
+class PlayerStateControllerSongStart extends IControllerEvent {
+  final AudioFile file;
+  const PlayerStateControllerSongStart(this.file);
+}
+
+class PlayerStateControllerSongStop extends IControllerEvent {
+  final AudioFile file;
+  const PlayerStateControllerSongStop(this.file);
+}
 
 class PlayerStateController extends IController with LoudnessConfigListener {
   ValueNotifier<AudioFile?> get current => _audioHandler.currentNotifier;
@@ -28,7 +43,7 @@ class PlayerStateController extends IController with LoudnessConfigListener {
       _audioHandler.currentAudioChangeStream;
 
   @override
-  void init() async {
+  Future<void> init() async {
     onLoudnessConfigListener();
   }
 

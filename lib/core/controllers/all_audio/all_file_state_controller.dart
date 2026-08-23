@@ -4,7 +4,7 @@ import 'dart:isolate';
 
 import 'package:cfb_store/cfb_store.dart';
 import 'package:dart_core_extensions/dart_core_extensions.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:than_sound/core/controllers/all_audio/all_file_event.dart';
 import 'package:than_sound/core/controllers/all_audio/all_state.dart';
 import 'package:than_sound/core/controllers/interfaces/i_controller.dart';
@@ -38,7 +38,7 @@ class AllFileStateController extends IController {
   static const String sortValueKey = 'sort-value-key';
 
   @override
-  void init() {
+  Future<void> init() async{
     scanFromStorage();
   }
 

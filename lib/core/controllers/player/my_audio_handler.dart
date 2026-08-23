@@ -41,6 +41,9 @@ class MyAudioHandler extends BaseAudioHandler
   late final AllFileStateController allFileStateController =
       ControllerManager.read<AllFileStateController>();
 
+  PlayerStateController get _playerStateController =>
+      ControllerManager.read<PlayerStateController>();
+
   @override
   PlayerState get state => _player.state;
   PlayerStream get stream => _player.stream;
@@ -77,6 +80,9 @@ class MyAudioHandler extends BaseAudioHandler
 
   // songe end event
   void songEnd() async {
+    _playerStateController.addEvent(
+      PlayerStateControllerSongEnd(currentNotifier.value!),
+    );
     final next = getNextSongIndex;
     if (next == -1) return;
     // timer
@@ -93,6 +99,9 @@ class MyAudioHandler extends BaseAudioHandler
 
     // play next song
     await open(playOrder[next]);
+    _playerStateController.addEvent(
+      PlayerStateControllerSongStart(currentNotifier.value!),
+    );
   }
 
   Future<void> setTracks(
@@ -117,6 +126,11 @@ class MyAudioHandler extends BaseAudioHandler
       currentNotifier.value = files[index];
     }
     await _player.open(createMedia(currentNotifier.value!), play: play);
+    if (play) {
+      _playerStateController.addEvent(
+        PlayerStateControllerSongStart(currentNotifier.value!),
+      );
+    }
     addNotiMediaItem(currentNotifier.value!);
   }
 
@@ -128,6 +142,7 @@ class MyAudioHandler extends BaseAudioHandler
     }
     await _player.open(createMedia(file), play: true);
     currentNotifier.value = file;
+    _playerStateController.addEvent(PlayerStateControllerSongStart(file));
     addNotiMediaItem(file);
   }
 
@@ -135,8 +150,17 @@ class MyAudioHandler extends BaseAudioHandler
   Future<void> skipToNext() async {
     final next = getNextSongIndex;
     if (next == -1) return;
+
+    if (player.state.playing) {
+      _playerStateController.addEvent(
+        PlayerStateControllerSongStop(currentNotifier.value!),
+      );
+    }
     currentNotifier.value = playOrder[next];
     await open(playOrder[next]);
+    _playerStateController.addEvent(
+      PlayerStateControllerSongStart(currentNotifier.value!),
+    );
   }
 
   @override
@@ -145,8 +169,17 @@ class MyAudioHandler extends BaseAudioHandler
     if (index == -1) return;
     final prev = index - 1;
     if (prev < 0) return;
+    if (player.state.playing) {
+      _playerStateController.addEvent(
+        PlayerStateControllerSongStop(currentNotifier.value!),
+      );
+    }
+
     currentNotifier.value = playOrder[prev];
     await open(playOrder[prev]);
+    _playerStateController.addEvent(
+      PlayerStateControllerSongStart(currentNotifier.value!),
+    );
   }
 
   // The most common callbacks:
@@ -161,6 +194,9 @@ class MyAudioHandler extends BaseAudioHandler
       }
 
       _player.play();
+      _playerStateController.addEvent(
+        PlayerStateControllerSongStart(currentNotifier.value!),
+      );
       audioPaused = false;
     } catch (e) {
       debugPrint('[MyAudioHandler:play]: $e');
@@ -171,6 +207,9 @@ class MyAudioHandler extends BaseAudioHandler
   Future<void> pause() async {
     _player.pause();
     audioPaused = true;
+    _playerStateController.addEvent(
+      PlayerStateControllerSongStop(currentNotifier.value!),
+    );
   }
 
   @override
@@ -187,6 +226,9 @@ class MyAudioHandler extends BaseAudioHandler
     audioPaused = false;
     await _player.stop();
     currentNotifier.value = null;
+    _playerStateController.addEvent(
+      PlayerStateControllerSongStop(currentNotifier.value!),
+    );
     playbackState.add(
       playbackState.value.copyWith(playing: false, processingState: .idle),
     );

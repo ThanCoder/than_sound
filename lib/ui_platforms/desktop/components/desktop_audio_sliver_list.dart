@@ -59,8 +59,6 @@ class _DesktopAudioRow extends StatefulWidget {
 class _DesktopAudioRowState extends State<_DesktopAudioRow> {
   bool hovering = false;
 
-
-
   @override
   Widget build(BuildContext context) {
     return MouseRegion(

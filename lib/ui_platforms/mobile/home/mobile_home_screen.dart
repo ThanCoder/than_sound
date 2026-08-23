@@ -8,8 +8,9 @@ import 'package:than_sound/core/controllers/interfaces/i_controller.dart';
 import 'package:than_sound/core/controllers/player/player_state_controller.dart';
 import 'package:than_sound/ui_platforms/components/favourite/favourite_controller.dart';
 import 'package:than_sound/ui_platforms/mobile/home/audio_list_page.dart';
-import 'package:than_sound/ui_platforms/mobile/home/library/lib_page.dart';
-import 'package:than_sound/ui_platforms/mobile/home/search/mobile_search_page.dart';
+import 'package:than_sound/ui_platforms/pages/library/lib_page.dart';
+import 'package:than_sound/ui_platforms/pages/music_tracker/music_tracker_page.dart';
+import 'package:than_sound/ui_platforms/pages/search/mobile_search_page.dart';
 import 'package:than_sound/ui_platforms/pages/more_page.dart';
 
 class MobileHomeScreen extends StatefulWidget {
@@ -49,7 +50,7 @@ class _MobileHomeScreenState extends State<MobileHomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: context.colorScheme.surface,
-      extendBody: true,
+      // extendBody: true,
       body: ValueListenableBuilder(
         valueListenable:
             ControllerManager.read<PlayerStateController>().showFloatWidget,
@@ -62,6 +63,7 @@ class _MobileHomeScreenState extends State<MobileHomeScreen> {
                   AudioListPage(),
                   MobileSearchPage(),
                   LibPage(),
+                  MusicTrackerPage(),
                   MorePage(),
                 ],
               ),
@@ -71,7 +73,7 @@ class _MobileHomeScreenState extends State<MobileHomeScreen> {
                 Positioned(
                   left: 0,
                   right: 0,
-                  bottom: kBottomNavigationBarHeight,
+                  bottom: 0, //kBottomNavigationBarHeight,
                   child: AudioFloatWidget(),
                 ),
             ],
@@ -100,6 +102,10 @@ class _MobileHomeScreenState extends State<MobileHomeScreen> {
           BottomNavigationBarItem(
             icon: Icon(Icons.library_music_outlined),
             label: 'Library',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.track_changes_outlined),
+            label: 'Tracker',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.grid_view_outlined),

@@ -6,7 +6,7 @@ import 'package:than_sound/core/models/audio_file.dart';
 import 'package:than_sound/ui_platforms/mobile/components/audio_item_menu.dart';
 import 'package:than_sound/ui_platforms/mobile/components/audio_list_item.dart';
 import 'package:than_sound/ui_platforms/components/audio_thumbnail.dart';
-import 'package:than_sound/ui_platforms/mobile/home/library/lib_page.dart';
+import 'package:than_sound/ui_platforms/pages/library/lib_page.dart';
 import 'package:than_sound/ui_platforms/player_theme_provider/player_content_theme_provider_screen.dart';
 
 class AudioGroupPage extends StatefulWidget {
@@ -56,26 +56,30 @@ class _AudioGroupPageState extends State<AudioGroupPage> {
       //   foregroundColor: col.onSurfaceVariant,
       //   title: Text(group.name),
       // ),
-      body: SafeArea(
-        child: CustomScrollView(
-          slivers: [
-            // SliverAppBar(
-            //   backgroundColor: col.surfaceContainer.withValues(alpha: .45),
-            //   foregroundColor: col.onSurfaceVariant.withValues(alpha: .45),
-            //   title: Text(group.name),
-            // ),
-            SliverToBoxAdapter(child: _header()),
-
-            SliverList.builder(
-              itemCount: group.files.length,
-              itemBuilder: (context, index) {
-                final file = group.files[index];
-
-                return _songItem(file);
-              },
+      body: CustomScrollView(
+        slivers: [
+          // SliverAppBar(
+          //   backgroundColor: col.surfaceContainer.withValues(alpha: .45),
+          //   foregroundColor: col.onSurfaceVariant.withValues(alpha: .45),
+          //   title: Text(group.name),
+          // ),
+          SliverToBoxAdapter(
+            child: SizedBox(
+              height: 400,
+              width: double.infinity,
+              child: _header(),
             ),
-          ],
-        ),
+          ),
+
+          SliverList.builder(
+            itemCount: group.files.length,
+            itemBuilder: (context, index) {
+              final file = group.files[index];
+
+              return _songItem(file);
+            },
+          ),
+        ],
       ),
     );
   }
@@ -106,85 +110,90 @@ class _AudioGroupPageState extends State<AudioGroupPage> {
           ),
         ),
 
-        Padding(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            children: [
-              SizedBox(
-                width: 180,
-                height: 180,
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(20),
-                  child: AudioThumbnail(file: group.cover),
-                ),
-              ),
-
-              const SizedBox(height: 16),
-
-              Text(
-                group.name,
-                textAlign: TextAlign.center,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                style: const TextStyle(
-                  fontSize: 22,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-
-              const SizedBox(height: 4),
-
-              Text(
-                '${group.count} songs',
-                style: TextStyle(color: col.onSurfaceVariant, fontSize: 13),
-              ),
-
-              const SizedBox(height: 16),
-
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  FilledButton.icon(
-                    onPressed: () {
-                      openConfrmAndPlay(widget.group.files[0]);
-                    },
-                    icon: const Icon(Icons.play_arrow_rounded),
-                    label: const Text('Play'),
+        Positioned(
+          top: 50,
+          left: 0,
+          right: 0,
+          child: Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              children: [
+                SizedBox(
+                  width: 180,
+                  height: 180,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(20),
+                    child: AudioThumbnail(file: group.cover),
                   ),
+                ),
 
-                  const SizedBox(width: 8),
+                const SizedBox(height: 16),
 
-                  StreamBuilder(
-                    stream: pCon.audioHandler.shuffleStream,
-                    builder: (context, asyncSnapshot) {
-                      final enable = pCon.audioHandler.isShuffle;
-                      return OutlinedButton.icon(
-                        style: OutlinedButton.styleFrom(
-                          backgroundColor: enable
-                              ? col.primaryContainer
-                              : col.surfaceContainer,
-                          foregroundColor: enable
-                              ? col.onPrimaryContainer
-                              : col.onSurfaceVariant,
-                        ),
-                        onPressed: () {
-                          pCon.audioHandler.toggleShuffle();
-                        },
-                        icon: Icon(Icons.shuffle_rounded),
-                        label: const Text('Shuffle'),
-                      );
-                    },
+                Text(
+                  group.name,
+                  textAlign: TextAlign.center,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.w700,
                   ),
-                ],
-              ),
-            ],
+                ),
+
+                const SizedBox(height: 4),
+
+                Text(
+                  '${group.count} songs',
+                  style: TextStyle(color: col.onSurfaceVariant, fontSize: 13),
+                ),
+
+                const SizedBox(height: 16),
+
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    FilledButton.icon(
+                      onPressed: () {
+                        openConfrmAndPlay(widget.group.files[0]);
+                      },
+                      icon: const Icon(Icons.play_arrow_rounded),
+                      label: const Text('Play'),
+                    ),
+
+                    const SizedBox(width: 8),
+
+                    StreamBuilder(
+                      stream: pCon.audioHandler.shuffleStream,
+                      builder: (context, asyncSnapshot) {
+                        final enable = pCon.audioHandler.isShuffle;
+                        return OutlinedButton.icon(
+                          style: OutlinedButton.styleFrom(
+                            backgroundColor: enable
+                                ? col.primaryContainer
+                                : col.surfaceContainer,
+                            foregroundColor: enable
+                                ? col.onPrimaryContainer
+                                : col.onSurfaceVariant,
+                          ),
+                          onPressed: () {
+                            pCon.audioHandler.toggleShuffle();
+                          },
+                          icon: Icon(Icons.shuffle_rounded),
+                          label: const Text('Shuffle'),
+                        );
+                      },
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
 
         // back
         Positioned(
           left: 10,
-          top: 10,
+          top: 40,
           child: IconButton(
             style: IconButton.styleFrom(
               backgroundColor: col.surfaceContainer.withValues(alpha: .45),

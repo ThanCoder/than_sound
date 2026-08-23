@@ -67,7 +67,6 @@ mixin ExtraMixin {
       genre: file.meta.genre,
       duration: duration ?? file.meta.duration,
       artUri: File(file.cacheCoverPath).uri,
-      
     );
     return item;
   }

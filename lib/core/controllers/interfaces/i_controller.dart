@@ -4,14 +4,16 @@ import 'package:flutter/material.dart';
 
 part 'controller_manager.dart';
 
-abstract class IControllerEvent {}
+abstract class IControllerEvent {
+  const IControllerEvent();
+}
 
 abstract class IController {
   final _eventController = StreamController<IControllerEvent>.broadcast();
 
   /// `ControllerAddEvent`,`ControllerRemoveEvent`
-  Stream<IControllerEvent> get eventStream => _eventController.stream;
-  void init();
+  Stream<IControllerEvent> get event => _eventController.stream;
+  Future<void> init();
 
   void addEvent(IControllerEvent event) {
     _eventController.add(event);

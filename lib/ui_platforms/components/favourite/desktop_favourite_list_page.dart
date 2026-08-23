@@ -41,7 +41,7 @@ class _DesktopFavouriteListPageState extends State<DesktopFavouriteListPage> {
   final con = ControllerManager.read<FavouriteController>();
   Widget get bodyWidget {
     return StreamBuilder(
-      stream: con.eventStream,
+      stream: con.event,
       builder: (context, snapshot) {
         if (con.files.isEmpty) {
           return Center(

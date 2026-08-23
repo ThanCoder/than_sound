@@ -15,6 +15,12 @@ class ControllerManager {
     controller.init();
   }
 
+  static Future<void> initAll() async {
+    for (var con in _controllers.values) {
+      await con.init();
+    }
+  }
+
   static T read<T extends IController>() {
     final controller = _controllers[T];
 

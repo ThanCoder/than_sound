@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:crypto/crypto.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 
 class FileUtils {
   static String getFileIdSync(String path) {
@@ -90,6 +90,4 @@ class FileUtils {
     // Hash + File Size ကို ပေါင်းပြီး ဒုတိယအကြိမ် Hash ပြုလုပ်ခြင်း
     return sha1.convert(utf8.encode('${dig.toString()}-$fileSize')).toString();
   }
-
-  
 }

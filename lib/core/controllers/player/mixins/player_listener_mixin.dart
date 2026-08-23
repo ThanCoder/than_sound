@@ -33,7 +33,7 @@ mixin PlayerListenerMixin {
   }
 
   void onPlayerListenerMixinControllerEvents() {
-    audioHandler.allFileStateController.eventStream
+    audioHandler.allFileStateController.event
         .whereType<AllFileStateControllerUpdateMeta>()
         .listen((event) {
           final current = audioHandler.currentNotifier.value;
@@ -56,7 +56,7 @@ mixin PlayerListenerMixin {
           }
         });
 
-    audioHandler.allFileStateController.eventStream.listen((event) {
+    audioHandler.allFileStateController.event.listen((event) {
       if (audioHandler.source != .allFileState) return;
       if (event is AllFileAddEvent) {
         audioHandler.playlist.insert(0, event.file);
