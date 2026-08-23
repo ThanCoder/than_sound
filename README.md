@@ -14,6 +14,5 @@
         <img src="https://raw.githubusercontent.com/ThanCoder/than_sound/refs/heads/main/screenshot/android/9.jpg" width="220"/>
          <img src="https://raw.githubusercontent.com/ThanCoder/than_sound/refs/heads/main/screenshot/android/10.jpg" width="220"/>v
  <img src="https://raw.githubusercontent.com/ThanCoder/than_sound/refs/heads/main/screenshot/android/11.jpg" width="220"/>
-  <img src="https://raw.githubusercontent.com/ThanCoder/than_sound/refs/heads/main/screenshot/android/12.jpg" width="220"/>
 
 </p>
