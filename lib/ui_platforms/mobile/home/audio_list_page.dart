@@ -58,7 +58,7 @@ class _AudioListPageState extends State<AudioListPage> {
           appBar: AppBar(
             backgroundColor: context.colorScheme.surfaceContainer,
             title: const Text(
-              'ThanAudio',
+              'ThanSound',
               style: TextStyle(fontWeight: FontWeight.w700),
             ),
             actions: actions,

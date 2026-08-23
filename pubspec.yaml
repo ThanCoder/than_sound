@@ -41,6 +41,7 @@ dependencies:
     git: 
       url: https://github.com/ThanCoder/t_server.git
   than_audiotag: ^0.3.0
+  package_info_plus: ^10.2.1
 
 # Latest Git commit သေချာယူချင်ရင်—
 

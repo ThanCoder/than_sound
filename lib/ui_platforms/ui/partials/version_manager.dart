@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:than_pkg_android/than_pkg_android.dart';
 import 'package:than_pkg_linux/than_pkg_linux.dart';
 import 'package:than_sound/core/utils/p_utils.dart';
 
@@ -13,7 +16,14 @@ class VersionManager extends StatelessWidget {
 
     return GestureDetector(
       onTap: () {
-        ThanPkgLinux.getInstance.launcher.launchUrl('$githubUrl/releases');
+        if (Platform.isAndroid) {
+          ThanPkgAndroid.getInstance.launchHandler.launchUrl(
+            '$githubUrl/releases',
+          );
+        }
+        if (Platform.isLinux) {
+          ThanPkgLinux.getInstance.launcher.launchUrl('$githubUrl/releases');
+        }
       },
       child: Container(
         padding: .symmetric(vertical: 14, horizontal: 16),

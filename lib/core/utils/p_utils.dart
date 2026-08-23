@@ -3,6 +3,7 @@ import 'dart:isolate';
 
 import 'package:dart_core_extensions/dart_core_extensions.dart';
 import 'package:flutter/material.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 import 'package:than_pkg_android/than_pkg_android.dart';
 import 'package:than_pkg_linux/than_pkg_linux.dart';
@@ -16,20 +17,20 @@ class PUtils {
   late Directory configDir;
   late String androidRootDirPath;
   String packageName = 'than_audio';
-  String version = '1';
+  String version = '1.0.0';
 
   Future<void> init() async {
     try {
+      final info = await PackageInfo.fromPlatform();
+      packageName = info.packageName;
+      version = info.version;
+
       if (Platform.isLinux) {
         final cfDir = await ThanPkgLinux.getInstance.pathHandler
             .getApplicationConfigDirectory();
         final cDir = await ThanPkgLinux.getInstance.pathHandler
             .getApplicationTemporaryDirectory();
-        final info = await ThanPkgLinux.getInstance.info.getAppInfo();
-        if (info != null) {
-          packageName = info.packageName;
-          version = info.version;
-        }
+
         if (cfDir != null) {
           configDir = cfDir;
         }
@@ -50,12 +51,6 @@ class PUtils {
         final cf = await ThanPkgAndroid.getInstance.pathHandler.getFilesPath();
         if (cf != null) {
           configDir = Directory(cf.join('config'));
-        }
-        final appInfo = await ThanPkgAndroid.getInstance.infoHandler
-            .getAppInfo();
-        if (appInfo != null) {
-          packageName = appInfo.packageName;
-          version = appInfo.versionName.toString();
         }
       }
     } catch (e) {
