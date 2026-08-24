@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:t_widgets/t_widgets.dart';
+import 'package:than_sound/ui_platforms/pages/equalizers/loudness_config_setting.dart';
 
 import 'package:than_sound/ui_platforms/pages/equalizers/audio_bass_eq_page.dart';
 
@@ -26,6 +27,7 @@ class _AudioEqHomePageState extends State<AudioEqHomePage> {
       body: Column(
         spacing: 8,
         children: [
+          LoudnessConfigSetting(),
           ListTile(
             tileColor: col.surfaceContainer,
             shape: RoundedRectangleBorder(borderRadius: .circular(15)),

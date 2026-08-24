@@ -1,7 +1,7 @@
 name: than_sound
 description: "Audio Project For Free"
-publish_to: 'none' # Remove this line if you wish to publish to pub.dev
-version: 0.1.0
+publish_to: "none" # Remove this line if you wish to publish to pub.dev
+version: 0.2.0
 
 repository: https://github.com/ThanCoder/than_sound.git
 
@@ -31,7 +31,7 @@ dependencies:
   than_audiotag: ^0.3.0
   package_info_plus: ^10.2.1
   dart_core_extensions:
-    git:  
+    git:
       url: https://github.com/ThanCoder/dart_core_extensions.git
   t_widgets:
     git:
@@ -40,9 +40,8 @@ dependencies:
     git:
       url: https://github.com/ThanCoder/t_pdf_reader.git
   t_server:
-    git: 
+    git:
       url: https://github.com/ThanCoder/t_server.git
-
 
 # Latest Git commit သေချာယူချင်ရင်—
 
@@ -66,8 +65,6 @@ flutter_launcher_icons:
 
 flutter:
   uses-material-design: true
-
-
 
   # To add assets to your application, add an assets section, like this:
   assets:

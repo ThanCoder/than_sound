@@ -1,5 +1,23 @@
 import 'package:than_sound/core/models/audio_file.dart';
 
+extension AudioFilePropsExt on AudioFile {
+  String get yearLabel {
+    final year = meta.year.toString();
+
+    if (meta.year == 0) return '';
+    // date format
+    if (year.length == 8) {
+      try {
+        return '${year.substring(0, 4)}-${year.substring(4, 6)}-${year.substring(6, 8)}';
+      } catch (e) {
+        // print(e.toString());
+      }
+    }
+    // print('year: ${meta.year}');
+    return year;
+  }
+}
+
 extension AudioFileExt on List<AudioFile> {
   void sortName({bool isA2Z = true}) {
     sort((a, b) {

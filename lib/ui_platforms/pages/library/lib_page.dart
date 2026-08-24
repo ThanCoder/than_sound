@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:t_widgets/t_widgets.dart';
 import 'package:than_sound/core/controllers/all_audio/all_file_state_controller.dart';
 import 'package:than_sound/core/controllers/interfaces/i_controller.dart';
+import 'package:than_sound/core/extensions/audio_file_extensions.dart';
 import 'package:than_sound/core/models/audio_file.dart';
 import 'package:than_sound/ui_platforms/pages/favourite/favourite_count_view.dart';
 import 'package:than_sound/ui_platforms/components/audio_thumbnail.dart';
@@ -42,7 +43,7 @@ class _LibPageState extends State<LibPage> {
         LibTagType.artist => file.meta.artist,
         LibTagType.album => file.meta.album,
         LibTagType.genre => file.meta.genre,
-        LibTagType.year => file.meta.year.toString(),
+        LibTagType.year => file.yearLabel,
       };
 
       if (key.isEmpty || key == '0') continue;
@@ -59,11 +60,6 @@ class _LibPageState extends State<LibPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: context.colorScheme.surface,
-      // appBar: AppBar(
-      //   backgroundColor: context.colorScheme.surfaceContainer,
-      //   foregroundColor: context.colorScheme.onSurfaceVariant,
-      //   title: Text("Library"),
-      // ),
       body: Padding(
         padding: const EdgeInsets.all(4),
         child: CustomScrollView(

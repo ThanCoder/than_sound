@@ -34,7 +34,24 @@ class _LoudnessConfigSettingState extends State<LoudnessConfigSetting> {
               children: [
                 Row(
                   children: [
-                    Icon(Icons.snowing, size: 30, color: colorScheme.primary),
+                    Container(
+                      decoration: BoxDecoration(
+                        color: colorScheme.primaryContainer,
+                        borderRadius: .circular(15),
+                        boxShadow: [
+                          .new(
+                            color: colorScheme.primary,
+                            blurRadius: 12,
+                            spreadRadius: 1,
+                          ),
+                        ],
+                      ),
+                      child: Icon(
+                        Icons.snowing,
+                        size: 30,
+                        color: colorScheme.onPrimaryContainer,
+                      ),
+                    ),
                     SizedBox(width: 10),
                     Text(
                       'Loundness Controller',

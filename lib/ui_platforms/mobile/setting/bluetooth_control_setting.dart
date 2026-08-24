@@ -20,7 +20,7 @@ class BluetoothControlSetting extends StatelessWidget {
           title: Row(
             children: [
               Container(
-                padding: .all(8),
+                padding: .all(10),
                 decoration: BoxDecoration(
                   color: col.surface,
                   borderRadius: .circular(15),

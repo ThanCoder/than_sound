@@ -50,7 +50,7 @@ class _CSliderState extends State<CSlider> {
       max: widget.max,
       value: val,
       secondaryTrackValue: widget.secondaryTrackValue,
-      allowedInteraction: .slideOnly,
+      allowedInteraction: .tapAndSlide,
       onChanged: (value) {
         widget.onChanged?.call(val);
         setState(() {

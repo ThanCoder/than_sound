@@ -125,6 +125,7 @@ class MyAudioHandler extends BaseAudioHandler
     if (currentNotifier.value == null) {
       currentNotifier.value = files[index];
     }
+
     await _player.open(createMedia(currentNotifier.value!), play: play);
     if (play) {
       _playerStateController.addEvent(
@@ -139,6 +140,9 @@ class MyAudioHandler extends BaseAudioHandler
     if (index == -1) {
       debugPrint('[MyAudioHandler:open]: index:$index');
       return;
+    }
+    if (player.state.playing) {
+      _playerStateController.addEvent(PlayerStateControllerSongStop(file));
     }
     await _player.open(createMedia(file), play: true);
     currentNotifier.value = file;

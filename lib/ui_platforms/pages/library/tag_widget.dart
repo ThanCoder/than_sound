@@ -36,10 +36,16 @@ class TagWidget extends StatelessWidget {
           spacing: 4,
           children: [
             ColorFiltered(
-              colorFilter: .mode(col.onSurfaceVariant, .dstIn),
+              colorFilter: .mode(
+                selected ? col.onPrimary : col.onSurfaceVariant,
+                .dstIn,
+              ),
               child: icon,
             ),
-            Text(title, style: TextStyle(color: col.onSurface)),
+            Text(
+              title,
+              style: TextStyle(color: selected ? col.onPrimary : col.onSurface),
+            ),
           ],
         ),
       ),

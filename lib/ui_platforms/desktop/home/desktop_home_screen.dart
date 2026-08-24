@@ -10,9 +10,10 @@ import 'package:than_sound/core/controllers/player/player_state_controller.dart'
 import 'package:than_sound/ui_platforms/components/current_music_visualizer_widget.dart';
 import 'package:than_sound/ui_platforms/desktop/home/desktop_list_page.dart';
 import 'package:than_sound/ui_platforms/components/sleep_timer/sleep_timer_page.dart';
+import 'package:than_sound/ui_platforms/pages/music_tracker/music_tracker_page.dart';
 import 'package:than_sound/ui_platforms/player_theme/interfaces/player_ui_context.dart';
 import 'package:than_sound/ui_platforms/player_theme/ui_context_creator.dart';
-import 'package:than_sound/ui_platforms/desktop/home/desktop_music_bar.dart';
+import 'package:than_sound/ui_platforms/desktop/components/desktop_music_bar.dart';
 import 'package:than_sound/ui_platforms/desktop/desktop_player_ui_actions.dart';
 import 'package:than_sound/ui_platforms/pages/library/lib_page.dart';
 import 'package:than_sound/ui_platforms/pages/more_page.dart';
@@ -140,7 +141,13 @@ class _DesktopHomeScreenState extends State<DesktopHomeScreen> {
   Widget _pages() {
     return IndexedStack(
       index: index,
-      children: [DesktopListPage(), LibPage(), MorePage(), SleepTimerPage()],
+      children: [
+        DesktopListPage(),
+        LibPage(),
+        MusicTrackerPage(),
+        MorePage(),
+        SleepTimerPage(),
+      ],
     );
   }
 
@@ -164,6 +171,11 @@ class _DesktopHomeScreenState extends State<DesktopHomeScreen> {
           icon: Icon(Icons.library_music_outlined),
           selectedIcon: Icon(Icons.library_music),
           label: Text('Library'),
+        ),
+        NavigationRailDestination(
+          icon: Icon(Icons.track_changes_outlined),
+          selectedIcon: Icon(Icons.track_changes_rounded),
+          label: Text('Tracker'),
         ),
         NavigationRailDestination(
           icon: Icon(Icons.grid_view_outlined),
