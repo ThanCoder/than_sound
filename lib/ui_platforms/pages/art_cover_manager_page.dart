@@ -247,6 +247,9 @@ class _ArtCoverManagerState extends State<ArtCoverManagerPage> {
         return;
       }
 
+      final cacheF = File(widget.file.cacheCoverPath);
+      await cacheF.deleteSafe();
+
       final imageData = await res.readAsBytes();
 
       final t = TTag();
@@ -364,6 +367,8 @@ class _ArtCoverManagerState extends State<ArtCoverManagerPage> {
         showErrorDialog(context, tRes.unwrapError().toString());
         return;
       }
+      final cacheF = File(widget.file.cacheCoverPath);
+      await cacheF.deleteSafe();
 
       AppUtils.clearImageCache();
 

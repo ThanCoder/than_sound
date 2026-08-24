@@ -18,9 +18,6 @@ class AudioThumbnail extends StatelessWidget {
     return FutureBuilder(
       future: TagPictureWorker.instance.getImageBytes(file.path),
       builder: (context, snapshot) {
-        // if (snapshot.connectionState == .waiting) {
-        //   return Center(child: CircularProgressIndicator.adaptive());
-        // }
         final data = snapshot.data;
         if (data != null && data.isOk) {
           final f = File(file.cacheCoverPath);

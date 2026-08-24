@@ -1,10 +1,20 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:than_pkg_android/than_pkg_android.dart';
 import 'package:than_pkg_linux/than_pkg_linux.dart';
 
 class AppUtils {
+  static Future<void> clipboardSetData(String text) async {
+    await Clipboard.setData(ClipboardData(text: text));
+  }
+
+  static Future<String?> clipboardGetDate() async {
+    final res = await Clipboard.getData(Clipboard.kTextPlain);
+    return res?.text;
+  }
+
   static void clearImageCache() {
     PaintingBinding.instance.imageCache.clear();
     PaintingBinding.instance.imageCache.clearLiveImages();

@@ -38,7 +38,7 @@ class AllFileStateController extends IController {
   static const String sortValueKey = 'sort-value-key';
 
   @override
-  Future<void> init() async{
+  Future<void> init() async {
     scanFromStorage();
   }
 
@@ -158,6 +158,7 @@ class AllFileStateController extends IController {
       }
       files.removeAt(index);
       addEvent(AllFileRemoveEvent(file));
+      addEvent(AllFileResetEvent());
 
       _con.add(_state);
 

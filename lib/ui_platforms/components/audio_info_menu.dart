@@ -1,8 +1,7 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:than_sound/core/extensions/date_time_ext.dart';
 import 'package:than_sound/core/models/audio_file.dart';
+import 'package:than_sound/ui_platforms/components/audio_thumbnail.dart';
 
 class AudioInfoMenu extends StatelessWidget {
   final AudioFile file;
@@ -25,7 +24,20 @@ class AudioInfoMenu extends StatelessWidget {
             Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                _Cover(path: file.cacheCoverPath, size: 82),
+                // _Cover(path: file.cacheCoverPath, size: 82),
+                Container(
+                  width: 82,
+                  height: 82,
+                  clipBehavior: Clip.antiAlias,
+                  decoration: BoxDecoration(
+                    color: colorScheme.surfaceContainerHighest,
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: ClipRRect(
+                    borderRadius: .circular(16),
+                    child: AudioThumbnail(file: file),
+                  ),
+                ),
 
                 const SizedBox(width: 16),
 
@@ -299,51 +311,6 @@ class AudioInfoMenu extends StatelessWidget {
   }
 }
 
-class _Cover extends StatelessWidget {
-  final String path;
-  final double size;
-
-  const _Cover({required this.path, required this.size});
-
-  @override
-  Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-
-    Widget child;
-
-    if (path.isEmpty || !File(path).existsSync()) {
-      child = Icon(
-        Icons.music_note_rounded,
-        size: size * .42,
-        color: colorScheme.onSurfaceVariant,
-      );
-    } else {
-      child = Image.file(
-        File(path),
-        fit: BoxFit.cover,
-        errorBuilder: (_, _, _) {
-          return Icon(
-            Icons.music_note_rounded,
-            size: size * .42,
-            color: colorScheme.onSurfaceVariant,
-          );
-        },
-      );
-    }
-
-    return Container(
-      width: size,
-      height: size,
-      clipBehavior: Clip.antiAlias,
-      decoration: BoxDecoration(
-        color: colorScheme.surfaceContainerHighest,
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: child,
-    );
-  }
-}
-
 class _SectionTitle extends StatelessWidget {
   final IconData icon;
   final String title;
@@ -440,7 +407,7 @@ class _InfoTile extends StatelessWidget {
           const SizedBox(width: 12),
 
           Expanded(
-            child: Text(
+            child: SelectableText(
               value,
               textAlign: TextAlign.end,
               style: theme.textTheme.bodyMedium?.copyWith(

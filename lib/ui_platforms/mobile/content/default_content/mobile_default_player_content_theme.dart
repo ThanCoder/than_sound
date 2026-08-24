@@ -386,7 +386,7 @@ class _DefaultPlayerViewState extends State<_DefaultPlayerView> {
               child: CSlider(
                 max: max,
                 value: value,
-                onChangeEnd: (value) {
+                onChanged: (value) {
                   actions.seek(Duration(milliseconds: value.toInt()));
                 },
               ),

@@ -48,6 +48,8 @@ class _MusicTrackerPageState extends State<MusicTrackerPage> {
     pCon.open(file);
   }
 
+  ColorScheme get col => Theme.of(context).colorScheme;
+
   @override
   Widget build(BuildContext context) {
     return StreamBuilder(
@@ -81,7 +83,12 @@ class _MusicTrackerPageState extends State<MusicTrackerPage> {
     );
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Listening Activity')),
+      backgroundColor: col.surface,
+      appBar: AppBar(
+        title: const Text('Listening Activity'),
+        backgroundColor: col.surfaceBright,
+        foregroundColor: col.onSurface,
+      ),
       body: RefreshIndicator.adaptive(
         onRefresh: con.load,
         child: CustomScrollView(
