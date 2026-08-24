@@ -47,8 +47,7 @@ class FavouriteController extends IController {
   }
 
   void toggle(AudioFile file) {
-    final list = _cf.getList('list');
-    if (list.contains(file.id)) {
+    if (isExists(file)) {
       remove(file);
     } else {
       add(file);
@@ -56,6 +55,7 @@ class FavouriteController extends IController {
   }
 
   void add(AudioFile file) {
+    files.insert(0, file);
     final list = _cf.getList('list');
     list.remove(file.id);
     list.insert(0, file.id);
@@ -64,6 +64,10 @@ class FavouriteController extends IController {
   }
 
   void remove(AudioFile file) {
+    final inx = files.indexWhere((e) => e.id == file.id);
+    if (inx != -1) {
+      files.removeAt(inx);
+    }
     final list = _cf.getList('list');
     list.remove(file.id);
     _cf.put('list', list);
