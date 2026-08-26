@@ -119,7 +119,6 @@ class _WaveformState extends State<Waveform> {
         }
         return WaveformWidget(
           controller: _waveformController,
-          height: 65,
           style: WaveformStyle(
             waveColor: Theme.of(context).colorScheme.primary,
             backgroundColor: Colors.transparent,

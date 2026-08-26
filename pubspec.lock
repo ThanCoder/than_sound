@@ -753,14 +753,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.3.0"
-  pdfium_dart:
-    dependency: transitive
-    description:
-      name: pdfium_dart
-      sha256: "86e95c66b09f3245b95c4924f2edce8d4f7c9786876e5c5ee8e36b104a94bbb0"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.2.5"
   petitparser:
     dependency: transitive
     description:
@@ -902,15 +894,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.4.1+2"
-  t_pdf_reader:
-    dependency: "direct main"
-    description:
-      path: "."
-      ref: HEAD
-      resolved-ref: "3f65bf1f78da86797bc40b0e21c09b2c53c18030"
-      url: "https://github.com/ThanCoder/t_pdf_reader.git"
-    source: git
-    version: "1.0.0"
   t_server:
     dependency: "direct main"
     description:
@@ -953,14 +936,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.3.0"
-  than_pdf_engine:
-    dependency: transitive
-    description:
-      name: than_pdf_engine
-      sha256: cc196f4810a5719c9bcfffbfde59fcb9cf12de31cf298201f6be58a64be8f97d
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.2.0"
   than_pkg_android:
     dependency: "direct main"
     description:

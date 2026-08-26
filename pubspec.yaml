@@ -30,15 +30,13 @@ dependencies:
   file_type_plus: ^1.1.0
   than_audiotag: ^0.3.0
   package_info_plus: ^10.2.1
+  
   dart_core_extensions:
     git:
       url: https://github.com/ThanCoder/dart_core_extensions.git
   t_widgets:
     git:
       url: https://github.com/ThanCoder/t_widgets.git
-  t_pdf_reader:
-    git:
-      url: https://github.com/ThanCoder/t_pdf_reader.git
   t_server:
     git:
       url: https://github.com/ThanCoder/t_server.git

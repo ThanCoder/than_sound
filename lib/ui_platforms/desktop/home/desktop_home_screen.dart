@@ -7,13 +7,12 @@ import 'package:t_widgets/t_widgets.dart';
 import 'package:than_sound/const_keys.dart';
 import 'package:than_sound/core/controllers/interfaces/i_controller.dart';
 import 'package:than_sound/core/controllers/player/player_state_controller.dart';
-import 'package:than_sound/ui_platforms/components/current_music_visualizer_widget.dart';
 import 'package:than_sound/ui_platforms/desktop/home/desktop_list_page.dart';
 import 'package:than_sound/ui_platforms/components/sleep_timer/sleep_timer_page.dart';
+import 'package:than_sound/ui_platforms/desktop/desktop_music_content_page.dart';
 import 'package:than_sound/ui_platforms/pages/music_tracker/music_tracker_page.dart';
 import 'package:than_sound/ui_platforms/player_theme/interfaces/player_ui_context.dart';
 import 'package:than_sound/ui_platforms/player_theme/ui_context_creator.dart';
-import 'package:than_sound/ui_platforms/desktop/components/desktop_music_bar.dart';
 import 'package:than_sound/ui_platforms/desktop/desktop_player_ui_actions.dart';
 import 'package:than_sound/ui_platforms/pages/library/lib_page.dart';
 import 'package:than_sound/ui_platforms/pages/more_page.dart';
@@ -113,28 +112,29 @@ class _DesktopHomeScreenState extends State<DesktopHomeScreen> {
           }
         }
       },
-      child: Column(
-        children: [
-          _body(),
-
-          //music bar
-          _musicBar(),
-        ],
-      ),
+      child: _body(),
     );
   }
 
-  Expanded _body() {
-    return Expanded(
-      child: Row(
-        children: [
-          _buildNavigation(),
+  Widget _body() {
+    return Row(
+      children: [
+        _buildNavigation(),
 
-          const VerticalDivider(width: 1),
+        const VerticalDivider(width: 1),
 
-          Expanded(child: _pages()),
-        ],
-      ),
+        Expanded(child: _pages()),
+
+        ValueListenableBuilder(
+          valueListenable: playerController.showFloatWidget,
+          builder: (context, enable, child) {
+            if (enable) {
+              return DesktopMusicContentPage();
+            }
+            return SizedBox.shrink();
+          },
+        ),
+      ],
     );
   }
 
@@ -188,40 +188,6 @@ class _DesktopHomeScreenState extends State<DesktopHomeScreen> {
           label: Text('Sleep Timer'),
         ),
       ],
-    );
-  }
-
-  Widget _musicBar() {
-    return ValueListenableBuilder(
-      valueListenable: pc.current,
-      builder: (context, value, child) {
-        return ValueListenableBuilder(
-          valueListenable: pc.showFloatWidget,
-          builder: (context, value, child) {
-            if (!pc.showFloatWidget.value) {
-              return Row(
-                mainAxisAlignment: .end,
-                children: [
-                  GestureDetector(
-                    onTap: () {
-                      pc.showFloatWidget.value = true;
-                    },
-                    child: MouseRegion(
-                      cursor: SystemMouseCursors.click,
-                      child: Container(
-                        padding: .all(5),
-                        decoration: BoxDecoration(borderRadius: .circular(15)),
-                        child: CurrentMusicVisualizerWidget(),
-                      ),
-                    ),
-                  ),
-                ],
-              );
-            }
-            return DesktopMusicBar(uiContext: ctx);
-          },
-        );
-      },
     );
   }
 }

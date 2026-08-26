@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:math';
 import 'package:dart_core_extensions/dart_core_extensions.dart';
 import 'package:flutter/material.dart';
@@ -37,14 +38,10 @@ class _DefaultPlayerViewState extends State<_DefaultPlayerView> {
   MobilePlayerUiActions get actions =>
       widget.ctx.actions as MobilePlayerUiActions;
 
-  final double statusbarHeight = 40;
+  final double statusbarHeight = Platform.isLinux ? 0 : 40;
 
   @override
   Widget build(BuildContext context) {
-    return _body();
-  }
-
-  Widget _body() {
     final current = state.playerStateController.current.value;
 
     if (current == null) {
@@ -89,12 +86,6 @@ class _DefaultPlayerViewState extends State<_DefaultPlayerView> {
             ),
           ),
         ),
-        // ClipRect(
-        //   child: BackdropFilter(
-        //     filter: .blur(sigmaX: 1, sigmaY: 1),
-        //     child: const SizedBox.expand(),
-        //   ),
-        // ),
       ],
     );
   }
@@ -262,6 +253,9 @@ class _DefaultPlayerViewState extends State<_DefaultPlayerView> {
   }
 
   Widget _waveform() {
+    if (Platform.isLinux) {
+      return SizedBox.shrink();
+    }
     return SizedBox(
       height: 65,
       width: double.infinity,
@@ -384,9 +378,10 @@ class _DefaultPlayerViewState extends State<_DefaultPlayerView> {
             SliderTheme(
               data: SliderThemeData(thumbShape: .noThumb),
               child: CSlider(
+                min: 0,
                 max: max,
                 value: value,
-                onChanged: (value) {
+                onChangeEnd: (value) {
                   actions.seek(Duration(milliseconds: value.toInt()));
                 },
               ),

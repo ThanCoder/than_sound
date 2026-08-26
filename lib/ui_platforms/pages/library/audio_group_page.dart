@@ -1,8 +1,11 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:t_widgets/t_widgets.dart';
 import 'package:than_sound/core/controllers/interfaces/i_controller.dart';
 import 'package:than_sound/core/controllers/player/player_state_controller.dart';
 import 'package:than_sound/core/models/audio_file.dart';
+import 'package:than_sound/ui_platforms/desktop/desktop_music_content_page.dart';
 import 'package:than_sound/ui_platforms/mobile/components/audio_item_menu.dart';
 import 'package:than_sound/ui_platforms/mobile/components/audio_list_item.dart';
 import 'package:than_sound/ui_platforms/components/audio_thumbnail.dart';
@@ -29,17 +32,10 @@ class _AudioGroupPageState extends State<AudioGroupPage> {
 
     final current = pCon.current.value;
     if (current != null && current.id == file.id && pCon.state.playing) {
+      if (Platform.isLinux) return;
       context.pushMaterialPageRoute(
         builder: (mainCtx) => PlayerContentThemeProviderScreen(),
       );
-      // final confirmed = await showConfirmDialog(
-      //   context,
-      //   'Want to Song Restart!',
-      // );
-      // if (confirmed) {
-      //   await pCon.setTracks(files, source: .libState);
-      //   pCon.open(file);
-      // }
       return;
     }
     await pCon.setTracks(files, source: .libState);
@@ -49,38 +45,41 @@ class _AudioGroupPageState extends State<AudioGroupPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: col.surface,
-      // appBar: AppBar(
-      //   backgroundColor: col.surfaceContainer,
-      //   foregroundColor: col.onSurfaceVariant,
-      //   title: Text(group.name),
-      // ),
-      body: CustomScrollView(
-        slivers: [
-          // SliverAppBar(
-          //   backgroundColor: col.surfaceContainer.withValues(alpha: .45),
-          //   foregroundColor: col.onSurfaceVariant.withValues(alpha: .45),
-          //   title: Text(group.name),
-          // ),
-          SliverToBoxAdapter(
-            child: SizedBox(
-              height: 400,
-              width: double.infinity,
-              child: _header(),
-            ),
-          ),
+    return Scaffold(backgroundColor: col.surface, body: _body());
+  }
 
-          SliverList.builder(
-            itemCount: group.files.length,
-            itemBuilder: (context, index) {
-              final file = group.files[index];
-
-              return _songItem(file);
-            },
-          ),
+  Widget _body() {
+    if (Platform.isLinux) {
+      return Row(
+        children: [
+          Expanded(child: _bodyContent()),
+          DesktopMusicContentPage(),
         ],
-      ),
+      );
+    }
+    return _bodyContent();
+  }
+
+  Widget _bodyContent() {
+    return CustomScrollView(
+      slivers: [
+        SliverToBoxAdapter(
+          child: SizedBox(
+            height: 400,
+            width: double.infinity,
+            child: _header(),
+          ),
+        ),
+
+        SliverList.builder(
+          itemCount: group.files.length,
+          itemBuilder: (context, index) {
+            final file = group.files[index];
+
+            return _songItem(file);
+          },
+        ),
+      ],
     );
   }
 
