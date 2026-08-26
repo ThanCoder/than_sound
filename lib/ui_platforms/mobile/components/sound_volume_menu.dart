@@ -25,7 +25,7 @@ class _SoundVolumeMenuState extends State<SoundVolumeMenu> {
               return _VolumeWidget(
                 value: py.state.volume,
                 max: 100,
-                onChanged: py.setVolume,
+                onChangeEnd: py.setVolume,
                 icon: Icon(Icons.volume_up_rounded),
                 title: 'Player',
               );
@@ -37,7 +37,7 @@ class _SoundVolumeMenuState extends State<SoundVolumeMenu> {
               return _VolumeWidget(
                 value: py.state.volumeGain,
                 max: 30,
-                onChanged: py.setVolumeGain,
+                onChangeEnd: py.setVolumeGain,
                 icon: Icon(Icons.volume_up_rounded),
                 title: 'Gain',
               );
@@ -70,8 +70,7 @@ class _VolumeWidget extends StatelessWidget {
     this.onChangeEnd,
     required this.title,
     required this.icon,
-    this.onChanged,
-  }) : min = 0.0;
+  }) : onChanged = null, min = 0.0;
 
   final double value;
   final double min;

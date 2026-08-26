@@ -7,6 +7,7 @@ import 'package:than_sound/core/controllers/interfaces/i_controller.dart';
 import 'package:than_sound/core/models/audio_file.dart';
 import 'package:than_sound/ui_platforms/components/dialog/confirm_alert_dialog.dart';
 import 'package:than_sound/ui_platforms/mobile/components/audio_content_theme_menu.dart';
+import 'package:than_sound/ui_platforms/mobile/components/sound_volume_menu.dart';
 import 'package:than_sound/ui_platforms/pages/art_cover_manager_page.dart';
 import 'package:than_sound/ui_platforms/pages/equalizers/audio_eq_home_page.dart';
 import 'package:than_sound/ui_platforms/pages/audio_medatata_editor_page.dart';
@@ -162,6 +163,25 @@ class _AudioItemMenuState extends State<AudioItemMenu> {
               builder: (mainCtx) {
                 return AudioEqHomePage();
               },
+            );
+          },
+        ),
+
+        const SizedBox(height: 4),
+        // Audio Equalizer
+        _MenuTile(
+          icon: Icons.volume_up_outlined,
+          title: 'Volume',
+          subtitle: 'Change or Modify audio Volume',
+          onTap: () {
+            context.pop();
+
+            showModalBottomSheet(
+              context: context,
+              isScrollControlled: true,
+              showDragHandle: true,
+              useSafeArea: true,
+              builder: (context) => SoundVolumeMenu(),
             );
           },
         ),
