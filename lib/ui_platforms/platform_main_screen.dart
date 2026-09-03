@@ -9,7 +9,7 @@ class PlatformMainScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (!Platform.isAndroid) {
+    if (Platform.isAndroid) {
       return MobileHomeScreen();
     } else if (Platform.isLinux) {
       return DesktopHomeScreen();
