@@ -53,16 +53,15 @@ class _AudioListPageState extends State<AudioListPage> {
 
           return;
         }
-
-        final con = ControllerManager.read<AllFileStateController>();
-        await con.scanFromStorage(usedCache: usedCache);
-        if (!mounted) return;
-
-        ControllerManager.read<PlayerStateController>().setTracks(
-          con.files,
-          source: .allFileState,
-        );
       }
+      final con = ControllerManager.read<AllFileStateController>();
+      await con.scanFromStorage(usedCache: usedCache);
+      if (!mounted) return;
+
+      ControllerManager.read<PlayerStateController>().setTracks(
+        con.files,
+        source: .allFileState,
+      );
     } catch (e) {
       if (!mounted) return;
       showTMessageDialogError(context, e.toString());

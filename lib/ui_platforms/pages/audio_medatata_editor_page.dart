@@ -166,10 +166,10 @@ class _AudioMedatataEditorPageState extends State<AudioMedatataEditorPage> {
   Widget _year() {
     return Container(
       padding: .symmetric(vertical: 8, horizontal: 4),
-      decoration: BoxDecoration(
-        color: col.surfaceContainer,
-        borderRadius: .circular(15),
-      ),
+      // decoration: BoxDecoration(
+      //   color: col.surfaceContainer,
+      //   borderRadius: .circular(15),
+      // ),
       child: TextField(
         controller: yearController,
         readOnly: true,

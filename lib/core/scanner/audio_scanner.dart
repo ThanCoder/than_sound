@@ -65,8 +65,8 @@ class AudioScanner {
           final id = FileUtils.getFileIdSync(entry.path);
 
           final meta = AudioMeta(entry.path);
-          final cacheCoverPath = cachePath.join('$id.png');
-          meta.openMeta(cacheCoverPath);
+          final cacheCoverFile = File(cachePath.join('$id.png'));
+          meta.openMeta(cacheCoverFile);
 
           return AudioFile(
             id: id,
@@ -76,7 +76,7 @@ class AudioScanner {
             date: entry.modifiedDate,
             meta: meta,
             size: entry.size,
-            cacheCoverPath: cacheCoverPath,
+            cacheCoverPath: cacheCoverFile.path,
           );
         } catch (e) {
           debugPrint('[AudioScanner:processEntry]: $e');

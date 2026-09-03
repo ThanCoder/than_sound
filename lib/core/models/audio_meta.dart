@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:dart_core_extensions/dart_core_extensions.dart';
 import 'package:flutter/material.dart';
 
@@ -46,7 +48,7 @@ class AudioMeta {
   String description;
   String pictureType;
 
-  void openMeta(String cachePath) {
+  void openMeta(File cacheCoverFile) {
     try {
       final file = TTag();
 
@@ -78,6 +80,11 @@ class AudioMeta {
       bitrate = props.bitrate;
       channels = props.channels;
       sampleRate = props.samplerate;
+      // cover
+      if (!cacheCoverFile.existsSync()) {
+        file.savePicture(cacheCoverFile.path);
+      }
+
       file.close();
     } catch (e) {
       debugPrint('[Dev: AudioMeta:openMeta]: $e');

@@ -279,7 +279,10 @@ class _SongStatTile extends StatelessWidget {
           leading: rank == null
               ? CircleAvatar(
                   backgroundColor: color.surfaceContainerHigh,
-                  child: AudioThumbnail(file: audio),
+                  child: AudioThumbnail(
+                    file: audio,
+                    borderRadius: .circular(15),
+                  ),
                   // const Icon(Icons.music_note),
                 )
               : SizedBox(

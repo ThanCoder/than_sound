@@ -58,39 +58,66 @@ class _MobileHomeScreenState extends State<MobileHomeScreen> {
           );
         },
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: context.colorScheme.surfaceContainer,
-        selectedItemColor: context.colorScheme.primary,
-        unselectedItemColor: context.colorScheme.onSurfaceVariant,
-        currentIndex: index,
-        onTap: (value) {
+      bottomNavigationBar: NavigationBar(
+        selectedIndex: index,
+        onDestinationSelected: (value) {
           setState(() {
             index = value;
           });
         },
-        items: [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home_outlined),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
+        destinations: [
+          NavigationDestination(icon: Icon(Icons.home), label: 'Home'),
+          NavigationDestination(
             icon: Icon(Icons.search_outlined),
             label: 'Search',
           ),
-          BottomNavigationBarItem(
+          NavigationDestination(
             icon: Icon(Icons.library_music_outlined),
             label: 'Library',
           ),
-          BottomNavigationBarItem(
+          NavigationDestination(
             icon: Icon(Icons.track_changes_outlined),
             label: 'Tracker',
           ),
-          BottomNavigationBarItem(
+          NavigationDestination(
             icon: Icon(Icons.grid_view_outlined),
             label: 'More',
           ),
         ],
       ),
+      // bottomNavigationBar: BottomNavigationBar(
+      //   backgroundColor: context.colorScheme.surfaceContainer,
+      //   selectedItemColor: context.colorScheme.primary,
+      //   unselectedItemColor: context.colorScheme.onSurfaceVariant,
+      //   currentIndex: index,
+      //   onTap: (value) {
+      //     setState(() {
+      //       index = value;
+      //     });
+      //   },
+      //   items: [
+      //     BottomNavigationBarItem(
+      //       icon: Icon(Icons.home_outlined),
+      //       label: 'Home',
+      //     ),
+      //     BottomNavigationBarItem(
+      //       icon: Icon(Icons.search_outlined),
+      //       label: 'Search',
+      //     ),
+      //     BottomNavigationBarItem(
+      //       icon: Icon(Icons.library_music_outlined),
+      //       label: 'Library',
+      //     ),
+      //     BottomNavigationBarItem(
+      //       icon: Icon(Icons.track_changes_outlined),
+      //       label: 'Tracker',
+      //     ),
+      //     BottomNavigationBarItem(
+      //       icon: Icon(Icons.grid_view_outlined),
+      //       label: 'More',
+      //     ),
+      //   ],
+      // ),
     );
   }
 }

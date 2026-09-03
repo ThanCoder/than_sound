@@ -6,12 +6,16 @@ import 'package:than_audiotag/than_audiotag.dart';
 import 'package:than_sound/core/models/audio_file.dart';
 
 class AudioThumbnail extends StatelessWidget {
+  const AudioThumbnail({super.key, required this.file, this.borderRadius});
   final AudioFile file;
-  const AudioThumbnail({super.key, required this.file});
+  final BorderRadiusGeometry? borderRadius;
 
   @override
   Widget build(BuildContext context) {
-    return ClipRRect(borderRadius: .circular(4), child: imageWidget);
+    return ClipRRect(
+      borderRadius: borderRadius ?? .circular(4),
+      child: imageWidget,
+    );
   }
 
   Widget get imageWidget {

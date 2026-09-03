@@ -182,11 +182,11 @@ class AllFileStateController extends IController {
         return;
       }
       final path = file.path;
-      final cacheCoverPath = path.join('${file.id}.png');
+      final cacheCoverFile = File(path.join('${file.id}.png'));
 
       final meta = await Isolate.run(() {
         final meta = AudioMeta(path);
-        meta.openMeta(cacheCoverPath);
+        meta.openMeta(cacheCoverFile);
         return meta;
       });
       final newF = file.copyWith(meta: meta);

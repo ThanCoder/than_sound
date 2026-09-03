@@ -30,10 +30,10 @@ class IconFormInput extends StatelessWidget {
     final col = context.colorScheme;
     return Container(
       padding: .symmetric(vertical: 8, horizontal: 4),
-      decoration: BoxDecoration(
-        color: col.surfaceContainer,
-        borderRadius: .circular(15),
-      ),
+      // decoration: BoxDecoration(
+      //   color: col.surfaceContainer,
+      //   borderRadius: .circular(15),
+      // ),
       child: Column(
         crossAxisAlignment: .start,
         spacing: 4,
