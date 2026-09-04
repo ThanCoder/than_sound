@@ -6,7 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:t_widgets/t_widgets.dart';
 import 'package:than_sound/const_keys.dart';
 import 'package:than_sound/core/controllers/interfaces/i_controller.dart';
-import 'package:than_sound/core/controllers/player/player_state_controller.dart';
+import 'package:than_sound/core/controllers/player_state/player_state_controller.dart';
 import 'package:than_sound/ui_platforms/desktop/home/desktop_list_page.dart';
 import 'package:than_sound/ui_platforms/components/sleep_timer/sleep_timer_page.dart';
 import 'package:than_sound/ui_platforms/desktop/desktop_music_content_page.dart';
@@ -67,13 +67,13 @@ class _DesktopHomeScreenState extends State<DesktopHomeScreen> {
     final pc = playerController;
 
     ctx = UiContextCreator.create(
-      actions: DesktopPlayerUiActions(
-        playPause: pc.toggle,
-        next: pc.next,
-        previous: pc.prev,
-        seek: pc.seek,
+      uiActions: DesktopPlayerUiActions(
+        playPause: pc.actions.playPause,
+        next: pc.actions.next,
+        previous: pc.actions.prev,
+        seek: pc.actions.seek,
         closeBar: () {
-          pc.showFloatWidget.value = false;
+          pc.actions.setShowFloatingWidget(false);
         },
       ),
     );
@@ -125,9 +125,10 @@ class _DesktopHomeScreenState extends State<DesktopHomeScreen> {
 
         Expanded(child: _pages()),
 
-        ValueListenableBuilder(
-          valueListenable: playerController.showFloatWidget,
-          builder: (context, enable, child) {
+        StreamBuilder(
+          stream: playerController.stream.showFloatingWidgetChanged,
+          builder: (context, snapshot) {
+            final enable = playerController.state.showFloatWidget;
             if (enable) {
               return DesktopMusicContentPage();
             }

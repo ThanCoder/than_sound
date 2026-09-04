@@ -3,7 +3,7 @@ import 'package:t_widgets/t_widgets.dart' show ContextExt;
 import 'package:than_sound/const_keys.dart';
 import 'package:than_sound/core/controllers/all_audio/all_file_state_controller.dart';
 import 'package:than_sound/core/controllers/interfaces/i_controller.dart';
-import 'package:than_sound/core/controllers/player/player_state_controller.dart';
+import 'package:than_sound/core/controllers/player_state/player_state_controller.dart';
 import 'package:than_sound/core/models/audio_file.dart';
 import 'package:than_sound/ui_platforms/desktop/components/desktop_audio_item_menu.dart';
 import 'package:than_sound/ui_platforms/components/dialog/error_alert_dialog.dart';
@@ -31,6 +31,47 @@ class _DesktopListPageState extends State<DesktopListPage> {
   void dispose() {
     scrollController.dispose();
     super.dispose();
+  }
+
+  double get height => MediaQuery.of(context).size.height;
+
+  void _jumpGpsList() {
+    try {
+      final current = plC.state.current;
+      if (current == null) return;
+      if (!scrollController.hasClients) return;
+      final index = allC.files.indexWhere((e) => e.id == current.id);
+      if (index == -1) return;
+      final offset = (index * audioSliverListDesktopItemHeight);
+      // jump
+      scrollController.animateTo(
+        offset.clamp(0, scrollController.position.maxScrollExtent),
+        duration: Duration(milliseconds: 300),
+        curve: Curves.linear,
+      );
+    } catch (e) {
+      showErrorDialog(context, e.toString());
+    }
+  }
+
+  void onTap(AudioFile file) async {
+    await plC.actions.setTracks(allC.files, source: .allFileState);
+    if (plC.isCurrentFile(file)) {
+      await plC.actions.play();
+    } else {
+      await plC.actions.open(file, play: true);
+    }
+
+    if (!plC.state.showFloatWidget) {
+      plC.actions.setShowFloatingWidget(true);
+    }
+  }
+
+  void onSecondaryTap(AudioFile file) {
+    showDialog(
+      context: context,
+      builder: (context) => DesktopAudioItemMenu(file: file),
+    );
   }
 
   @override
@@ -77,7 +118,6 @@ class _DesktopListPageState extends State<DesktopListPage> {
           builder: (context, asyncSnapshot) {
             return DesktopAudioSliverList(
               files: allC.files,
-              currentNotifier: plC.current,
               onTap: onTap,
               onSecondaryTap: onSecondaryTap,
             );
@@ -103,45 +143,5 @@ class _DesktopListPageState extends State<DesktopListPage> {
         },
       ),
     ];
-  }
-
-  double get height => MediaQuery.of(context).size.height;
-
-  void _jumpGpsList() {
-    try {
-      final current = plC.current.value;
-      if (current == null) return;
-      if (!scrollController.hasClients) return;
-      final index = allC.files.indexWhere((e) => e.id == current.id);
-      if (index == -1) return;
-      final offset = (index * audioSliverListDesktopItemHeight);
-      // jump
-      scrollController.animateTo(
-        offset.clamp(0, scrollController.position.maxScrollExtent),
-        duration: Duration(milliseconds: 300),
-        curve: Curves.linear,
-      );
-    } catch (e) {
-      showErrorDialog(context, e.toString());
-    }
-  }
-
-  void onTap(AudioFile file) async {
-    await plC.setTracks(allC.files, source: .allFileState);
-    if (plC.isCurrentFile(file)) {
-      await plC.play();
-    } else {
-      await plC.open(file);
-    }
-    if (!plC.showFloatWidget.value) {
-      plC.showFloatWidget.value = true;
-    }
-  }
-
-  void onSecondaryTap(AudioFile file) {
-    showDialog(
-      context: context,
-      builder: (context) => DesktopAudioItemMenu(file: file),
-    );
   }
 }

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:mini_music_visualizer/mini_music_visualizer.dart';
 import 'package:t_widgets/t_widgets.dart';
 import 'package:than_sound/core/controllers/interfaces/i_controller.dart';
-import 'package:than_sound/core/controllers/player/player_state_controller.dart';
+import 'package:than_sound/core/controllers/player_state/player_state_controller.dart';
 
 class CurrentMusicVisualizerWidget extends StatelessWidget {
   const CurrentMusicVisualizerWidget({super.key});

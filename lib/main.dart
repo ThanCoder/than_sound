@@ -9,7 +9,7 @@ import 'package:than_sound/const_keys.dart';
 import 'package:than_sound/core/controllers/all_audio/all_file_state_controller.dart';
 import 'package:than_sound/core/controllers/interfaces/i_controller.dart';
 import 'package:than_sound/core/controllers/player/my_audio_handler.dart';
-import 'package:than_sound/core/controllers/player/player_state_controller.dart';
+import 'package:than_sound/core/controllers/player_state/player_state_controller.dart';
 import 'package:than_sound/core/utils/p_utils.dart';
 import 'package:than_sound/main_app.dart';
 import 'package:mpv_audio_kit/mpv_audio_kit.dart';
@@ -46,7 +46,7 @@ void main() async {
     //     linuxWindowWidthKey,
     //     linuxWindowMinWidth.toInt(),
     //   ),
-    //   height: CFBStore.getInstance.getInt(
+    //   height: CFBStore.getInstance.getInt(j
     //     linuxWindowHeightKey,
     //     linuxWindowMinHeight.toInt(),
     //   ),
@@ -72,18 +72,12 @@ void main() async {
       androidNotificationIcon: 'mipmap/launcher_icon',
     ),
   );
-  audioHandler.onListenPlayerEvents();
-  await audioHandler.initConfig();
 
-  final ps = PlayerStateController(audioHandler)..init();
-  ControllerManager.register(ps);
-
+  ControllerManager.register(PlayerStateController(audioHandler));
   ControllerManager.register(AllFileStateController());
   ControllerManager.register(FavouriteController());
   ControllerManager.register(MusicTrackerController());
   ControllerManager.initAll();
-
-  audioHandler.onListenControllerEvent();
 
   runApp(const MainApp());
 }

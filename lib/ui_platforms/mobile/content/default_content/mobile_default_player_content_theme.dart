@@ -4,6 +4,7 @@ import 'package:dart_core_extensions/dart_core_extensions.dart';
 import 'package:flutter/material.dart';
 import 'package:marquee/marquee.dart';
 import 'package:t_widgets/t_widgets.dart';
+import 'package:than_sound/core/controllers/player_state/player_state_controller.dart';
 import 'package:than_sound/core/models/audio_file.dart';
 import 'package:than_sound/exts.dart';
 import 'package:than_sound/ui_platforms/components/reactive_cover/audio_reactive_cover_switcher.dart';
@@ -13,7 +14,6 @@ import 'package:than_sound/ui_platforms/components/c_slider.dart';
 import 'package:than_sound/ui_platforms/pages/favourite/favourite_button.dart';
 import 'package:than_sound/ui_platforms/player_theme/interfaces/i_player_theme.dart';
 import 'package:than_sound/ui_platforms/player_theme/interfaces/player_ui_context.dart';
-import 'package:than_sound/ui_platforms/player_theme/interfaces/player_ui_state.dart';
 import 'package:than_sound/ui_platforms/mobile/mobile_player_ui_actions.dart';
 
 class MobileDefaultPlayerContentTheme extends IPlayerTheme {
@@ -34,15 +34,14 @@ class _DefaultPlayerView extends StatefulWidget {
 
 class _DefaultPlayerViewState extends State<_DefaultPlayerView> {
   PlayerUiContext get ctx => widget.ctx;
-  PlayerUiState get state => widget.ctx.state;
-  MobilePlayerUiActions get actions =>
-      widget.ctx.actions as MobilePlayerUiActions;
+  PlayerState get state => ctx.state;
+  MobilePlayerUiActions get actions => ctx.actions as MobilePlayerUiActions;
 
   final double statusbarHeight = Platform.isLinux ? 0 : 40;
 
   @override
   Widget build(BuildContext context) {
-    final current = state.playerStateController.current.value;
+    final current = state.current;
 
     if (current == null) {
       return const SizedBox.shrink();
@@ -124,12 +123,10 @@ class _DefaultPlayerViewState extends State<_DefaultPlayerView> {
           const SizedBox(width: 38),
 
           Expanded(
-            child: StreamBuilder<bool>(
-              stream: ctx.streams.playing,
-              initialData: state.playerStateController.state.playing,
+            child: StreamBuilder(
+              stream: ctx.stream.playing,
               builder: (context, snapshot) {
-                final playing = snapshot.data ?? false;
-
+                final playing = ctx.state.playing;
                 if (playing) {
                   return Marquee(
                     text: current.autoTitle,
@@ -198,8 +195,8 @@ class _DefaultPlayerViewState extends State<_DefaultPlayerView> {
 
   Widget _cover(AudioFile current, double size) {
     return AudioReactiveCoverSwitcher(
-      playerStream: ctx.streams.playerStream,
-      playing: ctx.streams.playing,
+      playerStream: ctx.state.player.stream,
+      playing: ctx.state.player.stream.playing,
       playingState: true,
       child: Container(
         width: size,
@@ -260,9 +257,9 @@ class _DefaultPlayerViewState extends State<_DefaultPlayerView> {
       height: 65,
       width: double.infinity,
       child: Waveform(
-        playingState: state.playerStateController.state.playing,
-        playing: ctx.streams.playing,
-        playerStream: ctx.streams.playerStream,
+        playingState: state.playing,
+        playing: ctx.state.player.stream.playing,
+        playerStream: ctx.state.player.stream,
       ),
     );
   }
@@ -276,29 +273,26 @@ class _DefaultPlayerViewState extends State<_DefaultPlayerView> {
 
         const SizedBox(height: 8),
 
-        StreamBuilder<bool>(
-          stream: ctx.streams.playing,
-          initialData: state.playerStateController.state.playing,
+        StreamBuilder(
+          stream: ctx.stream.playing,
+          initialData: state.playing,
           builder: (context, snapshot) {
-            final playing = snapshot.data ?? false;
+            final playing = state.playing;
 
             return Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 StreamBuilder(
-                  stream:
-                      state.playerStateController.audioHandler.shuffleStream,
+                  stream: ctx.stream.shuffle,
                   builder: (context, asyncSnapshot) {
-                    final isShuffle =
-                        state.playerStateController.audioHandler.isShuffle;
+                    final isShuffle = state.isShuffle;
                     return _controlButton(
                       icon: isShuffle
                           ? Icons.shuffle_on_rounded
                           : Icons.shuffle,
                       size: 25,
                       onPressed: () {
-                        state.playerStateController.audioHandler
-                            .toggleShuffle();
+                        ctx.actions.toggleShuffle();
                       },
                     );
                   },
@@ -361,13 +355,13 @@ class _DefaultPlayerViewState extends State<_DefaultPlayerView> {
   }
 
   Widget _progress() {
-    return StreamBuilder<Duration>(
-      stream: ctx.streams.position,
-      initialData: state.playerStateController.state.position,
+    return StreamBuilder(
+      stream: ctx.stream.position,
+      initialData: state.position,
       builder: (context, snapshot) {
-        final position = snapshot.data ?? Duration.zero;
+        final position = state.position;
 
-        final duration = state.playerStateController.state.duration;
+        final duration = state.duration;
 
         final max = maxValue(duration.inMilliseconds.toDouble(), 1);
 
@@ -410,7 +404,7 @@ class _DefaultPlayerViewState extends State<_DefaultPlayerView> {
   }
 
   Widget _actions() {
-    final current = state.playerStateController.current.value;
+    final current = state.current;
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,

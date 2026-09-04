@@ -1,7 +1,7 @@
 name: than_sound
 description: "Audio Project For Free"
 publish_to: "none" # Remove this line if you wish to publish to pub.dev
-version: 0.4.0
+version: 0.5.0
 
 repository: https://github.com/ThanCoder/than_sound.git
 
@@ -30,7 +30,7 @@ dependencies:
   file_type_plus: ^1.1.0
   than_audiotag: ^0.3.0
   package_info_plus: ^10.2.1
-  
+
   dart_core_extensions:
     git:
       url: https://github.com/ThanCoder/dart_core_extensions.git
@@ -56,19 +56,19 @@ dev_dependencies:
   # dart run change_app_package_name:main than.app.than_player
   flutter_launcher_icons: ^0.14.4
   # dart run flutter_launcher_icons
-# dev lib
+  # dev lib
 flutter_launcher_icons:
   android: "launcher_icon"
-  image_path: "assets/logo/logo.png"
+  image_path: "assets/logo/plain-empty-soft-pastel-gradient-background--smoot.png-1788456913333.png"
 
 flutter:
   uses-material-design: true
 
   # To add assets to your application, add an assets section, like this:
   assets:
-    - assets/lotties/
-    - assets/logo/
-    - assets/svg/
+  - assets/lotties/
+  - assets/logo/
+  - assets/svg/
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
 

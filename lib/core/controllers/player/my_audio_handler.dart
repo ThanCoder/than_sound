@@ -1,253 +1,56 @@
 import 'dart:async';
 
 import 'package:audio_service/audio_service.dart';
-import 'package:cfb_store/cfb_store.dart';
-import 'package:flutter/material.dart';
-import 'package:mpv_audio_kit/mpv_audio_kit.dart' hide MediaAction;
-import 'package:than_sound/const_keys.dart';
-import 'package:than_sound/core/controllers/all_audio/all_file_event.dart';
-import 'package:than_sound/core/controllers/all_audio/all_file_state_controller.dart';
 import 'package:than_sound/core/controllers/interfaces/i_controller.dart';
-import 'package:than_sound/core/controllers/player/mixins/config_mixin.dart';
-import 'package:than_sound/core/controllers/player/mixins/extra_mixin.dart';
-import 'package:than_sound/core/controllers/player/mixins/player_sleep_timer_listener.dart';
-import 'package:than_sound/core/controllers/player/player_state_controller.dart';
-import 'package:than_sound/core/models/audio_file.dart';
-import 'package:than_sound/ui_platforms/components/sleep_timer/sleep_timer_mode.dart';
-import 'package:than_sound/ui_platforms/pages/favourite/favourite_controller.dart';
+import 'package:than_sound/core/controllers/player_state/player_state_controller.dart';
 
-part 'mixins/player_listener_mixin.dart';
-part 'mixins/shuffle_mixin.dart';
-part 'mixins/equalizer_logic.dart';
-
-class MyAudioHandler extends BaseAudioHandler
-    with
-        QueueHandler,
-        SeekHandler,
-        ConfigMixin,
-        PlayerListenerMixin,
-        ShuffleMixin,
-        ExtraMixin,
-        PlayerSleepTimerListener,
-        EqualizerLogic {
-  final _player = Player();
-  @override
-  Player get player => _player;
-  @override
-  MyAudioHandler get audioHandler => this;
-
-  late final FavouriteController favouriteController =
-      ControllerManager.read<FavouriteController>();
-  late final AllFileStateController allFileStateController =
-      ControllerManager.read<AllFileStateController>();
-
-  PlayerStateController get _playerStateController =>
+class MyAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
+  PlayerStateController get stateController =>
       ControllerManager.read<PlayerStateController>();
 
   @override
-  PlayerState get state => _player.state;
-  PlayerStream get stream => _player.stream;
-  bool audioPaused = false;
-
-  AudioFileSourceType _source = .none;
-  AudioFileSourceType get source => _source;
-
-  @override
-  List<AudioFile> playlist = [];
-  @override
-  List<AudioFile> playOrder = [];
-
-  bool get isShuffle => _isShuffle;
-  Stream<bool> get shuffleStream => _shuffleStreamController.stream;
-
-  @override
-  final currentNotifier = ValueNotifier<AudioFile?>(null);
-
-  final _currentAudioChangeContrller = StreamController<AudioFile?>.broadcast();
-  Stream<AudioFile?> get currentAudioChangeStream =>
-      _currentAudioChangeContrller.stream;
-
-  final store = CFBStore.getInstance;
-
-  void onListenPlayerEvents() {
-    onPlayerListenerMixin();
-  }
-
-  void onListenControllerEvent() {
-    onPlayerListenerMixinControllerEvents();
-    onPlayerSleepTimerListener();
-  }
-
-  // songe end event
-  void songEnd() async {
-    _playerStateController.addEvent(
-      PlayerStateControllerSongEnd(currentNotifier.value!),
-    );
-    final next = getNextSongIndex;
-    if (next == -1) return;
-    // timer
-
-    final timerType = SleepTimerMode.fromValue(
-      store.getString(playerSleepTimerTypeKey),
-    );
-    if (timerType != .none) {
-      return;
-    }
-
-    // update ui
-    currentNotifier.value = playOrder[next];
-
-    // play next song
-    await open(playOrder[next]);
-    _playerStateController.addEvent(
-      PlayerStateControllerSongStart(currentNotifier.value!),
-    );
-  }
-
-  Future<void> setTracks(
-    List<AudioFile> files, {
-    required AudioFileSourceType source,
-  }) async {
-    playlist = files;
-    playOrder = [...playlist];
-    _source = source;
-    if (_player.state.playing || currentNotifier.value != null) return;
-    await setAll(files, play: false);
-  }
-
-  Future<void> setAll(
-    List<AudioFile> files, {
-    int index = 0,
-    bool play = true,
-  }) async {
-    playlist = files;
-    playOrder = files;
-    if (currentNotifier.value == null) {
-      currentNotifier.value = files[index];
-    }
-
-    await _player.open(createMedia(currentNotifier.value!), play: play);
-    if (play) {
-      _playerStateController.addEvent(
-        PlayerStateControllerSongStart(currentNotifier.value!),
-      );
-    }
-    addNotiMediaItem(currentNotifier.value!);
-  }
-
-  Future<void> open(AudioFile file) async {
-    final index = getCurrentIndex(file);
-    if (index == -1) {
-      debugPrint('[MyAudioHandler:open]: index:$index');
-      return;
-    }
-    if (player.state.playing) {
-      _playerStateController.addEvent(PlayerStateControllerSongStop(file));
-    }
-    await _player.open(createMedia(file), play: true);
-    currentNotifier.value = file;
-    _playerStateController.addEvent(PlayerStateControllerSongStart(file));
-    addNotiMediaItem(file);
-  }
-
-  @override
   Future<void> skipToNext() async {
-    final next = getNextSongIndex;
-    if (next == -1) return;
-
-    if (player.state.playing) {
-      _playerStateController.addEvent(
-        PlayerStateControllerSongStop(currentNotifier.value!),
-      );
-    }
-    currentNotifier.value = playOrder[next];
-    await open(playOrder[next]);
-    _playerStateController.addEvent(
-      PlayerStateControllerSongStart(currentNotifier.value!),
-    );
+    await stateController.actions.next();
   }
 
   @override
   Future<void> skipToPrevious() async {
-    final index = getCurrentIndex(currentNotifier.value);
-    if (index == -1) return;
-    final prev = index - 1;
-    if (prev < 0) return;
-    if (player.state.playing) {
-      _playerStateController.addEvent(
-        PlayerStateControllerSongStop(currentNotifier.value!),
-      );
-    }
-
-    currentNotifier.value = playOrder[prev];
-    await open(playOrder[prev]);
-    _playerStateController.addEvent(
-      PlayerStateControllerSongStart(currentNotifier.value!),
-    );
+    await stateController.actions.prev();
   }
 
-  // The most common callbacks:
   @override
   Future<void> play() async {
-    // _player.state
-    try {
-      final pos = _player.state.position.inSeconds;
-      final dur = _player.state.duration.inSeconds;
-      if (dur != 0 && pos == dur) {
-        await _player.seek(Duration.zero);
-      }
-
-      _player.play();
-      _playerStateController.addEvent(
-        PlayerStateControllerSongStart(currentNotifier.value!),
-      );
-      audioPaused = false;
-    } catch (e) {
-      debugPrint('[MyAudioHandler:play]: $e');
-    }
+    await stateController.actions.play();
   }
 
   @override
   Future<void> pause() async {
-    _player.pause();
-    audioPaused = true;
-    _playerStateController.addEvent(
-      PlayerStateControllerSongStop(currentNotifier.value!),
-    );
+    await stateController.actions.pause();
   }
 
   @override
-  Future<void> seek(Duration position) => _player.seek(position);
+  Future<void> seek(Duration position) async =>
+      await stateController.actions.seek(position);
   @override
-  Future<void> skipToQueueItem(int index) => _player.seek(Duration.zero);
+  Future<void> skipToQueueItem(int index) async =>
+      await stateController.actions.seek(Duration.zero);
 
   Future<void> dispose() async {
-    _player.dispose();
+    // stateController.actions.dispose();
   }
 
   @override
   Future<void> stop() async {
-    audioPaused = false;
-    await _player.stop();
-    currentNotifier.value = null;
-    _playerStateController.addEvent(
-      PlayerStateControllerSongStop(currentNotifier.value!),
-    );
-    playbackState.add(
-      playbackState.value.copyWith(playing: false, processingState: .idle),
-    );
+    await stateController.actions.stop();
   }
 
   @override
   Future<dynamic> customAction(String name, [Map<String, dynamic>? extras]) {
-    final current = currentNotifier.value;
-    if (name == 'favorite' && current != null) {
-      // AudioBookmarkController.instance.remove(current.id);
-      favouriteController.remove(current);
+    if (name == 'favorite') {
+      stateController.actions.addFav();
     }
-    if (name == 'favorite_outline' && current != null) {
-      favouriteController.add(current);
-      // AudioBookmarkController.instance.add(current.id);
+    if (name == 'favorite_outline') {
+      stateController.actions.removeFav();
     }
 
     return super.customAction(name, extras);
@@ -255,12 +58,8 @@ class MyAudioHandler extends BaseAudioHandler
 
   @override
   Future<void> click([MediaButton button = MediaButton.media]) async {
-    final useBluetoothControl = CFBStore.getInstance.getBool(
-      audioBluetoothControlKeyName,
-      true,
-    );
+    final useBluetoothControl = stateController.state.useBluetoothControl;
     if (!useBluetoothControl) return;
-
     return super.click(button);
   }
 }

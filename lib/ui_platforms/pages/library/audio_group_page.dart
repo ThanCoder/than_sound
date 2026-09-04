@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:t_widgets/t_widgets.dart';
 import 'package:than_sound/core/controllers/interfaces/i_controller.dart';
-import 'package:than_sound/core/controllers/player/player_state_controller.dart';
+import 'package:than_sound/core/controllers/player_state/player_state_controller.dart';
 import 'package:than_sound/core/models/audio_file.dart';
 import 'package:than_sound/ui_platforms/desktop/desktop_music_content_page.dart';
 import 'package:than_sound/ui_platforms/mobile/components/audio_item_menu.dart';
@@ -30,7 +30,7 @@ class _AudioGroupPageState extends State<AudioGroupPage> {
   void openConfrmAndPlay(AudioFile file) async {
     final files = widget.group.files;
 
-    final current = pCon.current.value;
+    final current = pCon.state.current;
     if (current != null && current.id == file.id && pCon.state.playing) {
       if (Platform.isLinux) return;
       context.pushMaterialPageRoute(
@@ -38,9 +38,9 @@ class _AudioGroupPageState extends State<AudioGroupPage> {
       );
       return;
     }
-    await pCon.setTracks(files, source: .libState);
+    await pCon.actions.setTracks(files, source: .libState);
     // print('item: $file');
-    pCon.open(file);
+    pCon.actions.open(file);
   }
 
   @override
@@ -162,9 +162,9 @@ class _AudioGroupPageState extends State<AudioGroupPage> {
                     const SizedBox(width: 8),
 
                     StreamBuilder(
-                      stream: pCon.audioHandler.shuffleStream,
+                      stream: pCon.stream.shuffle,
                       builder: (context, asyncSnapshot) {
-                        final enable = pCon.audioHandler.isShuffle;
+                        final enable = pCon.state.isShuffle;
                         return OutlinedButton.icon(
                           style: OutlinedButton.styleFrom(
                             backgroundColor: enable
@@ -175,7 +175,7 @@ class _AudioGroupPageState extends State<AudioGroupPage> {
                                 : col.onSurfaceVariant,
                           ),
                           onPressed: () {
-                            pCon.audioHandler.toggleShuffle();
+                            pCon.actions.toggleShuffle();
                           },
                           icon: Icon(Icons.shuffle_rounded),
                           label: const Text('Shuffle'),

@@ -4,7 +4,7 @@ import 'package:cfb_store/cfb_store.dart';
 import 'package:than_sound/core/controllers/all_audio/all_file_event.dart';
 import 'package:than_sound/core/controllers/all_audio/all_file_state_controller.dart';
 import 'package:than_sound/core/controllers/interfaces/i_controller.dart';
-import 'package:than_sound/core/controllers/player/player_state_controller.dart';
+import 'package:than_sound/core/controllers/player_state/player_state_controller.dart';
 import 'package:than_sound/core/models/audio_file.dart';
 import 'package:than_sound/core/utils/p_utils.dart';
 import 'package:than_sound/ui_platforms/pages/music_tracker/song_stats.dart';
@@ -31,8 +31,8 @@ class MusicTrackerController extends IController {
 
     final stopW = Stopwatch();
 
-    _playerCon.event.listen((event) {
-      if (event is PlayerStateControllerSongStart) {
+    _playerCon.stream.all.listen((event) {
+      if (event is SongStart) {
         stopW
           ..reset()
           ..start();
@@ -40,13 +40,13 @@ class MusicTrackerController extends IController {
         onSongStart(event.file.id);
       }
 
-      if (event is PlayerStateControllerSongEnd) {
+      if (event is SongEnd) {
         stopW.stop();
 
         onSongEnd(event.file.id, stopW.elapsed);
       }
 
-      if (event is PlayerStateControllerSongStop) {
+      if (event is SongStop) {
         stopW.stop();
 
         onSongStop(event.file.id, stopW.elapsed);

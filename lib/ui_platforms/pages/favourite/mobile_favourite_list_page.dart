@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:t_widgets/t_widgets.dart';
 import 'package:than_sound/core/controllers/interfaces/i_controller.dart';
-import 'package:than_sound/core/controllers/player/player_state_controller.dart';
+import 'package:than_sound/core/controllers/player_state/player_state_controller.dart';
 import 'package:than_sound/ui_platforms/mobile/components/audio_float_widget.dart';
 import 'package:than_sound/ui_platforms/mobile/components/audio_sliver_list.dart';
 import 'package:than_sound/ui_platforms/pages/favourite/favourite_controller.dart';
@@ -56,16 +56,19 @@ class _MobileFavouriteListPageState extends State<MobileFavouriteListPage> {
                   AudioSliverList(
                     list: con.files,
                     onClicked: (file) async {
-                      pCon.setTracks(con.files, source: .favouriteState);
-                      pCon.open(file);
+                      pCon.actions.setTracks(
+                        con.files,
+                        source: .favouriteState,
+                      );
+                      pCon.actions.open(file);
                     },
                   ),
-                  ValueListenableBuilder(
-                    valueListenable: pCon.showFloatWidget,
-                    builder: (context, value, child) {
+                  StreamBuilder(
+                    stream: pCon.stream.showFloatingWidgetChanged,
+                    builder: (context, snapshot) {
                       return SliverToBoxAdapter(
                         child: SizedBox(
-                          height: pCon.showFloatWidget.value ? 130 : 90,
+                          height: pCon.state.showFloatWidget ? 130 : 90,
                         ),
                       );
                     },

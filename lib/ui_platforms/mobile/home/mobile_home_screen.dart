@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:t_widgets/t_widgets.dart';
 import 'package:than_sound/ui_platforms/mobile/components/audio_float_widget.dart';
 import 'package:than_sound/core/controllers/interfaces/i_controller.dart';
-import 'package:than_sound/core/controllers/player/player_state_controller.dart';
+import 'package:than_sound/core/controllers/player_state/player_state_controller.dart';
 import 'package:than_sound/ui_platforms/mobile/home/audio_list_page.dart';
 import 'package:than_sound/ui_platforms/pages/library/lib_page.dart';
 import 'package:than_sound/ui_platforms/pages/music_tracker/music_tracker_page.dart';
@@ -23,16 +23,17 @@ class _MobileHomeScreenState extends State<MobileHomeScreen> {
   }
 
   int index = 0;
+  final con = ControllerManager.read<PlayerStateController>();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: context.colorScheme.surface,
       // extendBody: true,
-      body: ValueListenableBuilder(
-        valueListenable:
-            ControllerManager.read<PlayerStateController>().showFloatWidget,
-        builder: (context, floatWidgetEnable, child) {
+      body: StreamBuilder(
+        stream: con.stream.showFloatingWidgetChanged,
+        builder: (context, snapshot) {
+          final floatWidgetEnable = con.state.showFloatWidget;
           return Stack(
             children: [
               IndexedStack(

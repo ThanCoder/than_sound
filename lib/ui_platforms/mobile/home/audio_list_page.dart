@@ -11,7 +11,7 @@ import 'package:than_sound/ui_platforms/ui/audio/list_gps_button.dart';
 import 'package:than_sound/const_keys.dart';
 import 'package:than_sound/core/controllers/all_audio/all_file_state_controller.dart';
 import 'package:than_sound/core/controllers/interfaces/i_controller.dart';
-import 'package:than_sound/core/controllers/player/player_state_controller.dart';
+import 'package:than_sound/core/controllers/player_state/player_state_controller.dart';
 import 'package:than_sound/ui_platforms/ui/partials/sort_provider.dart';
 
 class AudioListPage extends StatefulWidget {
@@ -58,7 +58,7 @@ class _AudioListPageState extends State<AudioListPage> {
       await con.scanFromStorage(usedCache: usedCache);
       if (!mounted) return;
 
-      ControllerManager.read<PlayerStateController>().setTracks(
+      ControllerManager.read<PlayerStateController>().actions.setTracks(
         con.files,
         source: .allFileState,
       );
@@ -71,7 +71,7 @@ class _AudioListPageState extends State<AudioListPage> {
   void goListGps() {
     try {
       final con = ControllerManager.read<PlayerStateController>();
-      final current = con.current.value;
+      final current = con.state.current;
       if (current == null) return;
       final allCon = ControllerManager.read<AllFileStateController>();
       final index = allCon.files.indexWhere((e) => e.id == current.id);
@@ -94,27 +94,27 @@ class _AudioListPageState extends State<AudioListPage> {
 
   void openConfrmAndPlay(AudioFile file) async {
     final pCon = ControllerManager.read<PlayerStateController>();
-    final current = pCon.current.value;
+    final current = pCon.state.current;
     if (current != null && current.id == file.id && pCon.state.playing) {
       final confirmed = await showConfirmDialog(
         context,
         'Want to Song Restart!',
       );
       if (confirmed) {
-        await pCon.setTracks(
+        await pCon.actions.setTracks(
           ControllerManager.read<AllFileStateController>().files,
           source: .allFileState,
         );
-        pCon.open(file);
+        pCon.actions.open(file);
       }
       return;
     }
-    await pCon.setTracks(
+    await pCon.actions.setTracks(
       ControllerManager.read<AllFileStateController>().files,
       source: .allFileState,
     );
     // print('item: $file');
-    pCon.open(file);
+    pCon.actions.open(file);
   }
 
   @override
@@ -146,10 +146,10 @@ class _AudioListPageState extends State<AudioListPage> {
                   bottom: widget.listGpsButtonBottomPos,
                   child: ListGpsButton(onClicked: goListGps),
                 )
-              else if (pCon.current.value != null)
+              else if (pCon.state.current != null)
                 Positioned(
                   right: widget.listGpsButtonRightPos ?? 10,
-                  bottom: pCon.showFloatWidget.value ? 100 : 50,
+                  bottom: pCon.state.showFloatWidget ? 100 : 50,
                   child: ListGpsButton(onClicked: goListGps),
                 ),
             ],
@@ -286,7 +286,7 @@ class _AudioListPageState extends State<AudioListPage> {
           AudioSliverList(list: con.files, onClicked: openConfrmAndPlay),
 
           SliverToBoxAdapter(
-            child: SizedBox(height: pCon.showFloatWidget.value ? 130 : 90),
+            child: SizedBox(height: pCon.state.showFloatWidget ? 130 : 90),
           ),
         ],
       ),

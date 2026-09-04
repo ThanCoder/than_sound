@@ -5,7 +5,7 @@ import 'package:than_sound/ui_platforms/components/current_music_visualizer_widg
 import 'package:than_sound/ui_platforms/ui/audio/list_gps_button.dart';
 import 'package:than_sound/const_keys.dart';
 import 'package:than_sound/core/controllers/interfaces/i_controller.dart';
-import 'package:than_sound/core/controllers/player/player_state_controller.dart';
+import 'package:than_sound/core/controllers/player_state/player_state_controller.dart';
 import 'package:than_sound/ui_platforms/ui/partials/sort_provider.dart';
 
 class PlayerPlaylist extends StatefulWidget {
@@ -62,10 +62,10 @@ class _PlayerPlaylistState extends State<PlayerPlaylist> {
         children: [
           CurrentMusicVisualizerWidget(),
           SizedBox(width: 10),
-          if (con.current.value != null)
+          if (con.state.current != null)
             Expanded(
               child: Text(
-                'T: ${con.current.value!.autoTitle}',
+                'T: ${con.state.current!.autoTitle}',
                 maxLines: 2,
                 overflow: .ellipsis,
                 style: TextStyle(
@@ -91,10 +91,10 @@ class _PlayerPlaylistState extends State<PlayerPlaylist> {
       stream: con.stream.playbackState,
       builder: (context, asyncSnapshot) {
         return AudioSliverList(
-          list: con.files,
+          list: con.state.files,
           onClicked: (file) async {
             final con = ControllerManager.read<PlayerStateController>();
-            con.open(file);
+            con.actions.open(file);
           },
         );
       },
@@ -104,9 +104,9 @@ class _PlayerPlaylistState extends State<PlayerPlaylist> {
   void goListGps() {
     try {
       final con = ControllerManager.read<PlayerStateController>();
-      final current = con.current.value;
+      final current = con.state.current;
       if (current == null) return;
-      final index = con.files.indexWhere((e) => e.id == current.id);
+      final index = con.state.files.indexWhere((e) => e.id == current.id);
       if (index == -1) return;
       final size = MediaQuery.of(context).size;
       final offset = (audioSliverListItemHeight * index) - (size.height * 0.3);

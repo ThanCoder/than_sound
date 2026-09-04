@@ -1,4 +1,4 @@
-import 'package:than_sound/core/controllers/player/player_state_controller.dart';
+import 'package:than_sound/core/controllers/player_state/player_state_controller.dart';
 
 class PlayerUiState {
   final PlayerStateController playerStateController;

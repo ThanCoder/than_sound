@@ -3,7 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:mpv_audio_kit/src/generated/audio_effects_settings.dart';
 import 'package:than_sound/core/controllers/interfaces/i_controller.dart';
-import 'package:than_sound/core/controllers/player/player_state_controller.dart';
+import 'package:than_sound/core/controllers/player_state/player_state_controller.dart';
 import 'package:than_sound/ui_platforms/components/c_slider.dart';
 
 class AudioBassEqPage extends StatefulWidget {
@@ -15,8 +15,7 @@ class AudioBassEqPage extends StatefulWidget {
 
 class _AudioBassEqPageState extends State<AudioBassEqPage> {
   ColorScheme get col => Theme.of(context).colorScheme;
-  final py =
-      ControllerManager.read<PlayerStateController>().audioHandler.player;
+  final py = ControllerManager.read<PlayerStateController>().player;
 
   @override
   void initState() {

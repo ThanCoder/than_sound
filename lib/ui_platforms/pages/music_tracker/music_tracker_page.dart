@@ -2,7 +2,7 @@ import 'package:dart_core_extensions/dart_core_extensions.dart';
 import 'package:flutter/material.dart';
 import 'package:than_sound/core/controllers/all_audio/all_file_state_controller.dart';
 import 'package:than_sound/core/controllers/interfaces/i_controller.dart';
-import 'package:than_sound/core/controllers/player/player_state_controller.dart';
+import 'package:than_sound/core/controllers/player_state/player_state_controller.dart';
 import 'package:than_sound/core/models/audio_file.dart';
 import 'package:than_sound/ui_platforms/components/audio_thumbnail.dart';
 import 'package:than_sound/ui_platforms/components/dialog/confirm_alert_dialog.dart';
@@ -25,27 +25,27 @@ class _MusicTrackerPageState extends State<MusicTrackerPage> {
 
   void openConfrmAndPlay(AudioFile file) async {
     final pCon = ControllerManager.read<PlayerStateController>();
-    final current = pCon.current.value;
+    final current = pCon.state.current;
     if (current != null && current.id == file.id && pCon.state.playing) {
       final confirmed = await showConfirmDialog(
         context,
         'Want to Song Restart!',
       );
       if (confirmed) {
-        await pCon.setTracks(
+        await pCon.actions.setTracks(
           ControllerManager.read<AllFileStateController>().files,
           source: .allFileState,
         );
-        pCon.open(file);
+        pCon.actions.open(file);
       }
       return;
     }
-    await pCon.setTracks(
+    await pCon.actions.setTracks(
       ControllerManager.read<AllFileStateController>().files,
       source: .allFileState,
     );
     // print('item: $file');
-    pCon.open(file);
+    pCon.actions.open(file);
   }
 
   ColorScheme get col => Theme.of(context).colorScheme;

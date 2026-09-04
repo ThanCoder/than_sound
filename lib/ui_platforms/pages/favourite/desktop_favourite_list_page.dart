@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:t_widgets/t_widgets.dart';
 import 'package:than_sound/core/controllers/interfaces/i_controller.dart';
-import 'package:than_sound/core/controllers/player/player_state_controller.dart';
+import 'package:than_sound/core/controllers/player_state/player_state_controller.dart';
 import 'package:than_sound/core/models/audio_file.dart';
 import 'package:than_sound/ui_platforms/desktop/components/desktop_audio_item_menu.dart';
 import 'package:than_sound/ui_platforms/desktop/components/desktop_audio_sliver_list.dart';
@@ -59,7 +59,7 @@ class _DesktopFavouriteListPageState extends State<DesktopFavouriteListPage> {
                   slivers: [
                     DesktopAudioSliverList(
                       files: con.files,
-                      currentNotifier: plC.current,
+
                       onTap: onTap,
                       onSecondaryTap: onSecondaryTap,
                     ),
@@ -74,14 +74,14 @@ class _DesktopFavouriteListPageState extends State<DesktopFavouriteListPage> {
   }
 
   void onTap(AudioFile file) async {
-    await plC.setTracks(con.files, source: .allFileState);
+    await plC.actions.setTracks(con.files, source: .allFileState);
     if (plC.isCurrentFile(file)) {
-      await plC.play();
+      await plC.actions.play();
     } else {
-      await plC.open(file);
+      await plC.actions.open(file);
     }
-    if (!plC.showFloatWidget.value) {
-      plC.showFloatWidget.value = true;
+    if (!plC.state.showFloatWidget) {
+      plC.actions.setShowFloatingWidget(true);
     }
   }
 

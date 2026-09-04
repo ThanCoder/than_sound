@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mpv_audio_kit/mpv_audio_kit.dart';
 import 'package:than_sound/core/controllers/interfaces/i_controller.dart';
-import 'package:than_sound/core/controllers/player/player_state_controller.dart';
+import 'package:than_sound/core/controllers/player_state/player_state_controller.dart';
 import 'package:than_sound/core/extensions/audio_file_extensions.dart';
 import 'package:than_sound/core/extensions/dur_ext.dart';
 import 'package:than_sound/core/models/audio_file.dart';
@@ -31,7 +31,7 @@ class _DesktopMusicContentPageState extends State<DesktopMusicContentPage> {
       showDragHandle: true,
       useSafeArea: true,
       builder: (context) => AudioItemMenu(
-        file: playerController.current.value!,
+        file: playerController.state.current!,
         showContentAnimation: true,
       ),
     );
@@ -39,9 +39,10 @@ class _DesktopMusicContentPageState extends State<DesktopMusicContentPage> {
 
   @override
   Widget build(BuildContext context) {
-    return ValueListenableBuilder(
-      valueListenable: playerController.current,
-      builder: (context, current, child) {
+    return StreamBuilder(
+      stream: playerController.stream.current,
+      builder: (context, snapshot) {
+        final current = playerController.state.current;
         if (current == null) {
           return SizedBox.shrink();
         }
@@ -161,7 +162,7 @@ class _DesktopMusicContentPageState extends State<DesktopMusicContentPage> {
                 max: player.state.duration.inSeconds.toDouble(),
                 value: player.state.position.inSeconds.toDouble(),
                 onChangeEnd: (value) {
-                  playerController.audioHandler.seek(
+                  playerController.actions.seek(
                     Duration(seconds: value.toInt()),
                   );
                 },
@@ -196,26 +197,22 @@ class _DesktopMusicContentPageState extends State<DesktopMusicContentPage> {
             foregroundColor: col.onPrimaryContainer,
           ),
           onPressed: () {
-            playerController.audioHandler.skipToPrevious();
+            playerController.actions.prev();
           },
           icon: Icon(Icons.skip_previous_outlined, size: 30),
         ),
         SizedBox(width: 30),
         StreamBuilder(
-          stream: playerController.audioHandler.player.stream.playing,
+          stream: playerController.stream.playing,
           builder: (context, asyncSnapshot) {
-            final playing = playerController.audioHandler.player.state.playing;
+            final playing = playerController.state.playing;
             return IconButton(
               style: IconButton.styleFrom(
                 backgroundColor: col.primary,
                 foregroundColor: col.onPrimary,
               ),
               onPressed: () {
-                if (playing) {
-                  playerController.audioHandler.pause();
-                } else {
-                  playerController.audioHandler.play();
-                }
+                playerController.actions.playPause();
               },
               icon: Icon(
                 playing ? Icons.pause : Icons.play_arrow_outlined,
@@ -232,7 +229,7 @@ class _DesktopMusicContentPageState extends State<DesktopMusicContentPage> {
             foregroundColor: col.onPrimaryContainer,
           ),
           onPressed: () {
-            playerController.audioHandler.skipToNext();
+            playerController.actions.next();
           },
           icon: Icon(Icons.skip_next_outlined, size: 30),
         ),

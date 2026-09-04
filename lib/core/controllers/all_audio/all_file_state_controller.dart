@@ -8,7 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:than_sound/core/controllers/all_audio/all_file_event.dart';
 import 'package:than_sound/core/controllers/all_audio/all_state.dart';
 import 'package:than_sound/core/controllers/interfaces/i_controller.dart';
-import 'package:than_sound/core/controllers/player/player_state_controller.dart';
+import 'package:than_sound/core/controllers/player_state/player_state_controller.dart';
 import 'package:than_sound/core/extensions/audio_file_extensions.dart';
 import 'package:than_sound/core/models/audio_file.dart';
 import 'package:than_sound/core/models/audio_meta.dart';
@@ -136,17 +136,17 @@ class AllFileStateController extends IController {
     sort(item, files);
     _setSortToConfig();
     _con.add(_state);
-    _playerStateController.setTracks(files, source: .allFileState);
+    // _playerStateController.setTracks(files, source: .allFileState);
   }
 
   Future<void> deleteAudioFile(AudioFile file) async {
     try {
       // check current songe
-      final current = _playerStateController.current.value;
+      final current = _playerStateController.state.current;
       if (current != null && current.path == file.path) {
-        await _playerStateController.stop();
+        await _playerStateController.actions.stop();
 
-        _playerStateController.current.value = null;
+        _playerStateController.actions.setCurrent(null);
       }
 
       final index = files.indexWhere((e) => e.path == file.path);

@@ -4,7 +4,7 @@ import 'package:than_sound/const_keys.dart';
 import 'package:than_sound/ui_platforms/components/current_music_visualizer_widget.dart';
 import 'package:than_sound/ui_platforms/components/audio_thumbnail.dart';
 import 'package:than_sound/core/controllers/interfaces/i_controller.dart';
-import 'package:than_sound/core/controllers/player/player_state_controller.dart';
+import 'package:than_sound/core/controllers/player_state/player_state_controller.dart';
 import 'package:than_sound/core/models/audio_file.dart';
 import 'package:than_sound/ui_platforms/pages/favourite/favourite_button.dart';
 
@@ -25,10 +25,10 @@ class AudioListItem extends StatelessWidget {
     final con = ControllerManager.read<PlayerStateController>();
     final colors = Theme.of(context).colorScheme;
 
-    return ValueListenableBuilder(
-      valueListenable: con.current,
-      builder: (context, current, child) {
-        final isCurrent = current?.id == file.id;
+    return StreamBuilder(
+      stream: con.stream.current,
+      builder: (context, snapshot) {
+        final isCurrent = con.state.current?.id == file.id;
 
         return Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),

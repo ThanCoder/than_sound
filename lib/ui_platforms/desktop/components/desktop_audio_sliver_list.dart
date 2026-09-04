@@ -2,6 +2,8 @@ import 'package:dart_core_extensions/dart_core_extensions.dart';
 import 'package:flutter/material.dart';
 import 'package:t_widgets/t_widgets.dart';
 import 'package:than_sound/const_keys.dart';
+import 'package:than_sound/core/controllers/interfaces/i_controller.dart';
+import 'package:than_sound/core/controllers/player_state/player_state_controller.dart';
 import 'package:than_sound/core/models/audio_file.dart';
 import 'package:than_sound/ui_platforms/components/current_music_visualizer_widget.dart';
 import 'package:than_sound/ui_platforms/pages/favourite/favourite_button.dart';
@@ -13,13 +15,11 @@ class DesktopAudioSliverList extends StatelessWidget {
     required this.files,
     required this.onTap,
     required this.onSecondaryTap,
-    required this.currentNotifier,
   });
 
   final List<AudioFile> files;
   final ValueChanged<AudioFile> onTap;
   final ValueChanged<AudioFile> onSecondaryTap;
-  final ValueNotifier<AudioFile?> currentNotifier;
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +30,6 @@ class DesktopAudioSliverList extends StatelessWidget {
 
         return _DesktopAudioRow(
           file: file,
-          currentNotifier: currentNotifier,
           onTap: () => onTap(file),
           onSecondaryTap: () => onSecondaryTap(file),
         );
@@ -44,13 +43,11 @@ class _DesktopAudioRow extends StatefulWidget {
     required this.file,
     required this.onTap,
     required this.onSecondaryTap,
-    required this.currentNotifier,
   });
 
   final AudioFile file;
   final VoidCallback onTap;
   final VoidCallback onSecondaryTap;
-  final ValueNotifier<AudioFile?> currentNotifier;
 
   @override
   State<_DesktopAudioRow> createState() => _DesktopAudioRowState();
@@ -58,6 +55,8 @@ class _DesktopAudioRow extends StatefulWidget {
 
 class _DesktopAudioRowState extends State<_DesktopAudioRow> {
   bool hovering = false;
+
+  final con = ControllerManager.read<PlayerStateController>();
 
   @override
   Widget build(BuildContext context) {
@@ -68,9 +67,10 @@ class _DesktopAudioRowState extends State<_DesktopAudioRow> {
       child: GestureDetector(
         onTap: widget.onTap,
         onSecondaryTap: widget.onSecondaryTap,
-        child: ValueListenableBuilder(
-          valueListenable: widget.currentNotifier,
-          builder: (context, current, child) {
+        child: StreamBuilder(
+          stream: con.stream.current,
+          builder: (context, snapshot) {
+            final current = con.state.current;
             return AnimatedContainer(
               duration: const Duration(milliseconds: 120),
               height: audioSliverListDesktopItemHeight,

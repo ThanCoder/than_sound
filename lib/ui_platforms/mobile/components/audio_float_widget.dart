@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:t_widgets/t_widgets.dart';
 import 'package:than_sound/ui_platforms/components/audio_thumbnail.dart';
 import 'package:than_sound/core/controllers/interfaces/i_controller.dart';
-import 'package:than_sound/core/controllers/player/player_state_controller.dart';
+import 'package:than_sound/core/controllers/player_state/player_state_controller.dart';
 import 'package:than_sound/core/models/audio_file.dart';
 import 'package:than_sound/router.dart';
 
@@ -14,6 +14,7 @@ class AudioFloatWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final col = context.colorScheme;
     final con = ControllerManager.read<PlayerStateController>();
+
     return GestureDetector(
       onTap: () => goContent(context),
       onLongPress: () => showCloseDialog(context),
@@ -30,17 +31,17 @@ class AudioFloatWidget extends StatelessWidget {
                 topRight: .circular(15),
               ),
             ),
-            child: ValueListenableBuilder(
-              valueListenable: con.current,
-              builder: (context, current, child) {
-                if (current == null || !con.showFloatWidget.value) {
+            child: StreamBuilder(
+              stream: con.stream.current,
+              builder: (context, snapshot) {
+                if (con.state.current == null || !con.state.showFloatWidget) {
                   return SizedBox.shrink();
                 }
 
                 return StreamBuilder(
                   stream: con.stream.playing,
                   builder: (context, asyncSnapshot) {
-                    return contentWidget(context, current, con);
+                    return contentWidget(context, con.state.current!, con);
                   },
                 );
               },
@@ -65,7 +66,7 @@ class AudioFloatWidget extends StatelessWidget {
         IconButton(
           color: col.primary.withValues(alpha: .80),
           onPressed: () {
-            con.prev();
+            con.actions.prev();
           },
           icon: Icon(Icons.skip_previous),
         ),
@@ -81,7 +82,7 @@ class AudioFloatWidget extends StatelessWidget {
           ),
           child: IconButton(
             onPressed: () {
-              con.toggle();
+              con.actions.playPause();
             },
             icon: Icon(
               color: col.primary,
@@ -92,7 +93,7 @@ class AudioFloatWidget extends StatelessWidget {
         IconButton(
           color: col.primary.withValues(alpha: .80),
           onPressed: () {
-            con.next();
+            con.actions.next();
           },
           icon: Icon(Icons.skip_next),
         ),
@@ -161,10 +162,8 @@ class AudioFloatWidget extends StatelessWidget {
             TextButton(
               onPressed: () {
                 ScaffoldMessenger.of(ctx).hideCurrentSnackBar();
-                ControllerManager.read<PlayerStateController>()
-                        .showFloatWidget
-                        .value =
-                    false;
+                ControllerManager.read<PlayerStateController>().actions
+                    .setShowFloatingWidget(false);
               },
               child: Text('Hide', style: TextStyle(color: col.inverseSurface)),
             ),

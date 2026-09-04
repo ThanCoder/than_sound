@@ -1,7 +1,7 @@
 import 'package:dart_core_extensions/dart_core_extensions.dart';
 import 'package:flutter/material.dart';
 import 'package:than_sound/core/controllers/interfaces/i_controller.dart';
-import 'package:than_sound/core/controllers/player/player_state_controller.dart';
+import 'package:than_sound/core/controllers/player_state/player_state_controller.dart';
 import 'package:than_sound/ui_platforms/mobile/components/sound_volume_menu.dart';
 import 'package:than_sound/ui_platforms/mobile/components/audio_item_menu.dart';
 import 'package:than_sound/ui_platforms/components/player_playlist.dart';
@@ -26,18 +26,16 @@ class _PlayerContentThemeProviderScreenState
     super.initState();
   }
 
-  final PlayerStateController playerController =
+  final PlayerStateController pc =
       ControllerManager.read<PlayerStateController>();
   late PlayerUiContext ctx;
   void init() {
-    final pc = playerController;
-
     ctx = UiContextCreator.create(
-      actions: MobilePlayerUiActions(
-        playPause: pc.toggle,
-        next: pc.next,
-        previous: pc.prev,
-        seek: pc.seek,
+      uiActions: MobilePlayerUiActions(
+        playPause: pc.actions.playPause,
+        next: pc.actions.next,
+        previous: pc.actions.prev,
+        seek: pc.actions.seek,
         playlist: showPlayList,
         sleepTimer: () {},
         more: showItemMenu,
@@ -50,9 +48,9 @@ class _PlayerContentThemeProviderScreenState
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: !TPlatform.isDesktop ? null : AppBar(),
-      body: ValueListenableBuilder(
-        valueListenable: playerController.current,
-        builder: (context, value, child) {
+      body: StreamBuilder(
+        stream: pc.stream.current,
+        builder: (context, snapshot) {
           return MobileDefaultPlayerContentTheme().build(context, ctx);
         },
       ),
@@ -81,10 +79,8 @@ class _PlayerContentThemeProviderScreenState
       isScrollControlled: true,
       showDragHandle: true,
       useSafeArea: true,
-      builder: (context) => AudioItemMenu(
-        file: playerController.current.value!,
-        showContentAnimation: true,
-      ),
+      builder: (context) =>
+          AudioItemMenu(file: pc.state.current!, showContentAnimation: true),
     );
   }
 
