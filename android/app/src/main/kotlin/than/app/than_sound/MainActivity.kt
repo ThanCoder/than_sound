@@ -1,4 +1,4 @@
-package com.example.than_sound
+package than.app.than_sound
 
 import io.flutter.embedding.android.FlutterActivity
 
