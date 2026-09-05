@@ -1,6 +1,9 @@
-# 0.3.0
+# 0.5.0
 
-<!-- - Added `Audio Setting Storage` -->
++ Added `Sleep Timer`
++ Modified `Home Navigation UI`
++ Modified `Player State Core`
+
 - Some Added `Desktop Version`
 - Fixed `Slider` -> `onChangedEnd` to `onChanged`
 
