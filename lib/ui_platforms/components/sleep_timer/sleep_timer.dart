@@ -1,41 +1,62 @@
 import 'dart:async';
 
+enum SleepTimerMode { off, afterDuration, endOfSong }
+
 class SleepTimer {
   Timer? _timer;
   DateTime? _endTime;
 
-  bool get isActive => _timer?.isActive ?? false;
+  SleepTimerMode _mode = SleepTimerMode.off;
+
+  SleepTimerMode get mode => _mode;
 
   Duration? get remaining {
-    final end = _endTime;
-    if (end == null) return null;
+    final endTime = _endTime;
 
-    final value = end.difference(DateTime.now());
-
-    if (value.isNegative) {
-      return Duration.zero;
+    if (endTime == null) {
+      return null;
     }
 
-    return value;
+    final value = endTime.difference(DateTime.now());
+
+    return value.isNegative ? Duration.zero : value;
   }
 
-  void start(Duration duration, {required void Function() onFinished}) {
+  void start(Duration duration, void Function() onFinished) {
     cancel();
 
+    _mode = SleepTimerMode.afterDuration;
     _endTime = DateTime.now().add(duration);
 
     _timer = Timer(duration, () {
       _timer = null;
       _endTime = null;
+      _mode = SleepTimerMode.off;
 
       onFinished();
     });
+  }
+
+  void endOfSong() {
+    cancel();
+    _mode = SleepTimerMode.endOfSong;
+  }
+
+  bool onSongCompleted() {
+    print('onSongCompleted: $_mode');
+    if (_mode != SleepTimerMode.endOfSong) {
+      return false;
+    }
+
+    _mode = SleepTimerMode.off;
+    return true;
   }
 
   void cancel() {
     _timer?.cancel();
     _timer = null;
     _endTime = null;
+    _mode = SleepTimerMode.off;
   }
 
   void dispose() {

@@ -17,6 +17,7 @@ class PlayerState {
   bool useBluetoothControl = true;
   Duration duration = .new(seconds: 0);
   Duration position = .new(seconds: 0);
+  PlayerLoop loop = .playlist;
 
   int get currentIndex {
     if (current == null) return -1;

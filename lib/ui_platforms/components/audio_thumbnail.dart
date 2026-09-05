@@ -19,12 +19,15 @@ class AudioThumbnail extends StatelessWidget {
   }
 
   Widget get imageWidget {
+    final f = File(file.cacheCoverPath);
+    if (f.existsSync()) {
+      return Image.file(f, fit: .cover, gaplessPlayback: true);
+    }
     return FutureBuilder(
       future: TagPictureWorker.instance.getImageBytes(file.path),
       builder: (context, snapshot) {
         final data = snapshot.data;
         if (data != null && data.isOk) {
-          final f = File(file.cacheCoverPath);
           if (!f.existsSync()) {
             f.writeAsBytes(data.unwrap());
           }
@@ -35,7 +38,6 @@ class AudioThumbnail extends StatelessWidget {
           );
         }
         return SvgPicture.asset('assets/svg/music-notes-svgrepo-com(2).svg');
-        // return Icon(Icons.image_not_supported_outlined, size: 50);
       },
     );
   }

@@ -11,7 +11,7 @@ dependencies:
   flutter:
     sdk: flutter
   cupertino_icons: ^1.0.8
-  mpv_audio_kit: ^0.4.4
+  mpv_audio_kit: ^0.4.5
   marquee: ^2.3.0
   crypto: ^3.0.7
   cfb_store: ^0.7.0
@@ -24,7 +24,7 @@ dependencies:
   waveform_visualizer: ^1.0.0
   mini_music_visualizer: ^1.1.4
   flutter_svg: ^2.3.0
-  audio_service_mpris: ^0.2.1
+  # audio_service_mpris: ^0.2.1
   flutter_colorpicker: ^1.1.0
   image_picker: ^1.2.3
   file_type_plus: ^1.1.0

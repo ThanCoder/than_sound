@@ -9,7 +9,7 @@ import 'package:than_sound/core/controllers/interfaces/i_controller.dart';
 import 'package:than_sound/core/controllers/player_state/player_state_controller.dart';
 import 'package:than_sound/ui_platforms/desktop/home/desktop_list_page.dart';
 import 'package:than_sound/ui_platforms/components/sleep_timer/sleep_timer_page.dart';
-import 'package:than_sound/ui_platforms/desktop/desktop_music_content_page.dart';
+import 'package:than_sound/ui_platforms/desktop/desktop_now_playing_page.dart';
 import 'package:than_sound/ui_platforms/pages/music_tracker/music_tracker_page.dart';
 import 'package:than_sound/ui_platforms/player_theme/interfaces/player_ui_context.dart';
 import 'package:than_sound/ui_platforms/player_theme/ui_context_creator.dart';
@@ -42,7 +42,7 @@ class _DesktopHomeScreenState extends State<DesktopHomeScreen> {
         .put(linuxWindowHeightKey, constraints!.maxHeight)
         .writeAll();
     debugPrint(
-      '[_DesktopHomeScreenState:saveSizeConfig]: Save window size config',
+      '[_DesktopHomeScreenState:saveSizeConfig]: Save window size config width:${constraints!.maxWidth}',
     );
   }
 
@@ -130,7 +130,7 @@ class _DesktopHomeScreenState extends State<DesktopHomeScreen> {
           builder: (context, snapshot) {
             final enable = playerController.state.showFloatWidget;
             if (enable) {
-              return DesktopMusicContentPage();
+              return DesktopNowPlayingPage();
             }
             return SizedBox.shrink();
           },

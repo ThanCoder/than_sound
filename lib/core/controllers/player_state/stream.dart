@@ -15,6 +15,12 @@ class PlayerStream {
   Stream<PositionChanged> get position => all.whereType<PositionChanged>();
   Stream<DurationChanged> get duration => all.whereType<DurationChanged>();
   Stream<PlayListChanged> get playlist => all.whereType<PlayListChanged>();
+  Stream<SongPlay> get play => all.whereType<SongPlay>();
+  Stream<SongPause> get pause => all.whereType<SongPause>();
+  Stream<SongEnd> get end => all.whereType<SongEnd>();
+  Stream<SongStart> get start => all.whereType<SongStart>();
+  Stream<SongStop> get stop => all.whereType<SongStop>();
+  Stream<LoopChanged> get loop => all.whereType<LoopChanged>();
 }
 
 extension PlayerStateEventExt on Stream<PlayerStateEvent> {

@@ -3,6 +3,8 @@ import 'dart:async';
 import 'package:mpv_audio_kit/mpv_audio_kit.dart';
 import 'package:than_sound/core/controllers/interfaces/i_controller.dart';
 import 'package:than_sound/core/controllers/player/my_audio_handler.dart';
+import 'package:than_sound/core/controllers/player_state/player_loop.dart';
+import 'package:than_sound/ui_platforms/components/sleep_timer/sleep_timer.dart';
 import 'package:than_sound/core/models/audio_file.dart';
 import 'package:than_sound/ui_platforms/pages/favourite/favourite_controller.dart';
 
@@ -23,6 +25,7 @@ class PlayerStateController extends IController {
   late final state = PlayerState(player);
   late final stream = PlayerStream();
   late final actions = PlayerActions(controller: this);
+  final sleepTimer = SleepTimer();
   late final _configListenr = PlayerStateConfigListener(
     player: player,
     state: state,
@@ -35,12 +38,17 @@ class PlayerStateController extends IController {
     stream: stream,
     actions: actions,
     audioHandler: _audioHandler,
+    sleepTimer: sleepTimer,
   );
+
+  bool _init = false;
 
   @override
   Future<void> init() async {
+    if (_init) return;
     await _configListenr.init();
     await _eventListenr.init();
+    _init = true;
   }
 
   bool isCurrentFile(AudioFile file) {

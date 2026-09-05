@@ -11,36 +11,32 @@ class PlayerActions {
     required AudioFileSourceType source,
   }) async {
     _controller.state.files = files;
-    _controller.state.playOrder = files;
+    _setToggleShuffle();
     _controller.state.source = source;
     _controller.stream._con.add(SourceChanged());
+
+    if (files.isEmpty) return;
+    if (_controller.state.current == null) {
+      await open(files.first, play: false);
+      setCurrent(files.first);
+    }
   }
 
   void setCurrent(AudioFile? file) {
     _controller.state.current = file;
     _controller.stream._con.add(CurrentChanged(file));
+    if (file != null) {
+      _controller.stream._con.add(PlayListChanged(file));
+    }
   }
 
   //*****************Player Actions***************************** */
   Future<void> open(AudioFile file, {bool play = true}) async {
     await _controller.player.open(Media(file.path), play: play);
     setCurrent(file);
-  }
-
-  void toggleShuffle() {
-    _controller.state.isShuffle = !_controller.state.isShuffle;
-    if (_controller.state.isShuffle) {
-      _controller.state.playOrder.shuffle();
-    } else {
-      _controller.state.playOrder = _controller.state.files;
+    if (play) {
+      _controller.stream._con.add(SongStart(file));
     }
-    _controller.stream._con.add(ShuffleChanged());
-    _controller.stream._con.add(PlayListChanged());
-  }
-
-  void setShowFloatingWidget(bool enable) {
-    _controller.state.showFloatWidget = enable;
-    _controller.stream._con.add(ShowFloatingWidgetChanged());
   }
 
   Future<void> pause() async {
@@ -63,19 +59,21 @@ class PlayerActions {
     }
   }
 
-  Future<void> next() async {
-    final index = _controller.state.currentIndex;
-    if (index == -1) return;
-    if ((index + 1) >= _controller.state.playOrder.length) return;
-    open(_controller.state.playOrder[index + 1]);
-  }
-
   Future<void> prev() async {
     final index = _controller.state.currentIndex;
     if (index == -1) return;
     if ((index - 1) > -1) {
-      open(_controller.state.playOrder[index - 1]);
+      final file = _controller.state.playOrder[index - 1];
+      await open(file);
     }
+  }
+
+  Future<void> next() async {
+    final index = _controller.state.currentIndex;
+    if (index == -1) return;
+    if ((index + 1) >= _controller.state.playOrder.length) return;
+    final file = _controller.state.playOrder[index + 1];
+    await open(file);
   }
 
   Future<void> seek(Duration position) async {
@@ -93,5 +91,35 @@ class PlayerActions {
   void removeFav() {
     if (_controller.state.current == null) return;
     _favController.remove(_controller.state.current!);
+  }
+
+  void toggleLoop() {
+    final values = PlayerLoop.values;
+
+    final index = values.indexOf(_controller.state.loop);
+    final nextIndex = (index + 1) % values.length;
+
+    _controller.state.loop = values[nextIndex];
+    _controller.stream._con.add(LoopChanged());
+  }
+
+  void _setToggleShuffle() {
+    if (_controller.state.isShuffle) {
+      _controller.state.playOrder.shuffle();
+    } else {
+      _controller.state.playOrder = _controller.state.files;
+    }
+  }
+
+  void toggleShuffle() {
+    _controller.state.isShuffle = !_controller.state.isShuffle;
+    _setToggleShuffle();
+    _controller.stream._con.add(ShuffleChanged());
+    _controller.stream._con.add(PlayListChanged(_controller.state.current!));
+  }
+
+  void setShowFloatingWidget(bool enable) {
+    _controller.state.showFloatWidget = enable;
+    _controller.stream._con.add(ShowFloatingWidgetChanged());
   }
 }

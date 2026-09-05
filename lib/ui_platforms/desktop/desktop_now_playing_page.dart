@@ -5,19 +5,20 @@ import 'package:than_sound/core/controllers/player_state/player_state_controller
 import 'package:than_sound/core/extensions/audio_file_extensions.dart';
 import 'package:than_sound/core/extensions/dur_ext.dart';
 import 'package:than_sound/core/models/audio_file.dart';
+import 'package:than_sound/ui_platforms/components/audio_loop_button.dart';
+import 'package:than_sound/ui_platforms/components/audio_shuffle_button.dart';
 import 'package:than_sound/ui_platforms/components/audio_thumbnail.dart';
 import 'package:than_sound/ui_platforms/components/c_slider.dart';
 import 'package:than_sound/ui_platforms/mobile/components/audio_item_menu.dart';
 
-class DesktopMusicContentPage extends StatefulWidget {
-  const DesktopMusicContentPage({super.key});
+class DesktopNowPlayingPage extends StatefulWidget {
+  const DesktopNowPlayingPage({super.key});
 
   @override
-  State<DesktopMusicContentPage> createState() =>
-      _DesktopMusicContentPageState();
+  State<DesktopNowPlayingPage> createState() => _DesktopNowPlayingPageState();
 }
 
-class _DesktopMusicContentPageState extends State<DesktopMusicContentPage> {
+class _DesktopNowPlayingPageState extends State<DesktopNowPlayingPage> {
   final PlayerStateController playerController =
       ControllerManager.read<PlayerStateController>();
   Player get player => playerController.player;
@@ -191,6 +192,8 @@ class _DesktopMusicContentPageState extends State<DesktopMusicContentPage> {
     return Row(
       mainAxisAlignment: .center,
       children: [
+        AudioShuffleButton(iconSize: 30),
+        SizedBox(width: 20),
         IconButton(
           style: IconButton.styleFrom(
             backgroundColor: col.primaryContainer,
@@ -222,7 +225,6 @@ class _DesktopMusicContentPageState extends State<DesktopMusicContentPage> {
           },
         ),
         SizedBox(width: 30),
-
         IconButton(
           style: IconButton.styleFrom(
             backgroundColor: col.primaryContainer,
@@ -233,6 +235,8 @@ class _DesktopMusicContentPageState extends State<DesktopMusicContentPage> {
           },
           icon: Icon(Icons.skip_next_outlined, size: 30),
         ),
+        SizedBox(width: 20),
+        AudioLoopButton(iconSize: 30),
       ],
     );
   }

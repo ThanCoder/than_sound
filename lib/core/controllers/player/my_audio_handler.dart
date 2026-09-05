@@ -2,11 +2,31 @@ import 'dart:async';
 
 import 'package:audio_service/audio_service.dart';
 import 'package:than_sound/core/controllers/interfaces/i_controller.dart';
+import 'package:than_sound/core/controllers/player/mixins/extra_mixin.dart';
 import 'package:than_sound/core/controllers/player_state/player_state_controller.dart';
+import 'package:than_sound/ui_platforms/pages/favourite/favourite_controller.dart';
 
-class MyAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
+class MyAudioHandler extends BaseAudioHandler
+    with QueueHandler, SeekHandler, ExtraMixin {
   PlayerStateController get stateController =>
       ControllerManager.read<PlayerStateController>();
+  FavouriteController get favController =>
+      ControllerManager.read<FavouriteController>();
+
+  @override
+  MyAudioHandler get audioHandler => this;
+  bool _init = false;
+  void listenEvents() {
+    if (_init) return;
+    _init = true;
+
+    stateController.stream.playlist.listen((event) {
+      addNotiMediaItem(event.file);
+    });
+    stateController.stream.playbackState.listen((event) {
+      playbackState.add(transformEvent);
+    });
+  }
 
   @override
   Future<void> skipToNext() async {
@@ -42,6 +62,7 @@ class MyAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
   @override
   Future<void> stop() async {
     await stateController.actions.stop();
+    playbackState.add(playbackState.value.copyWith(processingState: .idle));
   }
 
   @override

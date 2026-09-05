@@ -37,7 +37,11 @@ class PlaybackState extends PlayerStateEvent {
 }
 
 class PlayingChanged extends PlayerStateEvent {}
-class PlayListChanged extends PlayerStateEvent {}
+
+class PlayListChanged extends PlayerStateEvent {
+  final AudioFile file;
+  const PlayListChanged(this.file);
+}
 
 class SongEnd extends PlayerStateEvent {
   final AudioFile file;
@@ -52,4 +56,8 @@ class SongStart extends PlayerStateEvent {
 class SongStop extends PlayerStateEvent {
   final AudioFile file;
   const SongStop(this.file);
+}
+
+class LoopChanged extends PlayerStateEvent {
+  
 }

@@ -19,9 +19,6 @@ import 'package:waveform_visualizer/waveform_visualizer.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  // debugRepaintRainbowEnabled = true;
-
-  // SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
 
   MpvAudioKit.ensureInitialized();
   WaveformVisualizer.initialize();
@@ -41,25 +38,16 @@ void main() async {
   );
 
   if (Platform.isLinux) {
-    // await ThanPkgLinux.getInstance.window.setMinWindowSize(
-    //   width: CFBStore.getInstance.getInt(
-    //     linuxWindowWidthKey,
-    //     linuxWindowMinWidth.toInt(),
-    //   ),
-    //   height: CFBStore.getInstance.getInt(j
-    //     linuxWindowHeightKey,
-    //     linuxWindowMinHeight.toInt(),
-    //   ),
-    // );
+    // print('main: ${CFBStore.getInstance.getDouble(linuxWindowWidthKey)}');
     await ThanPkgLinux.getInstance.window.setWindowSize(
-      width: CFBStore.getInstance.getInt(
+      width: CFBStore.getInstance.getDouble(
         linuxWindowWidthKey,
-        linuxWindowMinWidth.toInt(),
-      ),
-      height: CFBStore.getInstance.getInt(
+        linuxWindowMinWidth,
+      ).toInt(),
+      height: CFBStore.getInstance.getDouble(
         linuxWindowHeightKey,
-        linuxWindowMinHeight.toInt(),
-      ),
+        linuxWindowMinHeight,
+      ).toInt(),
     );
   }
 
@@ -78,6 +66,8 @@ void main() async {
   ControllerManager.register(FavouriteController());
   ControllerManager.register(MusicTrackerController());
   ControllerManager.initAll();
+
+  audioHandler.listenEvents();
 
   runApp(const MainApp());
 }
