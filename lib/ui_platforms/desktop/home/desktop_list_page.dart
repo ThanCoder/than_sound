@@ -56,11 +56,7 @@ class _DesktopListPageState extends State<DesktopListPage> {
 
   void onTap(AudioFile file) async {
     await plC.actions.setTracks(allC.files, source: .allFileState);
-    if (plC.isCurrentFile(file)) {
-      await plC.actions.play();
-    } else {
-      await plC.actions.open(file, play: true);
-    }
+    await plC.actions.open(file, play: true);
 
     if (!plC.state.showFloatWidget) {
       plC.actions.setShowFloatingWidget(true);
