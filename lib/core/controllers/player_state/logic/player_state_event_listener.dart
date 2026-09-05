@@ -2,6 +2,7 @@ part of '../player_state_controller.dart';
 
 class PlayerStateEventListener {
   PlayerStateEventListener({required this._controller});
+
   final PlayerStateController _controller;
 
   SleepTimer get sleepTimer => _controller.sleepTimer;
@@ -12,65 +13,198 @@ class PlayerStateEventListener {
 
   bool _init = false;
 
+  Timer? _endTimer;
+
+  // Prevent SongEnd from being handled more than once
+  // while the previous end operation is still running.
+  bool _handlingEnd = false;
+
+  // Prevent duplicate completed events for the same playback.
+  bool _completionPending = false;
+
   Future<void> init() async {
-    if (_init) return;
+    if (_init) {
+      return;
+    }
+
     _init = true;
 
-    player.stream.position.listen((e) {
-      state.position = e;
-      stream._con.add(PositionChanged(e));
+    // -------------------------------------------------------------------------
+    // Position
+    // -------------------------------------------------------------------------
+
+    player.stream.position.listen((position) {
+      state.position = position;
+
+      stream._con.add(PositionChanged(position));
     });
-    player.stream.duration.listen((e) {
-      state.duration = e;
-      stream._con.add(DurationChanged(e));
+
+    // -------------------------------------------------------------------------
+    // Duration
+    // -------------------------------------------------------------------------
+
+    player.stream.duration.listen((duration) {
+      state.duration = duration;
+
+      stream._con.add(DurationChanged(duration));
     });
-    player.stream.playing.listen((e) {
-      state.playing = e;
+
+    // -------------------------------------------------------------------------
+    // Playing
+    // -------------------------------------------------------------------------
+
+    player.stream.playing.listen((playing) {
+      state.playing = playing;
+
       stream._con.add(PlayingChanged());
     });
 
-    Timer? endTimer;
-    int endCount = 0;
-    player.stream.playbackState.listen((event) {
-      if (event == .completed) {
-        endCount++;
-        endTimer?.cancel();
-        endTimer = Timer(Duration(milliseconds: 800), () {
-          endCount--;
-          if (endCount != 0) return;
-          stream._con.add(SongEnd(state.current!));
-        });
-      }
-      if (event == .paused) {
-        stream._con.add(SongPause());
-      }
-      stream._con.add(PlaybackState(event));
-    });
+    // -------------------------------------------------------------------------
+    // Playback state
+    // -------------------------------------------------------------------------
 
-    stream.end.listen((event) async {
-      // timer
+    player.stream.playbackState.listen(_onPlaybackState);
+
+    // -------------------------------------------------------------------------
+    // Song end
+    // -------------------------------------------------------------------------
+
+    stream.end.listen((_) {
+      _handleSongEnd();
+    });
+  }
+
+  // ===========================================================================
+  // Playback state
+  // ===========================================================================
+
+  void _onPlaybackState(MpvPlaybackState event) {
+    if (event == .completed) {
+      _scheduleSongEnd();
+    }
+
+    if (event == .paused) {
+      stream._con.add(SongPause());
+    }
+
+    // stream._con.add(PlayerbackState(event));
+  }
+
+  // ===========================================================================
+  // Completed debounce
+  // ===========================================================================
+
+  void _scheduleSongEnd() {
+    // Already waiting for the completion debounce.
+    if (_completionPending) {
+      return;
+    }
+
+    // Already processing the previous song.
+    if (_handlingEnd) {
+      return;
+    }
+
+    _completionPending = true;
+
+    _endTimer?.cancel();
+
+    _endTimer = Timer(const Duration(milliseconds: 800), () {
+      _completionPending = false;
+
+      final current = state.current;
+
+      if (current == null) {
+        return;
+      }
+
+      stream._con.add(SongEnd(current));
+    });
+  }
+
+  // ===========================================================================
+  // Song end handler
+  // ===========================================================================
+
+  Future<void> _handleSongEnd() async {
+    // Don't allow multiple SongEnd handlers to control mpv simultaneously.
+    if (_handlingEnd) {
+      return;
+    }
+
+    _handlingEnd = true;
+
+    try {
+      // -----------------------------------------------------------------------
+      // Sleep timer
+      // -----------------------------------------------------------------------
+
       if (sleepTimer.onSongCompleted()) {
         await player.pause();
         await player.seek(Duration.zero);
+
         return;
       }
-      //loop
-      if (state.loop != .off) {
-        if (state.loop == PlayerLoop.file) {
+
+      // -----------------------------------------------------------------------
+      // Loop
+      // -----------------------------------------------------------------------
+
+      final loop = state.loop;
+
+      if (loop != .off) {
+        // ---------------------------------------------------------------------
+        // Repeat current file
+        // ---------------------------------------------------------------------
+
+        if (loop == .file) {
           await player.seek(Duration.zero);
           await player.play();
+
           return;
         }
-        if (state.loop == .playlist) {
+
+        // ---------------------------------------------------------------------
+        // Repeat playlist
+        // ---------------------------------------------------------------------
+
+        if (loop == .playlist) {
           final index = state.currentIndex;
+
+          if (index == -1) {
+            return;
+          }
+
+          if (state.playOrder.isEmpty) {
+            return;
+          }
+
           final nextIndex = (index + 1) % state.playOrder.length;
+
           final file = state.playOrder[nextIndex];
+
           await actions.open(file);
+
           return;
         }
       }
 
+      // -----------------------------------------------------------------------
+      // Normal next
+      // -----------------------------------------------------------------------
+
       await actions.next();
-    });
+    } finally {
+      _handlingEnd = false;
+    }
+  }
+
+  // ===========================================================================
+  // Cleanup
+  // ===========================================================================
+
+  void dispose() {
+    _endTimer?.cancel();
+    _endTimer = null;
   }
 }

@@ -31,10 +31,10 @@ class DurationChanged extends PlayerStateEvent {
   const DurationChanged(this.duration);
 }
 
-class PlaybackState extends PlayerStateEvent {
-  final MpvPlaybackState state;
-  const PlaybackState(this.state);
-}
+// class PlayerbackState extends PlayerStateEvent {
+//   final MpvPlaybackState state;
+//   const PlayerbackState(this.state);
+// }
 
 class PlayingChanged extends PlayerStateEvent {}
 

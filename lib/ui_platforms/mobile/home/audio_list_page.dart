@@ -43,6 +43,7 @@ class _AudioListPageState extends State<AudioListPage> {
   }
 
   final controller = ScrollController();
+  final playstateController = ControllerManager.read<PlayerStateController>();
 
   Future<void> init({bool usedCache = true}) async {
     try {
@@ -58,7 +59,7 @@ class _AudioListPageState extends State<AudioListPage> {
       await con.scanFromStorage(usedCache: usedCache);
       if (!mounted) return;
 
-      ControllerManager.read<PlayerStateController>().actions.setTracks(
+      await playstateController.actions.setTracks(
         con.files,
         source: .allFileState,
       );
@@ -70,8 +71,7 @@ class _AudioListPageState extends State<AudioListPage> {
 
   void goListGps() {
     try {
-      final con = ControllerManager.read<PlayerStateController>();
-      final current = con.state.current;
+      final current = playstateController.state.current;
       if (current == null) return;
       final allCon = ControllerManager.read<AllFileStateController>();
       final index = allCon.files.indexWhere((e) => e.id == current.id);
@@ -93,28 +93,28 @@ class _AudioListPageState extends State<AudioListPage> {
   }
 
   void openConfrmAndPlay(AudioFile file) async {
-    final pCon = ControllerManager.read<PlayerStateController>();
-    final current = pCon.state.current;
-    if (current != null && current.id == file.id && pCon.state.playing) {
+    final current = playstateController.state.current;
+    if (current != null &&
+        current.id == file.id &&
+        playstateController.state.playing) {
       final confirmed = await showConfirmDialog(
         context,
         'Want to Song Restart!',
       );
       if (confirmed) {
-        await pCon.actions.setTracks(
+        await playstateController.actions.setTracks(
           ControllerManager.read<AllFileStateController>().files,
           source: .allFileState,
         );
-        pCon.actions.open(file);
+        await playstateController.actions.open(file);
       }
       return;
     }
-    await pCon.actions.setTracks(
+    await playstateController.actions.setTracks(
       ControllerManager.read<AllFileStateController>().files,
       source: .allFileState,
     );
-    // print('item: $file');
-    pCon.actions.open(file);
+    await playstateController.actions.open(file);
   }
 
   @override
@@ -149,7 +149,7 @@ class _AudioListPageState extends State<AudioListPage> {
               else if (pCon.state.current != null)
                 Positioned(
                   right: widget.listGpsButtonRightPos ?? 10,
-                  bottom: pCon.state.showFloatWidget ? 100 : 50,
+                  bottom: pCon.state.showFloatWidget ? 70 : 30,
                   child: ListGpsButton(onClicked: goListGps),
                 ),
             ],

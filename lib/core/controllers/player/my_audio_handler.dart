@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:audio_service/audio_service.dart';
+import 'package:than_sound/const_keys.dart';
 import 'package:than_sound/core/controllers/interfaces/i_controller.dart';
 import 'package:than_sound/core/controllers/player/extra_mixin.dart';
 import 'package:than_sound/core/controllers/player_state/player_state_controller.dart';
@@ -26,7 +27,7 @@ class MyAudioHandler extends BaseAudioHandler
     stateController.stream.position.listen((event) {
       playbackState.add(transformEvent);
     });
-     stateController.stream.playbackState.listen((event) {
+    stateController.stream.playbackState.listen((event) {
       playbackState.add(transformEvent);
     });
   }
@@ -82,8 +83,14 @@ class MyAudioHandler extends BaseAudioHandler
 
   @override
   Future<void> click([MediaButton button = MediaButton.media]) async {
-    final useBluetoothControl = stateController.state.useBluetoothControl;
+    final useBluetoothControl = stateController.config.getBool(
+      audioBluetoothControlKeyName,
+      true,
+    );
     if (!useBluetoothControl) return;
+    if (!stateController.state.playing) {
+      await stateController.actions.play();
+    }
     return super.click(button);
   }
 }

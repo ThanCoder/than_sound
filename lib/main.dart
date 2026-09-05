@@ -49,6 +49,8 @@ void main() async {
     );
   }
 
+  final player = Player();
+
   final audioHandler = await AudioService.init(
     builder: () => MyAudioHandler(),
     config: const AudioServiceConfig(
@@ -59,7 +61,7 @@ void main() async {
     ),
   );
 
-  ControllerManager.register(PlayerStateController());
+  ControllerManager.register(PlayerStateController(player));
   ControllerManager.register(AllFileStateController());
   ControllerManager.register(FavouriteController());
   ControllerManager.register(MusicTrackerController());

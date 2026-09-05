@@ -3,7 +3,6 @@ import 'package:t_widgets/t_widgets.dart';
 import 'package:than_sound/ui_platforms/pages/equalizers/audio_treble_eq_page.dart';
 
 import 'package:than_sound/ui_platforms/pages/equalizers/audio_bass_eq_page.dart';
-import 'package:than_sound/ui_platforms/pages/equalizers/loudness_eq_page.dart';
 
 class AudioEqHomePage extends StatefulWidget {
   const AudioEqHomePage({super.key});
@@ -34,11 +33,12 @@ class _AudioEqHomePageState extends State<AudioEqHomePage> {
               'Loudness',
               icon: Icons.speaker_group_outlined,
               subTitle: 'Normalization ON/OFF',
-              onTap: () {
-                context.pushMaterialPageRoute(
-                  builder: (mainCtx) => LoudnessEqPage(),
-                );
-              },
+              onTap: null,
+              //  () {
+              //   context.pushMaterialPageRoute(
+              //     builder: (mainCtx) => LoudnessEqPage(),
+              //   );
+              // },
             ),
             _menuTile(
               'Bass',
@@ -72,6 +72,7 @@ class _AudioEqHomePageState extends State<AudioEqHomePage> {
     required String subTitle,
     void Function()? onTap,
   }) {
+    final enable = onTap != null;
     return ListTile(
       tileColor: col.surfaceContainer,
       shape: RoundedRectangleBorder(borderRadius: .circular(15)),
@@ -80,16 +81,30 @@ class _AudioEqHomePageState extends State<AudioEqHomePage> {
         decoration: BoxDecoration(
           color: col.primaryContainer,
           borderRadius: .circular(10),
-          boxShadow: [.new(color: col.primary, blurRadius: 12)],
+          boxShadow: !enable
+              ? null
+              : [.new(color: col.primary, blurRadius: 12)],
         ),
         child: Icon(icon, color: col.onPrimaryContainer),
       ),
       title: Text(
         title,
-        style: TextStyle(color: col.onSurface, fontWeight: .w600),
+        style: TextStyle(
+          color: !enable ? col.onSurface.withValues(alpha: .45) : col.onSurface,
+          fontWeight: .w600,
+        ),
       ),
-      subtitle: Text(subTitle, style: TextStyle(color: col.onSurfaceVariant)),
-      trailing: Icon(Icons.arrow_forward_ios_outlined, color: col.primary),
+      subtitle: Text(
+        subTitle,
+        style: TextStyle(
+          color: !enable
+              ? col.onSurfaceVariant.withValues(alpha: .45)
+              : col.onSurfaceVariant,
+        ),
+      ),
+      trailing: !enable
+          ? null
+          : Icon(Icons.arrow_forward_ios_outlined, color: col.primary),
       onTap: onTap,
     );
   }

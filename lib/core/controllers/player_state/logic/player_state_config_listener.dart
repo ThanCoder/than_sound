@@ -15,7 +15,7 @@ class PlayerStateConfigListener
     _init = true;
     await _initStateConfig();
 
-    await initLoudnessConfigListener();
+    // await initLoudnessConfigListener();
     await initBassConfigListener();
     await initTrebleConfigListener();
   }

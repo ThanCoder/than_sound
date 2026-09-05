@@ -14,10 +14,13 @@ class PlayerState {
   bool isShuffle = false;
   bool showFloatWidget = false;
   AudioFileSourceType source = .none;
-  bool useBluetoothControl = true;
   Duration duration = .new(seconds: 0);
   Duration position = .new(seconds: 0);
   PlayerLoop loop = .playlist;
+  double audioVolume = 100;
+  //fade
+  final Duration fadeDuration = Duration(milliseconds: 500);
+  final int fadeSteps = 20;
 
   int get currentIndex {
     if (current == null) return -1;

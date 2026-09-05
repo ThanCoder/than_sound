@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:audio_service/audio_service.dart';
 import 'package:audio_session/audio_session.dart';
 import 'package:cfb_store/cfb_store.dart';
 import 'package:mpv_audio_kit/mpv_audio_kit.dart';
@@ -9,6 +10,7 @@ import 'package:than_sound/core/controllers/interfaces/i_controller.dart';
 import 'package:than_sound/core/controllers/player_state/player_config_listener_logic/bass_config_listener.dart';
 import 'package:than_sound/core/controllers/player_state/player_config_listener_logic/loudness_config_listener.dart';
 import 'package:than_sound/core/controllers/player_state/player_config_listener_logic/treble_config_listener.dart';
+import 'package:than_sound/core/controllers/player_state/player_fade_controller.dart';
 import 'package:than_sound/core/controllers/player_state/player_loop.dart';
 import 'package:than_sound/ui_platforms/components/sleep_timer/sleep_timer.dart';
 import 'package:than_sound/core/models/audio_file.dart';
@@ -25,9 +27,9 @@ part 'logic/player_state_session_listener.dart';
 enum AudioFileSourceType { none, allFileState, favouriteState, libState }
 
 class PlayerStateController extends IController {
-  PlayerStateController();
+  PlayerStateController(this.player);
+  final Player player;
 
-  final player = Player();
   final config = CFBStore.instance;
   final sleepTimer = SleepTimer();
 

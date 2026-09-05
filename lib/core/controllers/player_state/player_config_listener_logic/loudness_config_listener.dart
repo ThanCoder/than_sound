@@ -23,13 +23,13 @@ mixin LoudnessConfigListener {
     // Listen config changes
     _configSub = config.stream.put
         .where((e) => e.key == loudnessConfigKey)
-        .listen((event) {
+        .listen((event) async {
           _loudnessConfig = LoudessConfig.fromMap(
             config.getMap(loudnessConfigKey),
           );
 
           if (!_loudnessConfig.enabled) {
-            controller.player.setVolumeGain(0.0);
+            await controller.player.setVolumeGain(0.0);
           }
         });
 
@@ -37,7 +37,7 @@ mixin LoudnessConfigListener {
     _loudnessSub = controller.player.stream.loudness.listen(_onLoudness);
   }
 
-  void _onLoudness(LoudnessScan? scan) {
+  void _onLoudness(LoudnessScan? scan) async {
     if (!_loudnessConfig.enabled) {
       return;
     }
@@ -57,7 +57,7 @@ mixin LoudnessConfigListener {
       _loudnessConfig.maxGain,
     );
 
-    controller.player.setVolumeGain(gain);
+    await controller.player.setVolumeGain(gain);
   }
 
   Future<void> disposeLoudnessConfigListener() async {
