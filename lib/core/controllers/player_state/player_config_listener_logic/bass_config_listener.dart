@@ -12,12 +12,17 @@ mixin BassConfigListener {
 
   Future<void> initBassConfigListener() async {
     config.stream.put.where((e) => e.key == audioBassConfigKey).listen((event) {
-      final cf = BassConfig.fromMap(config.getMap(audioBassConfigKey));
-      controller.player.updateAudioEffects(
-        (e) => e.copyWith(
-          bass: BassSettings(enabled: cf.enable, g: cf.gain, f: cf.frequency),
-        ),
-      );
+      _update();
     });
+    _update();
+  }
+
+  void _update() {
+    final cf = BassConfig.fromMap(config.getMap(audioBassConfigKey));
+    controller.player.updateAudioEffects(
+      (e) => e.copyWith(
+        bass: BassSettings(enabled: cf.enable, g: cf.gain, f: cf.frequency),
+      ),
+    );
   }
 }

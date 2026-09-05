@@ -43,7 +43,6 @@ class SleepTimer {
   }
 
   bool onSongCompleted() {
-    print('onSongCompleted: $_mode');
     if (_mode != SleepTimerMode.endOfSong) {
       return false;
     }

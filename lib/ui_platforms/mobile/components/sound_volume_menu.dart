@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:t_widgets/t_widgets.dart';
 import 'package:than_sound/core/controllers/interfaces/i_controller.dart';
 import 'package:than_sound/core/controllers/player_state/player_state_controller.dart';
-import 'package:than_sound/ui_platforms/components/c_slider.dart';
 
 class SoundVolumeMenu extends StatefulWidget {
   const SoundVolumeMenu({super.key});
@@ -104,7 +103,7 @@ class _VolumeWidget extends StatelessWidget {
           Slider(
             min: min,
             max: max,
-            value: value,
+            value: value.clamp(min, max),
             onChangeEnd: onChangeEnd,
             onChanged: onChanged,
           ),

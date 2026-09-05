@@ -5,7 +5,6 @@ import 'package:than_sound/const_keys.dart';
 import 'package:than_sound/core/controllers/interfaces/i_controller.dart';
 import 'package:than_sound/core/controllers/player_state/configs/bass_config.dart';
 import 'package:than_sound/core/controllers/player_state/player_state_controller.dart';
-import 'package:than_sound/ui_platforms/components/c_slider.dart';
 
 class AudioBassEqPage extends StatefulWidget {
   const AudioBassEqPage({super.key});
@@ -14,6 +13,12 @@ class AudioBassEqPage extends StatefulWidget {
   State<AudioBassEqPage> createState() => _AudioBassEqPageState();
 }
 
+// 60–80 Hz → deep/sub-bass ပိုခံစားရ
+// 100 Hz → ⭐ general music အတွက် balance ကောင်း
+// 120–150 Hz → bass ပိုထူလာမယ်
+// 180–200 Hz → low-mid ပါဝင်လာပြီး အသံ muddy ဖြစ်နိုင်
+
+// ဒါကြောင့် default = 100 Hz လို့ထားတာ အကောင်းဆုံး။
 class _AudioBassEqPageState extends State<AudioBassEqPage> {
   ColorScheme get col => Theme.of(context).colorScheme;
   final con = ControllerManager.read<PlayerStateController>();
@@ -57,54 +62,6 @@ class _AudioBassEqPageState extends State<AudioBassEqPage> {
             ],
           );
         },
-      ),
-    );
-  }
-
-  Container _frequencyWidget(BassConfig bass) {
-    return Container(
-      padding: const EdgeInsets.fromLTRB(16, 12, 16, 14),
-      decoration: BoxDecoration(
-        color: col.surfaceContainer,
-        borderRadius: .circular(15),
-      ),
-      child: Column(
-        children: [
-          Row(
-            children: [
-              Text(
-                'Frequency',
-                style: TextStyle(fontWeight: .w600, color: col.onSurface),
-              ),
-              Spacer(),
-              Text(
-                '100 Hz',
-                style: TextStyle(color: col.primary, fontWeight: .w600),
-              ),
-              IconButton(
-                onPressed: () {
-                  con.config.putAndWriteAll(
-                    audioBassConfigKey,
-                    bass.copyWith(frequency: 100).toMap(),
-                  );
-                },
-                icon: Icon(Icons.restart_alt_outlined),
-              ),
-            ],
-          ),
-          CSlider(
-            min: 20,
-            max: 200,
-            value: bass.frequency,
-            onChanged: (value) {
-              con.config.putAndWriteAll(
-                audioBassConfigKey,
-                bass.copyWith(gain: value).toMap(),
-              );
-            },
-          ),
-          Row(children: [Text('20Hz'), Spacer(), Text('200 Hz')]),
-        ],
       ),
     );
   }
@@ -154,10 +111,10 @@ class _AudioBassEqPageState extends State<AudioBassEqPage> {
 
           const SizedBox(height: 4),
 
-          CSlider(
+          Slider(
             min: -20,
             max: 20,
-            value: bass.gain,
+            value: bass.gain.clamp(-20, 20),
             onChanged: (value) {
               con.config.putAndWriteAll(
                 audioBassConfigKey,
@@ -187,6 +144,54 @@ class _AudioBassEqPageState extends State<AudioBassEqPage> {
               ],
             ),
           ),
+        ],
+      ),
+    );
+  }
+
+  Container _frequencyWidget(BassConfig bass) {
+    return Container(
+      padding: const EdgeInsets.fromLTRB(16, 12, 16, 14),
+      decoration: BoxDecoration(
+        color: col.surfaceContainer,
+        borderRadius: .circular(15),
+      ),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              Text(
+                'Frequency',
+                style: TextStyle(fontWeight: .w600, color: col.onSurface),
+              ),
+              Spacer(),
+              Text(
+                '${bass.frequency.toInt()} Hz',
+                style: TextStyle(color: col.primary, fontWeight: .w600),
+              ),
+              IconButton(
+                onPressed: () {
+                  con.config.putAndWriteAll(
+                    audioBassConfigKey,
+                    bass.copyWith(frequency: 100).toMap(),
+                  );
+                },
+                icon: Icon(Icons.restart_alt_outlined),
+              ),
+            ],
+          ),
+          Slider(
+            min: 40,
+            max: 200,
+            value: bass.frequency,
+            onChanged: (value) {
+              con.config.putAndWriteAll(
+                audioBassConfigKey,
+                bass.copyWith(frequency: value).toMap(),
+              );
+            },
+          ),
+          Row(children: [Text('20Hz'), Spacer(), Text('200 Hz')]),
         ],
       ),
     );

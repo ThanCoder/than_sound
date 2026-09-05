@@ -106,6 +106,10 @@ class PlayerActions {
 
     _controller.state.loop = values[nextIndex];
     _controller.stream._con.add(LoopChanged());
+    _controller.config.putAndWriteAll(
+      audioPlayerLoopKey,
+      _controller.state.loop.name,
+    );
   }
 
   void _setToggleShuffle() {
@@ -121,6 +125,10 @@ class PlayerActions {
     _setToggleShuffle();
     _controller.stream._con.add(ShuffleChanged());
     _controller.stream._con.add(PlayListChanged(_controller.state.current!));
+    _controller.config.putAndWriteAll(
+      audioPlayerShuffleKey,
+      _controller.state.isShuffle,
+    );
   }
 
   void setShowFloatingWidget(bool enable) {

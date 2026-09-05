@@ -14,6 +14,13 @@ class AudioTrebleEqPage extends StatefulWidget {
   State<AudioTrebleEqPage> createState() => _AudioTrebleEqPageState();
 }
 
+// Bass
+// frequency: 100 Hz
+// range:      40–200 Hz
+
+// Treble
+// frequency: 3000 Hz  ⭐
+// range:      2000–10000 Hz
 class _AudioTrebleEqPageState extends State<AudioTrebleEqPage> {
   ColorScheme get col => Theme.of(context).colorScheme;
   final con = ControllerManager.read<PlayerStateController>();
@@ -56,7 +63,7 @@ class _AudioTrebleEqPageState extends State<AudioTrebleEqPage> {
                       .writeAll();
                 },
               ),
-              if (enabled) _bassWidget(cf),
+              if (enabled) _trebleWidget(cf),
               if (enabled) _frequencyWidget(cf),
             ],
           );
@@ -65,7 +72,7 @@ class _AudioTrebleEqPageState extends State<AudioTrebleEqPage> {
     );
   }
 
-  Container _bassWidget(TrebleConfig treble) {
+  Container _trebleWidget(TrebleConfig treble) {
     return Container(
       padding: const EdgeInsets.fromLTRB(16, 12, 16, 14),
       decoration: BoxDecoration(
@@ -113,7 +120,7 @@ class _AudioTrebleEqPageState extends State<AudioTrebleEqPage> {
           CSlider(
             min: -12,
             max: 12,
-            value: treble.gain,
+            value: treble.gain.clamp(-12, 12),
             onChanged: (value) {
               con.config.putAndWriteAll(
                 audioTrebleConfigKey,
@@ -165,32 +172,38 @@ class _AudioTrebleEqPageState extends State<AudioTrebleEqPage> {
               ),
               Spacer(),
               Text(
-                '100 Hz',
+                '${treble.frequency.toInt()} Hz',
                 style: TextStyle(color: col.primary, fontWeight: .w600),
               ),
               IconButton(
                 onPressed: () {
                   con.config.putAndWriteAll(
                     audioTrebleConfigKey,
-                    treble.copyWith(frequency: 100).toMap(),
+                    treble.copyWith(frequency: 3000).toMap(),
                   );
                 },
                 icon: Icon(Icons.restart_alt_outlined),
               ),
             ],
           ),
-          CSlider(
-            min: 1000,
-            max: 12000,
-            value: treble.frequency,
+          Slider(
+            min: 2000,
+            max: 10000,
+            value: treble.frequency.clamp(2000, 10000),
             onChanged: (value) {
               con.config.putAndWriteAll(
                 audioTrebleConfigKey,
-                treble.copyWith(gain: value).toMap(),
+                treble.copyWith(frequency: value).toMap(),
               );
             },
           ),
-          Row(children: [Text('20Hz'), Spacer(), Text('200 Hz')]),
+          Row(
+            children: [
+              const Text('2 kHz'),
+              const Spacer(),
+              const Text('10 kHz'),
+            ],
+          ),
         ],
       ),
     );

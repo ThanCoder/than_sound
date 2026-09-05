@@ -20,6 +20,7 @@ const double linuxWindowMinHeight = 400;
 const String audioContentUseReactiveCoverTypeKey =
     'audio-conent-use-reactive-cover-type';
 const String audioContentWaveFormTypeKey = 'audio-conent-wave-form-type';
+const String audioContentBlurKey = 'audioContentBlurKey';
 
 /*****************Audio Player Config********************************** */
 const String loudnessConfigKey = 'loudness-config-key';
@@ -28,6 +29,8 @@ const String audioTrebleConfigKey = 'audioTrebleConfigKey';
 const String audioAmplitudeAnimationTypeKey = 'audio-amplitude-animation-type';
 const String audioBluetoothControlKeyName = 'audio-bluetooth-control';
 const String audioVolumeKeyName = 'audio-volume';
+const String audioPlayerLoopKey = 'audioPlayerLoopKey';
+const String audioPlayerShuffleKey = 'audioPlayerShuffleKey';
 
 /*****************Audio Utils********************************** */
 final int audioScanMinFileSize = 1024 * 20;

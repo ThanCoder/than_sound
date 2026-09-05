@@ -14,16 +14,17 @@ mixin TrebleConfigListener {
     config.stream.put.where((e) => e.key == audioTrebleConfigKey).listen((
       event,
     ) {
-      final cf = TrebleConfig.fromMap(config.getMap(audioTrebleConfigKey));
-      controller.player.updateAudioEffects(
-        (e) => e.copyWith(
-          treble: TrebleSettings(
-            enabled: cf.enable,
-            g: cf.gain,
-            f: cf.frequency,
-          ),
-        ),
-      );
+      _update();
     });
+    _update();
+  }
+
+  void _update() {
+    final cf = TrebleConfig.fromMap(config.getMap(audioTrebleConfigKey));
+    controller.player.updateAudioEffects(
+      (e) => e.copyWith(
+        treble: TrebleSettings(enabled: cf.enable, g: cf.gain, f: cf.frequency),
+      ),
+    );
   }
 }

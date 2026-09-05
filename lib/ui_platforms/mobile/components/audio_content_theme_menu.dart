@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:than_sound/ui_platforms/components/reactive_cover/audio_reactive_cover_type_chooser.dart';
 import 'package:than_sound/ui_platforms/components/waveform/waveform_widget/wave_form_chooser.dart';
+import 'package:than_sound/ui_platforms/ui_config/widget/ui_content_blur_config_wiget.dart';
 
 class AudioContentThemeMenu extends StatelessWidget {
   const AudioContentThemeMenu({super.key});
@@ -20,6 +21,8 @@ class AudioContentThemeMenu extends StatelessWidget {
             AudioReactiveCoverTypeChooser(),
             //WaveForm Chooser
             WaveFormChooser(),
+
+            UiContentBlurConfigWiget(),
 
             SizedBox(height: 40),
           ],

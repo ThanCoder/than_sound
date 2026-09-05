@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:t_widgets/t_widgets.dart';
 import 'package:than_sound/ui_platforms/pages/equalizers/audio_treble_eq_page.dart';
-import 'package:than_sound/ui_platforms/pages/equalizers/loudness_config_setting.dart';
 
 import 'package:than_sound/ui_platforms/pages/equalizers/audio_bass_eq_page.dart';
+import 'package:than_sound/ui_platforms/pages/equalizers/loudness_eq_page.dart';
 
 class AudioEqHomePage extends StatefulWidget {
   const AudioEqHomePage({super.key});
@@ -25,35 +25,50 @@ class _AudioEqHomePageState extends State<AudioEqHomePage> {
           style: TextStyle(color: col.onSurface),
         ),
       ),
-      body: Column(
-        spacing: 8,
-        children: [
-          LoudnessConfigSetting(),
-          _menuTile(
-            'Bass',
-            subTitle: 'Bass Boost',
-            onTap: () {
-              context.pushMaterialPageRoute(
-                builder: (mainCtx) => AudioBassEqPage(),
-              );
-            },
-          ),
-          _menuTile(
-            'Trable',
-            subTitle: 'Trable Boost',
-            onTap: () {
-              context.pushMaterialPageRoute(
-                builder: (mainCtx) => AudioTrebleEqPage(),
-              );
-            },
-          ),
-        ],
+      body: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          spacing: 8,
+          children: [
+            _menuTile(
+              'Loudness',
+              icon: Icons.speaker_group_outlined,
+              subTitle: 'Normalization ON/OFF',
+              onTap: () {
+                context.pushMaterialPageRoute(
+                  builder: (mainCtx) => LoudnessEqPage(),
+                );
+              },
+            ),
+            _menuTile(
+              'Bass',
+              icon: Icons.equalizer_outlined,
+              subTitle: 'Bass Boost',
+              onTap: () {
+                context.pushMaterialPageRoute(
+                  builder: (mainCtx) => AudioBassEqPage(),
+                );
+              },
+            ),
+            _menuTile(
+              'Trable',
+              icon: Icons.equalizer_outlined,
+              subTitle: 'Trable Boost',
+              onTap: () {
+                context.pushMaterialPageRoute(
+                  builder: (mainCtx) => AudioTrebleEqPage(),
+                );
+              },
+            ),
+          ],
+        ),
       ),
     );
   }
 
   Widget _menuTile(
     String title, {
+    required IconData icon,
     required String subTitle,
     void Function()? onTap,
   }) {
@@ -67,7 +82,7 @@ class _AudioEqHomePageState extends State<AudioEqHomePage> {
           borderRadius: .circular(10),
           boxShadow: [.new(color: col.primary, blurRadius: 12)],
         ),
-        child: Icon(Icons.equalizer_outlined, color: col.onPrimaryContainer),
+        child: Icon(icon, color: col.onPrimaryContainer),
       ),
       title: Text(
         title,

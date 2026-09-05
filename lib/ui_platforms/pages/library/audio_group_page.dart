@@ -65,7 +65,7 @@ class _AudioGroupPageState extends State<AudioGroupPage> {
       slivers: [
         SliverToBoxAdapter(
           child: SizedBox(
-            height: 400,
+            height: 450,
             width: double.infinity,
             child: _header(),
           ),

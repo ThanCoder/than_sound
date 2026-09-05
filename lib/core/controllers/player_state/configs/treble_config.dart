@@ -18,7 +18,7 @@ class TrebleConfig {
 
   factory TrebleConfig.fromMap(Map<String, dynamic> map) {
     return TrebleConfig(
-      gain: map['gain'] ?? -1,
+      gain: map['gain'] ?? 0,
       frequency: map['frequency'] ?? 3000,
       enable: map['enable'] ?? false,
     );

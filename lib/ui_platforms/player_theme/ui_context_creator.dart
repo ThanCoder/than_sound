@@ -7,6 +7,7 @@ class UiContextCreator {
   static PlayerUiContext create({required PlayerUiActions uiActions}) {
     final pc = ControllerManager.read<PlayerStateController>();
     return .new(
+      config: pc.config,
       state: pc.state,
       stream: pc.stream,
       actions: pc.actions,

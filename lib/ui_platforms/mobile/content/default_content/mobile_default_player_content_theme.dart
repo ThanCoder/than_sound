@@ -4,6 +4,7 @@ import 'package:dart_core_extensions/dart_core_extensions.dart';
 import 'package:flutter/material.dart';
 import 'package:marquee/marquee.dart';
 import 'package:t_widgets/t_widgets.dart';
+import 'package:than_sound/const_keys.dart';
 import 'package:than_sound/core/controllers/player_state/player_state_controller.dart';
 import 'package:than_sound/core/models/audio_file.dart';
 import 'package:than_sound/exts.dart';
@@ -16,6 +17,7 @@ import 'package:than_sound/ui_platforms/pages/favourite/favourite_button.dart';
 import 'package:than_sound/ui_platforms/player_theme/interfaces/i_player_theme.dart';
 import 'package:than_sound/ui_platforms/player_theme/interfaces/player_ui_context.dart';
 import 'package:than_sound/ui_platforms/mobile/mobile_player_ui_actions.dart';
+import 'package:than_sound/ui_platforms/ui_config/config/ui_content_blur_config.dart';
 
 class MobileDefaultPlayerContentTheme extends IPlayerTheme {
   @override
@@ -68,25 +70,52 @@ class _DefaultPlayerViewState extends State<_DefaultPlayerView> {
   Widget _background(AudioFile current) {
     final scheme = context.colorScheme;
 
-    return Stack(
-      fit: StackFit.expand,
-      children: [
-        Positioned.fill(child: AudioThumbnail(file: current)),
+    return StreamBuilder(
+      stream: ctx.config.stream.put.where((e) => e.key == audioContentBlurKey),
+      builder: (context, asyncSnapshot) {
+        final contentBur = UiContentBlurConfig.fromMap(
+          ctx.config.getMap(audioContentBlurKey),
+        );
+        return Stack(
+          fit: StackFit.expand,
+          children: [
+            Positioned.fill(child: AudioThumbnail(file: current)),
 
-        Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: [
-                scheme.surface.withValues(alpha: .45),
-                scheme.surface.withValues(alpha: .72),
-                scheme.surface.withValues(alpha: .92),
-              ],
+            if (contentBur.enable)
+              Positioned.fill(
+                child: ClipRect(
+                  child: BackdropFilter(
+                    filter: .blur(
+                      sigmaX: contentBur.sigmaX,
+                      sigmaY: contentBur.sigmaY,
+                    ),
+                    child: const SizedBox.expand(),
+                  ),
+                ),
+              ),
+
+            Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    scheme.surface.withValues(
+                      alpha: contentBur.enable ? .30 : .45,
+                    ),
+                    scheme.surface.withValues(
+                      alpha: contentBur.enable ? .65 : .72,
+                    ),
+                    scheme.surface.withValues(
+                      alpha: contentBur.enable ? .95 : .92,
+                    ),
+                  ],
+                ),
+              ),
             ),
-          ),
-        ),
-      ],
+          ],
+        );
+      },
     );
   }
 

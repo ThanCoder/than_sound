@@ -13,9 +13,19 @@ class PlayerStateConfigListener
   Future<void> init() async {
     if (_init) return;
     _init = true;
+    await _initStateConfig();
 
     await initLoudnessConfigListener();
     await initBassConfigListener();
     await initTrebleConfigListener();
+  }
+
+  Future<void> _initStateConfig() async {
+    _controller.state.loop = PlayerLoop.fromValue(
+      _controller.config.getString(audioPlayerLoopKey),
+    );
+    _controller.state.isShuffle = _controller.config.getBool(
+      audioPlayerShuffleKey,
+    );
   }
 }

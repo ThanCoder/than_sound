@@ -97,8 +97,5 @@ class _LoudnessConfigSettingState extends State<LoudnessConfigSetting> {
 
   void save(LoudessConfig config) {
     store.putAndWriteAll(loudnessConfigKey, config.toMap());
-    // final py = ControllerManager.read<PlayerStateController>().player;
-    // py.updateAudioEffects(mapper)
-    // py.set
   }
 }

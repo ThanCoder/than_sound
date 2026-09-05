@@ -8,5 +8,9 @@ enum PlayerLoop {
   file,
 
   /// Loop the entire playlist: `loop-file=no`, `loop-playlist=inf`.
-  playlist,
+  playlist;
+
+  static PlayerLoop fromValue(String val) {
+    return values.firstWhere((e) => e.name == val, orElse: () => off);
+  }
 }
