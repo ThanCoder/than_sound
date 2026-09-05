@@ -3,18 +3,18 @@
 import 'package:flutter/material.dart';
 import 'package:than_sound/const_keys.dart';
 import 'package:than_sound/core/controllers/interfaces/i_controller.dart';
-import 'package:than_sound/core/controllers/player_state/configs/bass_config.dart';
+import 'package:than_sound/core/controllers/player_state/configs/treble_config.dart';
 import 'package:than_sound/core/controllers/player_state/player_state_controller.dart';
 import 'package:than_sound/ui_platforms/components/c_slider.dart';
 
-class AudioBassEqPage extends StatefulWidget {
-  const AudioBassEqPage({super.key});
+class AudioTrebleEqPage extends StatefulWidget {
+  const AudioTrebleEqPage({super.key});
 
   @override
-  State<AudioBassEqPage> createState() => _AudioBassEqPageState();
+  State<AudioTrebleEqPage> createState() => _AudioTrebleEqPageState();
 }
 
-class _AudioBassEqPageState extends State<AudioBassEqPage> {
+class _AudioTrebleEqPageState extends State<AudioTrebleEqPage> {
   ColorScheme get col => Theme.of(context).colorScheme;
   final con = ControllerManager.read<PlayerStateController>();
 
@@ -22,11 +22,15 @@ class _AudioBassEqPageState extends State<AudioBassEqPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: col.surface,
-      appBar: AppBar(title: Text('Bass Boost')),
+      appBar: AppBar(title: Text('Treble Boost')),
       body: StreamBuilder(
-        stream: con.config.stream.put.where((e) => e.key == audioBassConfigKey),
+        stream: con.config.stream.put.where(
+          (e) => e.key == audioTrebleConfigKey,
+        ),
         builder: (context, snapshot) {
-          final cf = BassConfig.fromMap(con.config.getMap(audioBassConfigKey));
+          final cf = TrebleConfig.fromMap(
+            con.config.getMap(audioTrebleConfigKey),
+          );
           final enabled = cf.enable;
           return Column(
             spacing: 5,
@@ -35,18 +39,18 @@ class _AudioBassEqPageState extends State<AudioBassEqPage> {
                 tileColor: col.surfaceContainer,
                 shape: RoundedRectangleBorder(borderRadius: .circular(15)),
                 title: Text(
-                  'Base Boost',
+                  'Treble Boost',
                   style: TextStyle(color: col.onSurface, fontWeight: .w600),
                 ),
                 subtitle: Text(
-                  'Enhance low frequencies',
+                  'Enhance high frequencies',
                   style: TextStyle(color: col.onSurfaceVariant),
                 ),
                 value: enabled,
                 onChanged: (value) {
                   con.config
                       .put(
-                        audioBassConfigKey,
+                        audioTrebleConfigKey,
                         cf.copyWith(enable: value).toMap(),
                       )
                       .writeAll();
@@ -61,55 +65,7 @@ class _AudioBassEqPageState extends State<AudioBassEqPage> {
     );
   }
 
-  Container _frequencyWidget(BassConfig bass) {
-    return Container(
-      padding: const EdgeInsets.fromLTRB(16, 12, 16, 14),
-      decoration: BoxDecoration(
-        color: col.surfaceContainer,
-        borderRadius: .circular(15),
-      ),
-      child: Column(
-        children: [
-          Row(
-            children: [
-              Text(
-                'Frequency',
-                style: TextStyle(fontWeight: .w600, color: col.onSurface),
-              ),
-              Spacer(),
-              Text(
-                '100 Hz',
-                style: TextStyle(color: col.primary, fontWeight: .w600),
-              ),
-              IconButton(
-                onPressed: () {
-                  con.config.putAndWriteAll(
-                    audioBassConfigKey,
-                    bass.copyWith(frequency: 100).toMap(),
-                  );
-                },
-                icon: Icon(Icons.restart_alt_outlined),
-              ),
-            ],
-          ),
-          CSlider(
-            min: 20,
-            max: 200,
-            value: bass.frequency,
-            onChanged: (value) {
-              con.config.putAndWriteAll(
-                audioBassConfigKey,
-                bass.copyWith(gain: value).toMap(),
-              );
-            },
-          ),
-          Row(children: [Text('20Hz'), Spacer(), Text('200 Hz')]),
-        ],
-      ),
-    );
-  }
-
-  Container _bassWidget(BassConfig bass) {
+  Container _bassWidget(TrebleConfig treble) {
     return Container(
       padding: const EdgeInsets.fromLTRB(16, 12, 16, 14),
       decoration: BoxDecoration(
@@ -130,8 +86,8 @@ class _AudioBassEqPageState extends State<AudioBassEqPage> {
               ),
               const Spacer(),
               Text(
-                '${bass.gain >= 0 ? '+' : ''}'
-                '${bass.gain.toStringAsFixed(1)} dB',
+                '${treble.gain >= 0 ? '+' : ''}'
+                '${treble.gain.toStringAsFixed(1)} dB',
                 style: TextStyle(
                   color: col.primary,
                   fontWeight: FontWeight.w600,
@@ -143,8 +99,8 @@ class _AudioBassEqPageState extends State<AudioBassEqPage> {
                 tooltip: 'Reset',
                 onPressed: () {
                   con.config.putAndWriteAll(
-                    audioBassConfigKey,
-                    bass.copyWith(gain: 6).toMap(),
+                    audioTrebleConfigKey,
+                    treble.copyWith(gain: 0).toMap(),
                   );
                 },
                 icon: const Icon(Icons.restart_alt_rounded),
@@ -155,13 +111,13 @@ class _AudioBassEqPageState extends State<AudioBassEqPage> {
           const SizedBox(height: 4),
 
           CSlider(
-            min: -20,
-            max: 20,
-            value: bass.gain,
+            min: -12,
+            max: 12,
+            value: treble.gain,
             onChanged: (value) {
               con.config.putAndWriteAll(
-                audioBassConfigKey,
-                bass.copyWith(gain: value).toMap(),
+                audioTrebleConfigKey,
+                treble.copyWith(gain: value).toMap(),
               );
             },
           ),
@@ -187,6 +143,54 @@ class _AudioBassEqPageState extends State<AudioBassEqPage> {
               ],
             ),
           ),
+        ],
+      ),
+    );
+  }
+
+  Container _frequencyWidget(TrebleConfig treble) {
+    return Container(
+      padding: const EdgeInsets.fromLTRB(16, 12, 16, 14),
+      decoration: BoxDecoration(
+        color: col.surfaceContainer,
+        borderRadius: .circular(15),
+      ),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              Text(
+                'Frequency',
+                style: TextStyle(fontWeight: .w600, color: col.onSurface),
+              ),
+              Spacer(),
+              Text(
+                '100 Hz',
+                style: TextStyle(color: col.primary, fontWeight: .w600),
+              ),
+              IconButton(
+                onPressed: () {
+                  con.config.putAndWriteAll(
+                    audioTrebleConfigKey,
+                    treble.copyWith(frequency: 100).toMap(),
+                  );
+                },
+                icon: Icon(Icons.restart_alt_outlined),
+              ),
+            ],
+          ),
+          CSlider(
+            min: 1000,
+            max: 12000,
+            value: treble.frequency,
+            onChanged: (value) {
+              con.config.putAndWriteAll(
+                audioTrebleConfigKey,
+                treble.copyWith(gain: value).toMap(),
+              );
+            },
+          ),
+          Row(children: [Text('20Hz'), Spacer(), Text('200 Hz')]),
         ],
       ),
     );

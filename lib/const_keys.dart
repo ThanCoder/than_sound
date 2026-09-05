@@ -22,15 +22,12 @@ const String audioContentUseReactiveCoverTypeKey =
 const String audioContentWaveFormTypeKey = 'audio-conent-wave-form-type';
 
 /*****************Audio Player Config********************************** */
-const String audioAmplitudeAnimationTypeKey = 'audio-amplitude-animation-type';
 const String loudnessConfigKey = 'loudness-config-key';
+const String audioBassConfigKey = 'audioBassConfigKey';
+const String audioTrebleConfigKey = 'audioTrebleConfigKey';
+const String audioAmplitudeAnimationTypeKey = 'audio-amplitude-animation-type';
 const String audioBluetoothControlKeyName = 'audio-bluetooth-control';
 const String audioVolumeKeyName = 'audio-volume';
-const String audioShuffleModeEnabledKeyName = 'audioShuffleModeEnabled';
-// sleep timer
-const String playerSleepTimerTypeKey = 'player-sleep-timer-type';
-const String playerSleepTimerDurationSecondsKey =
-    'player-sleep-timer-duration-seconds';
 
 /*****************Audio Utils********************************** */
 final int audioScanMinFileSize = 1024 * 20;

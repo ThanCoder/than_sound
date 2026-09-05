@@ -36,6 +36,10 @@ class PlayerActions {
     setCurrent(file);
     if (play) {
       _controller.stream._con.add(SongStart(file));
+      if (!_controller.state.showFloatWidget) {
+        _controller.state.showFloatWidget = true;
+        _controller.stream._con.add(ShowFloatingWidgetChanged());
+      }
     }
   }
 
@@ -44,7 +48,8 @@ class PlayerActions {
   }
 
   Future<void> stop() async {
-    await _controller.player.stop();
+    await _controller.player.pause();
+    await seek(.zero);
   }
 
   Future<void> play() async {

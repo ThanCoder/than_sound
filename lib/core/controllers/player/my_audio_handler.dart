@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:audio_service/audio_service.dart';
 import 'package:than_sound/core/controllers/interfaces/i_controller.dart';
-import 'package:than_sound/core/controllers/player/mixins/extra_mixin.dart';
+import 'package:than_sound/core/controllers/player/extra_mixin.dart';
 import 'package:than_sound/core/controllers/player_state/player_state_controller.dart';
 import 'package:than_sound/ui_platforms/pages/favourite/favourite_controller.dart';
 
@@ -23,7 +23,10 @@ class MyAudioHandler extends BaseAudioHandler
     stateController.stream.playlist.listen((event) {
       addNotiMediaItem(event.file);
     });
-    stateController.stream.playbackState.listen((event) {
+    stateController.stream.position.listen((event) {
+      playbackState.add(transformEvent);
+    });
+     stateController.stream.playbackState.listen((event) {
       playbackState.add(transformEvent);
     });
   }
@@ -68,10 +71,10 @@ class MyAudioHandler extends BaseAudioHandler
   @override
   Future<dynamic> customAction(String name, [Map<String, dynamic>? extras]) {
     if (name == 'favorite') {
-      stateController.actions.addFav();
+      stateController.actions.removeFav();
     }
     if (name == 'favorite_outline') {
-      stateController.actions.removeFav();
+      stateController.actions.addFav();
     }
 
     return super.customAction(name, extras);

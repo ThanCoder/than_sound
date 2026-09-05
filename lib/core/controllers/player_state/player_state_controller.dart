@@ -1,8 +1,13 @@
 import 'dart:async';
+import 'dart:io';
 
+import 'package:audio_session/audio_session.dart';
+import 'package:cfb_store/cfb_store.dart';
 import 'package:mpv_audio_kit/mpv_audio_kit.dart';
 import 'package:than_sound/core/controllers/interfaces/i_controller.dart';
-import 'package:than_sound/core/controllers/player/my_audio_handler.dart';
+import 'package:than_sound/core/controllers/player_state/player_config_listener_logic/bass_config_listener.dart';
+import 'package:than_sound/core/controllers/player_state/player_config_listener_logic/loudness_config_listener.dart';
+import 'package:than_sound/core/controllers/player_state/player_config_listener_logic/treble_config_listener.dart';
 import 'package:than_sound/core/controllers/player_state/player_loop.dart';
 import 'package:than_sound/ui_platforms/components/sleep_timer/sleep_timer.dart';
 import 'package:than_sound/core/models/audio_file.dart';
@@ -14,32 +19,23 @@ part 'stream.dart';
 part 'actions.dart';
 part 'logic/player_state_config_listener.dart';
 part 'logic/player_state_event_listener.dart';
+part 'logic/player_state_session_listener.dart';
 
 enum AudioFileSourceType { none, allFileState, favouriteState, libState }
 
 class PlayerStateController extends IController {
-  final MyAudioHandler _audioHandler;
-  PlayerStateController(this._audioHandler);
+  PlayerStateController();
 
   final player = Player();
+  final config = CFBStore.instance;
+  final sleepTimer = SleepTimer();
+
   late final state = PlayerState(player);
   late final stream = PlayerStream();
   late final actions = PlayerActions(controller: this);
-  final sleepTimer = SleepTimer();
-  late final _configListenr = PlayerStateConfigListener(
-    player: player,
-    state: state,
-    stream: stream,
-    actions: actions,
-  );
-  late final _eventListenr = PlayerStateEventListener(
-    player: player,
-    state: state,
-    stream: stream,
-    actions: actions,
-    audioHandler: _audioHandler,
-    sleepTimer: sleepTimer,
-  );
+  late final _configListenr = PlayerStateConfigListener(controller: this);
+  late final _eventListenr = PlayerStateEventListener(controller: this);
+  late final _sessionListener = PlayerStateSessionListener(controller: this);
 
   bool _init = false;
 
@@ -48,6 +44,7 @@ class PlayerStateController extends IController {
     if (_init) return;
     await _configListenr.init();
     await _eventListenr.init();
+    await _sessionListener.init();
     _init = true;
   }
 

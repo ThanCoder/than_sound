@@ -79,10 +79,8 @@ mixin ExtraMixin {
 
   AudioProcessingState get processingState {
     final state = audioHandler.stateController.player.state;
-    if (state.completed) return .completed;
-    if (state.buffering) return .buffering;
-    if (state.playWhenReady || state.playing) return .ready;
-    if (audioHandler.stateController.state.pause) return .ready;
-    return .idle;
+    return state.buffering
+        ? AudioProcessingState.buffering
+        : AudioProcessingState.ready;
   }
 }

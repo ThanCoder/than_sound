@@ -40,14 +40,12 @@ void main() async {
   if (Platform.isLinux) {
     // print('main: ${CFBStore.getInstance.getDouble(linuxWindowWidthKey)}');
     await ThanPkgLinux.getInstance.window.setWindowSize(
-      width: CFBStore.getInstance.getDouble(
-        linuxWindowWidthKey,
-        linuxWindowMinWidth,
-      ).toInt(),
-      height: CFBStore.getInstance.getDouble(
-        linuxWindowHeightKey,
-        linuxWindowMinHeight,
-      ).toInt(),
+      width: CFBStore.getInstance
+          .getDouble(linuxWindowWidthKey, linuxWindowMinWidth)
+          .toInt(),
+      height: CFBStore.getInstance
+          .getDouble(linuxWindowHeightKey, linuxWindowMinHeight)
+          .toInt(),
     );
   }
 
@@ -61,7 +59,7 @@ void main() async {
     ),
   );
 
-  ControllerManager.register(PlayerStateController(audioHandler));
+  ControllerManager.register(PlayerStateController());
   ControllerManager.register(AllFileStateController());
   ControllerManager.register(FavouriteController());
   ControllerManager.register(MusicTrackerController());

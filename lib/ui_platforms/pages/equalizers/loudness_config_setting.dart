@@ -2,7 +2,7 @@ import 'package:cfb_store/cfb_store.dart';
 import 'package:flutter/material.dart';
 import 'package:t_widgets/t_widgets.dart';
 import 'package:than_sound/const_keys.dart';
-import 'package:than_sound/core/player_config/loudess_config.dart';
+import 'package:than_sound/core/controllers/player_state/configs/loudess_config.dart';
 
 class LoudnessConfigSetting extends StatefulWidget {
   const LoudnessConfigSetting({super.key});
@@ -18,9 +18,7 @@ class _LoudnessConfigSettingState extends State<LoudnessConfigSetting> {
   Widget build(BuildContext context) {
     final colorScheme = context.colorScheme;
     return StreamBuilder(
-      stream: store.events.where(
-        (e) => e is PutValue && e.key == loudnessConfigKey,
-      ),
+      stream: store.stream.put.where((e) => e.key == loudnessConfigKey),
       builder: (context, asyncSnapshot) {
         final config = LoudessConfig.fromMap(store.getMap(loudnessConfigKey));
         return Container(

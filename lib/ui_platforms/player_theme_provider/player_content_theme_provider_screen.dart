@@ -1,7 +1,9 @@
 import 'package:dart_core_extensions/dart_core_extensions.dart';
 import 'package:flutter/material.dart';
+import 'package:t_widgets/t_widgets.dart';
 import 'package:than_sound/core/controllers/interfaces/i_controller.dart';
 import 'package:than_sound/core/controllers/player_state/player_state_controller.dart';
+import 'package:than_sound/ui_platforms/components/sleep_timer/sleep_timer_page.dart';
 import 'package:than_sound/ui_platforms/mobile/components/sound_volume_menu.dart';
 import 'package:than_sound/ui_platforms/mobile/components/audio_item_menu.dart';
 import 'package:than_sound/ui_platforms/components/player_playlist.dart';
@@ -37,12 +39,14 @@ class _PlayerContentThemeProviderScreenState
         previous: pc.actions.prev,
         seek: pc.actions.seek,
         playlist: showPlayList,
-        sleepTimer: () {},
+        sleepTimer: goSleepTimerPage,
         more: showItemMenu,
         volume: showVolumeMenu,
       ),
     );
   }
+
+  final currentTheme = MobileDefaultPlayerContentTheme();
 
   @override
   Widget build(BuildContext context) {
@@ -51,7 +55,7 @@ class _PlayerContentThemeProviderScreenState
       body: StreamBuilder(
         stream: pc.stream.current,
         builder: (context, snapshot) {
-          return MobileDefaultPlayerContentTheme().build(context, ctx);
+          return currentTheme.build(context, ctx);
         },
       ),
     );
@@ -92,5 +96,9 @@ class _PlayerContentThemeProviderScreenState
       useSafeArea: true,
       builder: (context) => SoundVolumeMenu(),
     );
+  }
+
+  void goSleepTimerPage() {
+    context.pushMaterialPageRoute(builder: (mainCtx) => SleepTimerPage());
   }
 }

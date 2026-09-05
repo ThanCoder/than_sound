@@ -30,6 +30,7 @@ dependencies:
   file_type_plus: ^1.1.0
   than_audiotag: ^0.3.0
   package_info_plus: ^10.2.1
+  # flutter_headset_detector: ^3.1.0
 
   dart_core_extensions:
     git: https://github.com/ThanCoder/dart_core_extensions.git

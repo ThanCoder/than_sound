@@ -1,20 +1,14 @@
 part of '../player_state_controller.dart';
 
 class PlayerStateEventListener {
-  PlayerStateEventListener({
-    required this.player,
-    required this.state,
-    required this.stream,
-    required this.actions,
-    required this.audioHandler,
-    required this.sleepTimer,
-  });
-  final Player player;
-  final PlayerState state;
-  final PlayerStream stream;
-  final PlayerActions actions;
-  final MyAudioHandler audioHandler;
-  final SleepTimer sleepTimer;
+  PlayerStateEventListener({required this._controller});
+  final PlayerStateController _controller;
+
+  SleepTimer get sleepTimer => _controller.sleepTimer;
+  Player get player => _controller.player;
+  PlayerState get state => _controller.state;
+  PlayerStream get stream => _controller.stream;
+  PlayerActions get actions => _controller.actions;
 
   bool _init = false;
 
@@ -22,8 +16,14 @@ class PlayerStateEventListener {
     if (_init) return;
     _init = true;
 
-    player.stream.position.listen((e) => stream._con.add(PositionChanged(e)));
-    player.stream.duration.listen((e) => stream._con.add(DurationChanged(e)));
+    player.stream.position.listen((e) {
+      state.position = e;
+      stream._con.add(PositionChanged(e));
+    });
+    player.stream.duration.listen((e) {
+      state.duration = e;
+      stream._con.add(DurationChanged(e));
+    });
     player.stream.playing.listen((e) {
       state.playing = e;
       stream._con.add(PlayingChanged());
@@ -51,6 +51,7 @@ class PlayerStateEventListener {
       // timer
       if (sleepTimer.onSongCompleted()) {
         await player.pause();
+        await player.seek(Duration.zero);
         return;
       }
       //loop
@@ -62,12 +63,10 @@ class PlayerStateEventListener {
         }
         if (state.loop == .playlist) {
           final index = state.currentIndex;
-          if (index == -1) return;
-          if (index == state.playOrder.length -1) {
-            final file = state.playOrder.first;
-            await actions.open(file);
-            return;
-          }
+          final nextIndex = (index + 1) % state.playOrder.length;
+          final file = state.playOrder[nextIndex];
+          await actions.open(file);
+          return;
         }
       }
 

@@ -1,22 +1,21 @@
 part of '../player_state_controller.dart';
 
-class PlayerStateConfigListener {
-  PlayerStateConfigListener({
-    required this.player,
-    required this.state,
-    required this.stream,
-    required this.actions,
-  });
+class PlayerStateConfigListener
+    with LoudnessConfigListener, BassConfigListener, TrebleConfigListener {
+  PlayerStateConfigListener({required this._controller});
+  final PlayerStateController _controller;
 
-  final Player player;
-  final PlayerState state;
-  final PlayerStream stream;
-  final PlayerActions actions;
+  @override
+  PlayerStateController get controller => _controller;
 
   bool _init = false;
 
   Future<void> init() async {
     if (_init) return;
     _init = true;
+
+    await initLoudnessConfigListener();
+    await initBassConfigListener();
+    await initTrebleConfigListener();
   }
 }

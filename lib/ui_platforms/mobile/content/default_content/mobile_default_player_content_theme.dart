@@ -7,6 +7,7 @@ import 'package:t_widgets/t_widgets.dart';
 import 'package:than_sound/core/controllers/player_state/player_state_controller.dart';
 import 'package:than_sound/core/models/audio_file.dart';
 import 'package:than_sound/exts.dart';
+import 'package:than_sound/ui_platforms/components/audio_loop_button.dart';
 import 'package:than_sound/ui_platforms/components/reactive_cover/audio_reactive_cover_switcher.dart';
 import 'package:than_sound/ui_platforms/components/waveform/waveform_widget/waveform.dart';
 import 'package:than_sound/ui_platforms/components/audio_thumbnail.dart';
@@ -35,7 +36,7 @@ class _DefaultPlayerView extends StatefulWidget {
 class _DefaultPlayerViewState extends State<_DefaultPlayerView> {
   PlayerUiContext get ctx => widget.ctx;
   PlayerState get state => ctx.state;
-  MobilePlayerUiActions get actions => ctx.actions as MobilePlayerUiActions;
+  MobilePlayerUiActions get actions => ctx.uiActions as MobilePlayerUiActions;
 
   final double statusbarHeight = Platform.isLinux ? 0 : 40;
 
@@ -336,8 +337,9 @@ class _DefaultPlayerViewState extends State<_DefaultPlayerView> {
                   size: 48,
                   onPressed: actions.next,
                 ),
+                AudioLoopButton(),
 
-                _controlButton(icon: Icons.replay, size: 25),
+                // _controlButton(icon: Icons.replay, size: 25),
               ],
             );
           },
