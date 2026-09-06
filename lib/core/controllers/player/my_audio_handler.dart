@@ -27,7 +27,8 @@ class MyAudioHandler extends BaseAudioHandler
     stateController.stream.position.listen((event) {
       playbackState.add(transformEvent);
     });
-    stateController.stream.playbackState.listen((event) {
+    // player playback state
+    stateController.player.stream.playbackState.listen((event) {
       playbackState.add(transformEvent);
     });
   }
