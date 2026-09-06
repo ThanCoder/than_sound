@@ -9,7 +9,7 @@ import 'package:than_sound/ui_platforms/components/audio_loop_button.dart';
 import 'package:than_sound/ui_platforms/components/audio_shuffle_button.dart';
 import 'package:than_sound/ui_platforms/components/audio_thumbnail.dart';
 import 'package:than_sound/ui_platforms/components/c_slider.dart';
-import 'package:than_sound/ui_platforms/mobile/components/audio_item_menu.dart';
+import 'package:than_sound/ui_platforms/components/audio_item_menu.dart';
 
 class DesktopNowPlayingPage extends StatefulWidget {
   const DesktopNowPlayingPage({super.key});

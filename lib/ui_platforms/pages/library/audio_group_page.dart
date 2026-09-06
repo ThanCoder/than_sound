@@ -6,7 +6,7 @@ import 'package:than_sound/core/controllers/interfaces/i_controller.dart';
 import 'package:than_sound/core/controllers/player_state/player_state_controller.dart';
 import 'package:than_sound/core/models/audio_file.dart';
 import 'package:than_sound/ui_platforms/desktop/desktop_now_playing_page.dart';
-import 'package:than_sound/ui_platforms/mobile/components/audio_item_menu.dart';
+import 'package:than_sound/ui_platforms/components/audio_item_menu.dart';
 import 'package:than_sound/ui_platforms/mobile/components/audio_list_item.dart';
 import 'package:than_sound/ui_platforms/components/audio_thumbnail.dart';
 import 'package:than_sound/ui_platforms/pages/library/lib_page.dart';
