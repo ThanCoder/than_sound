@@ -1,7 +1,6 @@
 part of '../player_state_controller.dart';
 
-class PlayerStateConfigListener
-    with LoudnessConfigListener, BassConfigListener, TrebleConfigListener {
+class PlayerStateConfigListener with BassConfigListener, TrebleConfigListener {
   PlayerStateConfigListener({required this._controller});
   final PlayerStateController _controller;
 

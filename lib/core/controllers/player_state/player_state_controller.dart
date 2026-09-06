@@ -8,7 +8,6 @@ import 'package:mpv_audio_kit/mpv_audio_kit.dart';
 import 'package:than_sound/const_keys.dart';
 import 'package:than_sound/core/controllers/interfaces/i_controller.dart';
 import 'package:than_sound/core/controllers/player_state/player_config_listener_logic/bass_config_listener.dart';
-import 'package:than_sound/core/controllers/player_state/player_config_listener_logic/loudness_config_listener.dart';
 import 'package:than_sound/core/controllers/player_state/player_config_listener_logic/treble_config_listener.dart';
 import 'package:than_sound/core/controllers/player_state/player_fade_controller.dart';
 import 'package:than_sound/core/controllers/player_state/player_loop.dart';
