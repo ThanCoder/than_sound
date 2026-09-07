@@ -11,6 +11,6 @@ enum PlayerLoop {
   playlist;
 
   static PlayerLoop fromValue(String val) {
-    return values.firstWhere((e) => e.name == val, orElse: () => off);
+    return values.firstWhere((e) => e.name == val, orElse: () => playlist);
   }
 }

@@ -13,7 +13,7 @@ class PlayerState {
   bool end = false;
   bool isShuffle = false;
   bool showFloatWidget = false;
-  AudioFileSourceType source = .none;
+  AudioFileSource source = NoneAudioSource();
   Duration duration = .new(seconds: 0);
   Duration position = .new(seconds: 0);
   PlayerLoop loop = .playlist;
@@ -25,5 +25,17 @@ class PlayerState {
   int get currentIndex {
     if (current == null) return -1;
     return playOrder.indexWhere((e) => e.path == current!.path);
+  }
+
+  bool get isNextSong {
+    final index = currentIndex;
+    if (index == -1) return false;
+    return index + 1 < playOrder.length;
+  }
+
+  bool get isPrevSong {
+    final index = currentIndex;
+    if (index == -1) return false;
+    return index > 0;
   }
 }

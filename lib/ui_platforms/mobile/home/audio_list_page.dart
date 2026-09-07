@@ -61,7 +61,7 @@ class _AudioListPageState extends State<AudioListPage> {
 
       await playstateController.actions.setTracks(
         con.files,
-        source: .allFileState,
+        source: const AllFileStateSource(),
       );
     } catch (e) {
       if (!mounted) return;
@@ -104,7 +104,7 @@ class _AudioListPageState extends State<AudioListPage> {
       if (confirmed) {
         await playstateController.actions.setTracks(
           ControllerManager.read<AllFileStateController>().files,
-          source: .allFileState,
+          source: const AllFileStateSource(),
         );
         await playstateController.actions.open(file);
       }
@@ -112,7 +112,7 @@ class _AudioListPageState extends State<AudioListPage> {
     }
     await playstateController.actions.setTracks(
       ControllerManager.read<AllFileStateController>().files,
-      source: .allFileState,
+      source: const AllFileStateSource(),
     );
     await playstateController.actions.open(file);
   }

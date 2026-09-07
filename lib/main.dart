@@ -26,6 +26,7 @@ void main() async {
   if (Platform.isAndroid) {
     final session = await AudioSession.instance;
     await session.configure(AudioSessionConfiguration.music());
+    await session.setActive(true);
   }
 
   await PUtils.instance.init();

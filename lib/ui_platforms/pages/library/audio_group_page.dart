@@ -38,7 +38,10 @@ class _AudioGroupPageState extends State<AudioGroupPage> {
       );
       return;
     }
-    await pCon.actions.setTracks(files, source: .libState);
+    await pCon.actions.setTracks(
+      files,
+      source: LibStateSource(widget.group.name),
+    );
     // print('item: $file');
     pCon.actions.open(file);
   }

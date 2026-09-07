@@ -74,7 +74,7 @@ class _DesktopFavouriteListPageState extends State<DesktopFavouriteListPage> {
   }
 
   void onTap(AudioFile file) async {
-    await plC.actions.setTracks(con.files, source: .allFileState);
+    await plC.actions.setTracks(con.files, source: const AllFileStateSource());
     if (plC.isCurrentFile(file)) {
       await plC.actions.play();
     } else {

@@ -17,9 +17,9 @@ class PlayerActions {
 
   Future<void> setTracks(
     List<AudioFile> files, {
-    required AudioFileSourceType source,
+    required AudioFileSource source,
   }) async {
-    if (_controller.state.source == source) {
+    if (_controller.state.source.isSome(source)) {
       return;
     }
 
@@ -233,10 +233,11 @@ class PlayerActions {
 
   void _setToggleShuffle() {
     if (_controller.state.isShuffle) {
-      _controller.state.playOrder.shuffle();
+      _controller.state.playOrder = List.of(_controller.state.files)..shuffle();
     } else {
-      _controller.state.playOrder = _controller.state.files;
+      _controller.state.playOrder = List.of(_controller.state.files);
     }
+    _controller.stream._con.add(PlayOrderChanged());
   }
 
   void toggleShuffle() {

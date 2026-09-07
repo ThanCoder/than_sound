@@ -58,7 +58,7 @@ class _MobileFavouriteListPageState extends State<MobileFavouriteListPage> {
                     onClicked: (file) async {
                       pCon.actions.setTracks(
                         con.files,
-                        source: .favouriteState,
+                        source: const FavouriteStateSource(),
                       );
                       pCon.actions.open(file);
                     },

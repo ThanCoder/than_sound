@@ -19,11 +19,10 @@ part 'events.dart';
 part 'state.dart';
 part 'stream.dart';
 part 'actions.dart';
-part 'logic/player_state_config_listener.dart';
-part 'logic/player_state_event_listener.dart';
-part 'logic/player_state_session_listener.dart';
-
-enum AudioFileSourceType { none, allFileState, favouriteState, libState }
+part 'event_logic/player_state_config_listener.dart';
+part 'event_logic/player_state_event_listener.dart';
+part 'event_logic/player_state_session_listener.dart';
+part 'audio_file_source_type.dart';
 
 class PlayerStateController extends IController {
   PlayerStateController(this.player);

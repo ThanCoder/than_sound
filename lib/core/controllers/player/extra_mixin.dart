@@ -42,10 +42,12 @@ mixin ExtraMixin {
 
   PlaybackState get transformEvent => .new(
     controls: [
-      MediaControl.skipToPrevious,
+      if (audioHandler.stateController.state.isPrevSong)
+        MediaControl.skipToPrevious,
       audioHandler.stateController.state.playing ? MediaControl.pause : .play,
       MediaControl.stop,
-      MediaControl.skipToNext,
+      if (audioHandler.stateController.state.isNextSong)
+        MediaControl.skipToNext,
       if (audioHandler.stateController.state.current != null &&
           audioHandler.favController.isExists(
             audioHandler.stateController.state.current!,

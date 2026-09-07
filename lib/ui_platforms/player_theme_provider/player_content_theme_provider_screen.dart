@@ -6,7 +6,7 @@ import 'package:than_sound/core/controllers/player_state/player_state_controller
 import 'package:than_sound/ui_platforms/components/sleep_timer/sleep_timer_page.dart';
 import 'package:than_sound/ui_platforms/components/sound_volume_menu.dart';
 import 'package:than_sound/ui_platforms/components/audio_item_menu.dart';
-import 'package:than_sound/ui_platforms/components/player_playlist.dart';
+import 'package:than_sound/ui_platforms/components/player_playlist_menu.dart';
 import 'package:than_sound/ui_platforms/player_theme/interfaces/player_ui_context.dart';
 import 'package:than_sound/ui_platforms/mobile/content/default_content/mobile_default_player_content_theme.dart';
 import 'package:than_sound/ui_platforms/player_theme/ui_context_creator.dart';
@@ -72,7 +72,7 @@ class _PlayerContentThemeProviderScreenState
       showDragHandle: true,
       useSafeArea: true,
       builder: (context) {
-        return FractionallySizedBox(heightFactor: .90, child: PlayerPlaylist());
+        return FractionallySizedBox(heightFactor: .90, child: PlayerPlaylistMenu());
       },
     );
   }

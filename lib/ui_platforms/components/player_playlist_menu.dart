@@ -8,14 +8,14 @@ import 'package:than_sound/core/controllers/interfaces/i_controller.dart';
 import 'package:than_sound/core/controllers/player_state/player_state_controller.dart';
 import 'package:than_sound/ui_platforms/ui/partials/sort_provider.dart';
 
-class PlayerPlaylist extends StatefulWidget {
-  const PlayerPlaylist({super.key});
+class PlayerPlaylistMenu extends StatefulWidget {
+  const PlayerPlaylistMenu({super.key});
 
   @override
-  State<PlayerPlaylist> createState() => _PlayerPlaylistState();
+  State<PlayerPlaylistMenu> createState() => _PlayerPlaylistMenuState();
 }
 
-class _PlayerPlaylistState extends State<PlayerPlaylist> {
+class _PlayerPlaylistMenuState extends State<PlayerPlaylistMenu> {
   final controller = ScrollController();
   @override
   void initState() {
@@ -88,10 +88,10 @@ class _PlayerPlaylistState extends State<PlayerPlaylist> {
   StreamBuilder listWidget() {
     final con = ControllerManager.read<PlayerStateController>();
     return StreamBuilder(
-      stream: con.stream.playbackState,
+      stream: con.stream.playOrder,
       builder: (context, asyncSnapshot) {
         return AudioSliverList(
-          list: con.state.files,
+          list: con.state.playOrder,
           onClicked: (file) async {
             final con = ControllerManager.read<PlayerStateController>();
             con.actions.open(file);

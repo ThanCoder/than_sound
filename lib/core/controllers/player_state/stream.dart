@@ -21,6 +21,7 @@ class PlayerStream {
   Stream<SongStart> get start => all.whereType<SongStart>();
   Stream<SongStop> get stop => all.whereType<SongStop>();
   Stream<LoopChanged> get loop => all.whereType<LoopChanged>();
+  Stream<PlayOrderChanged> get playOrder => all.whereType<PlayOrderChanged>();
 }
 
 extension PlayerStateEventExt on Stream<PlayerStateEvent> {

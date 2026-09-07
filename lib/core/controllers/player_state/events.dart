@@ -18,6 +18,8 @@ class CurrentChanged extends PlayerStateEvent {
 class PlayStateChanged extends PlayerStateEvent {}
 
 class ShuffleChanged extends PlayerStateEvent {}
+class PlayOrderChanged extends PlayerStateEvent {}
+
 
 class ShowFloatingWidgetChanged extends PlayerStateEvent {}
 

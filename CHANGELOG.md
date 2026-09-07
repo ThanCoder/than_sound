@@ -1,3 +1,6 @@
+# 0.6.1
++ Fixed `Play List Next,Prev Error`
+
 # 0.5.0
 
 + Added `Sleep Timer`

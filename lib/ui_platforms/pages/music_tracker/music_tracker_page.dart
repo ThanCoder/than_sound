@@ -34,7 +34,7 @@ class _MusicTrackerPageState extends State<MusicTrackerPage> {
       if (confirmed) {
         await pCon.actions.setTracks(
           ControllerManager.read<AllFileStateController>().files,
-          source: .allFileState,
+          source: const AllFileStateSource(),
         );
         pCon.actions.open(file);
       }
@@ -42,7 +42,7 @@ class _MusicTrackerPageState extends State<MusicTrackerPage> {
     }
     await pCon.actions.setTracks(
       ControllerManager.read<AllFileStateController>().files,
-      source: .allFileState,
+      source: const AllFileStateSource(),
     );
     // print('item: $file');
     pCon.actions.open(file);

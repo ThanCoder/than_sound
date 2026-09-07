@@ -330,7 +330,7 @@ class _DefaultPlayerViewState extends State<_DefaultPlayerView> {
                 _controlButton(
                   icon: Icons.skip_previous_rounded,
                   size: 48,
-                  onPressed: actions.previous,
+                  onPressed: state.isPrevSong ? actions.previous : null,
                 ),
 
                 const SizedBox(width: 20),
@@ -364,7 +364,7 @@ class _DefaultPlayerViewState extends State<_DefaultPlayerView> {
                 _controlButton(
                   icon: Icons.skip_next_rounded,
                   size: 48,
-                  onPressed: actions.next,
+                  onPressed: state.isNextSong ? actions.next : null,
                 ),
                 AudioLoopButton(),
 
