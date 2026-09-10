@@ -15,6 +15,10 @@ class PlayerActions {
   // Track / playlist
   // ---------------------------------------------------------------------------
 
+  void setSource(AudioFileSource source) {
+    _controller.state.source = source;
+  }
+
   Future<void> setTracks(
     List<AudioFile> files, {
     required AudioFileSource source,

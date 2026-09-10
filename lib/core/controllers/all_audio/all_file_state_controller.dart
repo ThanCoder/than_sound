@@ -76,6 +76,7 @@ class AllFileStateController extends IController {
         final cList = files.map((e) => e.toMap()).toList();
         cacheStore.put('list', cList);
       }
+      _playerStateController.actions.setSource(NoneAudioSource());
     } catch (e) {
       _state = _state.copyWith(isLoading: false, errorMessage: e.toString());
       _con.add(state);
