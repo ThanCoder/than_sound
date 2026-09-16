@@ -18,12 +18,14 @@ class PUtils {
   late String androidRootDirPath;
   String packageName = 'than_audio';
   String version = '1.0.0';
+  String appName = 'than_audio';
 
   Future<void> init() async {
     try {
       final info = await PackageInfo.fromPlatform();
       packageName = info.packageName;
       version = info.version;
+      appName = info.appName;
 
       if (Platform.isLinux) {
         final cfDir = await ThanPkgLinux.getInstance.pathHandler
@@ -37,7 +39,8 @@ class PUtils {
         if (cDir != null) {
           cacheDir = cDir;
         }
-      } else if (Platform.isAndroid) {
+      }
+      if (Platform.isAndroid) {
         final path = ThanPkgAndroid.getInstance.pathHandler
             .getDeviceStoragePath();
         androidRootDirPath = PathBuf(path).join('.$packageName').path;

@@ -6,6 +6,8 @@ import 'package:audio_session/audio_session.dart';
 import 'package:cfb_store/cfb_store.dart';
 import 'package:mpv_audio_kit/mpv_audio_kit.dart';
 import 'package:than_sound/const_keys.dart';
+import 'package:than_sound/core/controllers/all_audio/all_file_event.dart';
+import 'package:than_sound/core/controllers/all_audio/all_file_state_controller.dart';
 import 'package:than_sound/core/controllers/interfaces/i_controller.dart';
 import 'package:than_sound/core/controllers/player_state/player_config_listener_logic/bass_config_listener.dart';
 import 'package:than_sound/core/controllers/player_state/player_config_listener_logic/treble_config_listener.dart';
@@ -47,10 +49,29 @@ class PlayerStateController extends IController {
     await _eventListenr.init();
     await _sessionListener.init();
     _init = true;
+    _listenAllState();
   }
 
   bool isCurrentFile(AudioFile file) {
     if (state.current == null) return false;
     return state.current!.path == file.path;
+  }
+
+  void _listenAllState() {
+    ControllerManager.read<AllFileStateController>().event
+        .whereType<AllFileRemoveEvent>()
+        .listen((event) {
+          final file = event.file;
+          final fIndex = state.files.indexWhere((e) => e.path == file.path);
+          if (fIndex != -1) {
+            state.files.removeAt(fIndex);
+          }
+          final pIndex = state.playOrder.indexWhere((e) => e.path == file.path);
+          if (pIndex != -1) {
+            state.playOrder.removeAt(pIndex);
+          }
+          stream._con.add(PlayListChanged(file));
+          stream._con.add(PlayOrderChanged());
+        });
   }
 }

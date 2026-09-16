@@ -3,6 +3,7 @@ import 'package:t_widgets/t_widgets.dart';
 import 'package:than_sound/core/utils/p_utils.dart';
 import 'package:than_sound/ui_platforms/mobile/setting/audio_setting_page.dart';
 import 'package:than_sound/ui_platforms/mobile/setting/ui_theme_setting_page.dart';
+import 'package:than_sound/ui_platforms/pages/share_server/server_home_page.dart';
 import 'package:than_sound/ui_platforms/ui/partials/cache_manager.dart';
 import 'package:than_sound/ui_platforms/ui/partials/material_theme_provider.dart';
 import 'package:than_sound/ui_platforms/ui/partials/version_manager.dart';
@@ -15,6 +16,7 @@ class MorePage extends StatefulWidget {
 }
 
 class _MorePageState extends State<MorePage> {
+  ColorScheme get col => Theme.of(context).colorScheme;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -31,7 +33,21 @@ class _MorePageState extends State<MorePage> {
           // ui setting
           uiColorSetting(),
 
-          audioSetting(context),
+          audioSetting(),
+
+          ListTile(
+            tileColor: col.surfaceContainer,
+            shape: RoundedRectangleBorder(borderRadius: .circular(15)),
+            leading: Icon(Icons.share_outlined, color: col.primary),
+            trailing: Icon(Icons.arrow_forward_ios),
+            title: Text('Share Server'),
+            onTap: () {
+              context.pushMaterialPageRoute(
+                builder: (mainCtx) => ServerHomePage(),
+              );
+            },
+          ),
+          SizedBox(height: 50),
         ],
       ),
     );
@@ -84,8 +100,7 @@ class _MorePageState extends State<MorePage> {
     );
   }
 
-  GestureDetector audioSetting(BuildContext context) {
-    final col = context.colorScheme;
+  GestureDetector audioSetting() {
     return GestureDetector(
       onTap: () {
         context.pushMaterialPageRoute(builder: (mainCtx) => AudioSettingPage());

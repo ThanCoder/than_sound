@@ -11,6 +11,7 @@ import 'package:than_sound/ui_platforms/desktop/home/desktop_list_page.dart';
 import 'package:than_sound/ui_platforms/components/sleep_timer/sleep_timer_page.dart';
 import 'package:than_sound/ui_platforms/desktop/desktop_now_playing_page.dart';
 import 'package:than_sound/ui_platforms/pages/music_tracker/music_tracker_page.dart';
+import 'package:than_sound/ui_platforms/pages/share_server/server_home_page.dart';
 import 'package:than_sound/ui_platforms/player_theme/interfaces/player_ui_context.dart';
 import 'package:than_sound/ui_platforms/player_theme/ui_context_creator.dart';
 import 'package:than_sound/ui_platforms/desktop/desktop_player_ui_actions.dart';
@@ -148,6 +149,7 @@ class _DesktopHomeScreenState extends State<DesktopHomeScreen> {
         MusicTrackerPage(),
         MorePage(),
         SleepTimerPage(),
+        ServerHomePage(),
       ],
     );
   }
@@ -188,6 +190,7 @@ class _DesktopHomeScreenState extends State<DesktopHomeScreen> {
           selectedIcon: Icon(Icons.timer_rounded),
           label: Text('Sleep Timer'),
         ),
+        .new(icon: Icon(Icons.share), label: Text('Share Server')),
       ],
     );
   }

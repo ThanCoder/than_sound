@@ -878,6 +878,15 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.4.1+2"
+  t_client:
+    dependency: "direct main"
+    description:
+      path: "."
+      ref: HEAD
+      resolved-ref: bd45db18cb9bc2b18d69a02594186a84227a3159
+      url: "https://github.com/ThanCoder/t_client"
+    source: git
+    version: "0.3.0"
   t_server:
     dependency: "direct main"
     description:
@@ -1049,5 +1058,5 @@ packages:
     source: hosted
     version: "3.1.3"
 sdks:
-  dart: ">=3.12.0 <4.0.0"
+  dart: ">=3.13.0 <4.0.0"
   flutter: ">=3.44.0"

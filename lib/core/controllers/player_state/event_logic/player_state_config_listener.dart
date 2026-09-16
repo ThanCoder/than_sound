@@ -26,5 +26,6 @@ class PlayerStateConfigListener with BassConfigListener, TrebleConfigListener {
     _controller.state.isShuffle = _controller.config.getBool(
       audioPlayerShuffleKey,
     );
+    
   }
 }

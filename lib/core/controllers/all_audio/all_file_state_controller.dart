@@ -44,6 +44,7 @@ class AllFileStateController extends IController {
 
   Future<void> scanFromStorage({bool usedCache = true}) async {
     try {
+      if (state.isLoading) return;
       _state = _state.copyWith(
         isLoading: true,
         errorMessage: '',
@@ -61,7 +62,7 @@ class AllFileStateController extends IController {
         addEvent(AllFileResetEvent());
       }
 
-      final list = await AudioScanner.scan();
+      final list = await AudioScanner.scanPlatform();
       if (list.isNotEmpty) {
         files.clear();
         files.addAll(list);
@@ -87,6 +88,18 @@ class AllFileStateController extends IController {
     final res = cacheStore.getMapList('list');
     if (res.isEmpty) return [];
     return res.map((e) => AudioFile.fromMap(e)).toList();
+  }
+
+  AudioFile? getById(String id) {
+    final index = files.indexWhere((e) => e.id == id);
+    if (index == -1) return null;
+    return files[index];
+  }
+
+  AudioFile? getByPath(String path) {
+    final index = files.indexWhere((e) => e.path == path);
+    if (index == -1) return null;
+    return files[index];
   }
 
   SortItem _getSortFromConfig() {

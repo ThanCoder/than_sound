@@ -44,6 +44,45 @@ class AudioScanner {
     return scanFolders;
   }
 
+  static Future<List<AudioFile>> scanPlatform() async {
+    if (Platform.isAndroid) {
+      return await _scanAndroid();
+    }
+    return await scan();
+  }
+
+  static Future<List<AudioFile>> _scanAndroid() async {
+    final list = await ThanPkgAndroid.getInstance.mediaSelector.fetchAudio();
+    if (list.isEmpty) return [];
+
+    final cachePath = PUtils.instance.getCachePath();
+    return await Isolate.run(() {
+      final files = <AudioFile>[];
+      for (var f in list) {
+        final id = FileUtils.getFileIdSync(f.path);
+
+        final meta = AudioMeta(f.path);
+        final cacheCoverFile = File(cachePath.join('$id.png'));
+        meta.openMeta(cacheCoverFile);
+        final file = File(f.path);
+
+        files.add(
+          .new(
+            id: id,
+            name: f.name,
+            path: f.path,
+            dirname: file.parent.name,
+            date: file.modified,
+            meta: meta,
+            size: f.size,
+            cacheCoverPath: cacheCoverFile.path,
+          ),
+        );
+      }
+      return files;
+    });
+  }
+
   static Future<List<AudioFile>> scan() async {
     final roots = await getScanRootPath();
     final cachePath = PUtils.instance.getCachePath();

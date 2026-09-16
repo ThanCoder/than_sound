@@ -6,7 +6,7 @@ version: 0.7.0
 repository: https://github.com/ThanCoder/than_sound.git
 
 environment:
-  sdk: ^3.12.0
+  sdk: ^3.13.0
 dependencies:
   flutter:
     sdk: flutter
@@ -38,6 +38,8 @@ dependencies:
     git: https://github.com/ThanCoder/t_widgets.git
   t_server:
     git: https://github.com/ThanCoder/t_server.git
+  t_client:
+    git: https://github.com/ThanCoder/t_client
 
 # flutter pub upgrade dart_core_extensions t_widgets t_server
 

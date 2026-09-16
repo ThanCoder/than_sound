@@ -21,7 +21,13 @@ class AudioThumbnail extends StatelessWidget {
   Widget get imageWidget {
     final f = File(file.cacheCoverPath);
     if (f.existsSync()) {
-      return Image.file(f, fit: .cover, gaplessPlayback: true);
+      return Image.file(
+        f,
+        fit: .cover,
+        gaplessPlayback: true,
+        errorBuilder: (context, error, stackTrace) =>
+            SvgPicture.asset('assets/svg/music-notes-svgrepo-com(2).svg'),
+      );
     }
     return FutureBuilder(
       future: TagPictureWorker.instance.getImageBytes(file.path),

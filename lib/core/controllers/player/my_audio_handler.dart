@@ -31,6 +31,11 @@ class MyAudioHandler extends BaseAudioHandler
     stateController.player.stream.playbackState.listen((event) {
       playbackState.add(transformEvent);
     });
+    favController.event.whereType<FavouriteControllerValueChanged>().listen((
+      e,
+    ) {
+      playbackState.add(transformEvent);
+    });
   }
 
   @override

@@ -18,8 +18,8 @@ class CurrentChanged extends PlayerStateEvent {
 class PlayStateChanged extends PlayerStateEvent {}
 
 class ShuffleChanged extends PlayerStateEvent {}
-class PlayOrderChanged extends PlayerStateEvent {}
 
+class PlayOrderChanged extends PlayerStateEvent {}
 
 class ShowFloatingWidgetChanged extends PlayerStateEvent {}
 
@@ -60,6 +60,4 @@ class SongStop extends PlayerStateEvent {
   const SongStop(this.file);
 }
 
-class LoopChanged extends PlayerStateEvent {
-  
-}
+class LoopChanged extends PlayerStateEvent {}
