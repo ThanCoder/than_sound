@@ -7,6 +7,7 @@ list(APPEND FLUTTER_PLUGIN_LIST
   file_selector_linux
   mpv_audio_kit
   than_pkg_linux
+  url_launcher_linux
 )
 
 list(APPEND FLUTTER_FFI_PLUGIN_LIST

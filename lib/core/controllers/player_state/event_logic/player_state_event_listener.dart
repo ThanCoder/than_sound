@@ -28,6 +28,9 @@ class PlayerStateEventListener {
     }
 
     _init = true;
+    player.stream.volume.listen((volume) {
+      _controller.config.putAndWriteAll(audioPlayerVolumeKey, volume);
+    });
 
     // -------------------------------------------------------------------------
     // Position

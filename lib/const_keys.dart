@@ -31,6 +31,7 @@ const String audioBluetoothControlKeyName = 'audio-bluetooth-control';
 const String audioVolumeKeyName = 'audio-volume';
 const String audioPlayerLoopKey = 'audioPlayerLoopKey';
 const String audioPlayerShuffleKey = 'audioPlayerShuffleKey';
+const String audioPlayerVolumeKey = 'audioPlayerVolumeKey';
 
 /*****************Audio Utils********************************** */
 final int audioScanMinFileSize = 1024 * 20;

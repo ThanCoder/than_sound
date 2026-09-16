@@ -30,31 +30,6 @@ class _SoundVolumeMenuState extends State<SoundVolumeMenu> {
               );
             },
           ),
-          StreamBuilder(
-            stream: py.stream.volumeGain,
-            builder: (context, asyncSnapshot) {
-              return _VolumeWidget(
-                value: py.state.volumeGain,
-                max: 30,
-                onChanged: py.setVolumeGain,
-                icon: Icon(Icons.volume_up_rounded),
-                title: 'Gain',
-              );
-            },
-          ),
-          if (py.state.systemVolume != null)
-            StreamBuilder(
-              stream: py.stream.systemVolume,
-              builder: (context, asyncSnapshot) {
-                return _VolumeWidget(
-                  value: py.state.systemVolume ?? 0.0,
-                  max: 100,
-                  onChangeEnd: py.setSystemVolume,
-                  icon: Icon(Icons.volume_up_rounded),
-                  title: 'System Volume',
-                );
-              },
-            ),
           SizedBox(height: 25),
         ],
       ),
@@ -66,7 +41,6 @@ class _VolumeWidget extends StatelessWidget {
   const _VolumeWidget({
     required this.value,
     required this.max,
-    this.onChangeEnd,
     this.onChanged,
     required this.title,
     required this.icon,
@@ -77,7 +51,6 @@ class _VolumeWidget extends StatelessWidget {
   final double max;
   final String title;
   final Widget icon;
-  final void Function(double value)? onChangeEnd;
   final void Function(double value)? onChanged;
 
   @override
@@ -104,7 +77,6 @@ class _VolumeWidget extends StatelessWidget {
             min: min,
             max: max,
             value: value.clamp(min, max),
-            onChangeEnd: onChangeEnd,
             onChanged: onChanged,
           ),
           SizedBox(height: 2),
@@ -114,7 +86,7 @@ class _VolumeWidget extends StatelessWidget {
               mainAxisAlignment: .spaceBetween,
               children: [
                 Text('${min.toInt()}%'),
-                Text('${((value / max) * 100).toStringAsFixed(0)}%'),
+                Text('${value.toStringAsFixed(0)}%'),
                 Text('${max.toInt()}%'),
               ],
             ),

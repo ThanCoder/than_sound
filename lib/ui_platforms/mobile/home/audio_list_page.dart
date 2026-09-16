@@ -271,6 +271,7 @@ class _AudioListPageState extends State<AudioListPage> {
     return RefreshIndicator.adaptive(
       onRefresh: () => init(usedCache: false),
       child: CustomScrollView(
+        physics: const AlwaysScrollableScrollPhysics(),
         controller: controller,
         slivers: [
           if (state.isLoading && con.files.isNotEmpty)

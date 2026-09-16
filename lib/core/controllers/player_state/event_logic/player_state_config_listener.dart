@@ -26,6 +26,9 @@ class PlayerStateConfigListener with BassConfigListener, TrebleConfigListener {
     _controller.state.isShuffle = _controller.config.getBool(
       audioPlayerShuffleKey,
     );
-    
+    final volume = _controller.config.getDouble(audioPlayerVolumeKey);
+    if (volume > 0) {
+      await _controller.player.setVolume(volume);
+    }
   }
 }
