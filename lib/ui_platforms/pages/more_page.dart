@@ -5,9 +5,9 @@ import 'package:than_sound/ui_platforms/mobile/setting/audio_setting_page.dart';
 import 'package:than_sound/ui_platforms/mobile/setting/ui_theme_setting_page.dart';
 import 'package:than_sound/ui_platforms/pages/dev_pages/dev_route_tile.dart';
 import 'package:than_sound/ui_platforms/pages/share_server/server_home_page.dart';
-import 'package:than_sound/ui_platforms/ui/partials/cache_manager.dart';
-import 'package:than_sound/ui_platforms/ui/partials/material_theme_provider.dart';
-import 'package:than_sound/ui_platforms/ui/partials/version_manager.dart';
+import 'package:than_sound/ui_platforms/pages/partials/cache_manager.dart';
+import 'package:than_sound/ui_platforms/pages/partials/material_theme_provider.dart';
+import 'package:than_sound/ui_platforms/pages/partials/version_manager.dart';
 
 class MorePage extends StatefulWidget {
   const MorePage({super.key});

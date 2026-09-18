@@ -13,7 +13,7 @@ import 'package:than_sound/core/controllers/player_state/player_state_controller
 import 'package:than_sound/core/utils/p_utils.dart';
 import 'package:than_sound/main_app.dart';
 import 'package:mpv_audio_kit/mpv_audio_kit.dart';
-import 'package:than_sound/ui_platforms/pages/favourite/favourite_controller.dart';
+import 'package:than_sound/ui_platforms/pages/library/favourite/favourite_controller.dart';
 import 'package:than_sound/ui_platforms/pages/music_tracker/music_tracker_controller.dart';
 import 'package:waveform_visualizer/waveform_visualizer.dart';
 

@@ -15,7 +15,7 @@ import 'package:than_sound/core/controllers/player_state/player_fade_controller.
 import 'package:than_sound/core/controllers/player_state/player_loop.dart';
 import 'package:than_sound/ui_platforms/components/sleep_timer/sleep_timer.dart';
 import 'package:than_sound/core/models/audio_file.dart';
-import 'package:than_sound/ui_platforms/pages/favourite/favourite_controller.dart';
+import 'package:than_sound/ui_platforms/pages/library/favourite/favourite_controller.dart';
 
 part 'events.dart';
 part 'state.dart';
@@ -73,5 +73,12 @@ class PlayerStateController extends IController {
           stream._con.add(PlayListChanged(file));
           stream._con.add(PlayOrderChanged());
         });
+    final favCon = ControllerManager.read<FavouriteController>();
+    favCon.event.whereType<FavouriteControllerValueChanged>().listen((event) {
+      if (state.source is FavouriteStateSource) {
+        state.files = state.files;
+        actions._setToggleShuffle();
+      }
+    });
   }
 }

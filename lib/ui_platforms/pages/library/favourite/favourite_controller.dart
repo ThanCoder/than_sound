@@ -74,10 +74,10 @@ class FavouriteController extends IController {
     save();
   }
 
-  void save() {
+  void save() async {
     final list = files.map((e) => e.id).toList();
     _cf.put('list', list);
-    _cf.writeAll();
+    await _cf.writeAll();
     addEvent(FavouriteControllerValueChanged());
   }
 }

@@ -5,10 +5,12 @@ import 'package:than_sound/const_keys.dart';
 import 'package:than_sound/core/controllers/interfaces/i_controller.dart';
 import 'package:than_sound/core/controllers/player_state/player_state_controller.dart';
 import 'package:than_sound/core/models/audio_file.dart';
+import 'package:than_sound/core/utils/platform_util.dart';
 import 'package:than_sound/ui_platforms/components/audio_item_menu.dart';
+import 'package:than_sound/ui_platforms/desktop/desktop_now_playing_page.dart';
 import 'package:than_sound/ui_platforms/mobile/components/audio_float_widget.dart';
 import 'package:than_sound/ui_platforms/components/audio_list_item.dart';
-import 'package:than_sound/ui_platforms/pages/favourite/favourite_controller.dart';
+import 'package:than_sound/ui_platforms/pages/library/favourite/favourite_controller.dart';
 
 class MobileFavouriteListPage extends StatefulWidget {
   const MobileFavouriteListPage({super.key});
@@ -30,6 +32,15 @@ class _MobileFavouriteListPageState extends State<MobileFavouriteListPage> {
   final pCon = ControllerManager.read<PlayerStateController>();
 
   void playAudio(AudioFile file) {
+    final current = pCon.state.current;
+    if (current != null && current.id == file.id && pCon.state.playing) {
+      if (PlatformUtil.isDesktopNotifier.value) {
+        context.pushMaterialPageRoute(
+          builder: (mainCtx) => DesktopNowPlayingPage(),
+        );
+      }
+      return;
+    }
     pCon.actions.setTracks(con.files, source: const FavouriteStateSource());
     pCon.actions.open(file);
     pCon.actions.setShowFloatingWidget(true);
@@ -103,9 +114,21 @@ class _MobileFavouriteListPageState extends State<MobileFavouriteListPage> {
               ),
             ],
           ),
-
           // floating widget
-          Positioned(left: 0, bottom: 0, right: 0, child: AudioFloatWidget()),
+          ValueListenableBuilder(
+            valueListenable: PlatformUtil.isDesktopNotifier,
+            builder: (context, isDesktop, child) {
+              if (isDesktop) {
+                return SizedBox.shrink();
+              }
+              return Positioned(
+                left: 0,
+                bottom: 0,
+                right: 0,
+                child: AudioFloatWidget(),
+              );
+            },
+          ),
         ],
       ),
     );
@@ -116,44 +139,42 @@ class _MobileFavouriteListPageState extends State<MobileFavouriteListPage> {
       itemCount: con.files.length,
       itemExtent: audioSliverListItemHeight,
       onReorderItem: (oldIndex, newIndex) {
-        if (oldIndex < newIndex) {
-          newIndex -= 1;
-        }
-
         final item = con.files.removeAt(oldIndex);
         con.files.insert(newIndex, item);
         con.save();
+        pCon.actions.setSource(NoneAudioSource());
         setState(() {});
       },
       itemBuilder: (context, index) {
         final item = con.files[index];
-        if (TPlatform.isMobile) {
-          return ReorderableDelayedDragStartListener(
+        if (PlatformUtil.isDesktopNotifier.value) {
+          return Row(
             key: ValueKey(item.id),
-            index: index,
-            child: AudioListItem(
-              file: item,
-              onClicked: playAudio,
-              onMenuClicked: onMenu,
-            ),
+            children: [
+              Expanded(
+                child: AudioListItem(
+                  file: item,
+                  onClicked: playAudio,
+                  onMenuClicked: onMenu,
+                ),
+              ),
+              ReorderableDragStartListener(
+                index: index,
+                child: Icon(Icons.drag_handle),
+              ),
+              SizedBox(width: 10),
+            ],
           );
         }
-        return Row(
+
+        return ReorderableDelayedDragStartListener(
           key: ValueKey(item.id),
-          children: [
-            Expanded(
-              child: AudioListItem(
-                file: item,
-                onClicked: playAudio,
-                onMenuClicked: onMenu,
-              ),
-            ),
-            ReorderableDragStartListener(
-              index: index,
-              child: Icon(Icons.drag_handle),
-            ),
-            SizedBox(width: 10),
-          ],
+          index: index,
+          child: AudioListItem(
+            file: item,
+            onClicked: playAudio,
+            onMenuClicked: onMenu,
+          ),
         );
       },
     );

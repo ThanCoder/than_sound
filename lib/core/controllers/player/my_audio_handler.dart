@@ -5,7 +5,7 @@ import 'package:than_sound/const_keys.dart';
 import 'package:than_sound/core/controllers/interfaces/i_controller.dart';
 import 'package:than_sound/core/controllers/player/extra_mixin.dart';
 import 'package:than_sound/core/controllers/player_state/player_state_controller.dart';
-import 'package:than_sound/ui_platforms/pages/favourite/favourite_controller.dart';
+import 'package:than_sound/ui_platforms/pages/library/favourite/favourite_controller.dart';
 
 class MyAudioHandler extends BaseAudioHandler
     with QueueHandler, SeekHandler, ExtraMixin {

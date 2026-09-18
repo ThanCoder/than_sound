@@ -1,16 +1,15 @@
-import 'dart:io';
-
+import 'package:dart_core_extensions/dart_core_extensions.dart';
 import 'package:flutter/material.dart';
 import 'package:t_widgets/t_widgets.dart';
 import 'package:than_sound/core/controllers/interfaces/i_controller.dart';
 import 'package:than_sound/core/controllers/player_state/player_state_controller.dart';
 import 'package:than_sound/core/models/audio_file.dart';
-import 'package:than_sound/ui_platforms/desktop/desktop_now_playing_page.dart';
 import 'package:than_sound/ui_platforms/components/audio_item_menu.dart';
 import 'package:than_sound/ui_platforms/components/audio_list_item.dart';
 import 'package:than_sound/ui_platforms/components/audio_thumbnail.dart';
+import 'package:than_sound/ui_platforms/desktop/desktop_now_playing_page.dart';
 import 'package:than_sound/ui_platforms/pages/library/lib_page.dart';
-import 'package:than_sound/ui_platforms/player_theme_provider/player_content_theme_provider_screen.dart';
+import 'package:than_sound/ui_platforms/player_theme_provider/mobile_now_playing_provider_page.dart';
 
 class AudioGroupPage extends StatefulWidget {
   const AudioGroupPage({super.key, required this.group});
@@ -32,10 +31,15 @@ class _AudioGroupPageState extends State<AudioGroupPage> {
 
     final current = pCon.state.current;
     if (current != null && current.id == file.id && pCon.state.playing) {
-      if (Platform.isLinux) return;
-      context.pushMaterialPageRoute(
-        builder: (mainCtx) => PlayerContentThemeProviderScreen(),
-      );
+      if (TPlatform.isDesktop) {
+        context.pushMaterialPageRoute(
+          builder: (mainCtx) => DesktopNowPlayingPage(),
+        );
+      } else {
+        context.pushMaterialPageRoute(
+          builder: (mainCtx) => MobileNowPlayingProviderPage(),
+        );
+      }
       return;
     }
     await pCon.actions.setTracks(
@@ -52,14 +56,6 @@ class _AudioGroupPageState extends State<AudioGroupPage> {
   }
 
   Widget _body() {
-    if (Platform.isLinux) {
-      return Row(
-        children: [
-          Expanded(child: _bodyContent()),
-          DesktopNowPlayingPage(),
-        ],
-      );
-    }
     return _bodyContent();
   }
 

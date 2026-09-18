@@ -2,7 +2,7 @@ import 'package:cfb_store/cfb_store.dart';
 import 'package:flutter/material.dart';
 import 'package:t_widgets/t_widgets.dart';
 import 'package:than_sound/const_keys.dart';
-import 'package:than_sound/ui_platforms/ui/partials/color_scheme_picker.dart';
+import 'package:than_sound/ui_platforms/pages/partials/color_scheme_picker.dart';
 
 class UiThemeSettingPage extends StatefulWidget {
   const UiThemeSettingPage({super.key});

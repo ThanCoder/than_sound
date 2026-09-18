@@ -4,7 +4,7 @@ import 'package:than_sound/core/controllers/all_audio/all_file_state_controller.
 import 'package:than_sound/core/controllers/interfaces/i_controller.dart';
 import 'package:than_sound/core/extensions/audio_file_extensions.dart';
 import 'package:than_sound/core/models/audio_file.dart';
-import 'package:than_sound/ui_platforms/pages/favourite/favourite_count_view.dart';
+import 'package:than_sound/ui_platforms/pages/library/favourite/favourite_count_view.dart';
 import 'package:than_sound/ui_platforms/components/audio_thumbnail.dart';
 import 'package:than_sound/ui_platforms/pages/library/audio_group_page.dart';
 import 'package:than_sound/ui_platforms/pages/library/lib_tag_type.dart';

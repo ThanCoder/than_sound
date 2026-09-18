@@ -124,6 +124,7 @@ class SortButton extends StatelessWidget {
       onPressed: () async {
         final res = await showModalBottomSheet<SortItem>(
           context: context,
+          showDragHandle: true,
           builder: (context) => SortProviderDialog(
             list: list,
             value: value,

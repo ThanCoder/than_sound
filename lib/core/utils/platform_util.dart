@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:dart_core_extensions/dart_core_extensions.dart';
+import 'package:flutter/material.dart';
 import 'package:than_audiotag/core/my_native/workers/tag_picture_worker.dart';
 import 'package:than_pkg_android/than_pkg_android.dart';
 import 'package:than_pkg_linux/than_pkg_linux.dart';
@@ -8,6 +9,8 @@ import 'package:than_sound/core/models/audio_file.dart';
 import 'package:than_sound/core/utils/p_utils.dart';
 
 class PlatformUtil {
+  static final isDesktopNotifier = ValueNotifier(false);
+  
   static Future<void> launchUrl(String url) async {
     if (Platform.isLinux) {
       await ThanPkgLinux.getInstance.launcher.launchUrl(url);

@@ -1,4 +1,4 @@
-import 'package:than_sound/ui_platforms/ui/partials/sort_provider.dart';
+import 'package:than_sound/ui_platforms/pages/partials/sort_provider.dart';
 
 class AllState {
   final bool isLoading;

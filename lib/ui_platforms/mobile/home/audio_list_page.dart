@@ -5,14 +5,14 @@ import 'package:t_widgets/t_widgets.dart';
 import 'package:than_pkg_android/than_pkg_android.dart';
 import 'package:than_sound/core/models/audio_file.dart';
 import 'package:than_sound/ui_platforms/components/dialog/confirm_alert_dialog.dart';
-import 'package:than_sound/ui_platforms/ui/audio/audio_list_header.dart';
+import 'package:than_sound/ui_platforms/components/audio_list_header.dart';
 import 'package:than_sound/ui_platforms/components/audio_sliver_list.dart';
-import 'package:than_sound/ui_platforms/ui/audio/list_gps_button.dart';
+import 'package:than_sound/ui_platforms/components/list_gps_button.dart';
 import 'package:than_sound/const_keys.dart';
 import 'package:than_sound/core/controllers/all_audio/all_file_state_controller.dart';
 import 'package:than_sound/core/controllers/interfaces/i_controller.dart';
 import 'package:than_sound/core/controllers/player_state/player_state_controller.dart';
-import 'package:than_sound/ui_platforms/ui/partials/sort_provider.dart';
+import 'package:than_sound/ui_platforms/pages/partials/sort_provider.dart';
 
 class AudioListPage extends StatefulWidget {
   final double? listGpsButtonRightPos;

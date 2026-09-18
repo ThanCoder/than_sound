@@ -13,7 +13,7 @@ import 'package:than_sound/core/extensions/audio_file_extensions.dart';
 import 'package:than_sound/core/models/audio_file.dart';
 import 'package:than_sound/core/models/audio_meta.dart';
 import 'package:than_sound/core/scanner/audio_scanner.dart';
-import 'package:than_sound/ui_platforms/ui/partials/sort_provider.dart';
+import 'package:than_sound/ui_platforms/pages/partials/sort_provider.dart';
 
 class AllFileStateController extends IController {
   PlayerStateController get _playerStateController =>

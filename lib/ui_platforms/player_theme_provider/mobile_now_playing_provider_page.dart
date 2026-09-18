@@ -12,16 +12,16 @@ import 'package:than_sound/ui_platforms/mobile/content/default_content/mobile_de
 import 'package:than_sound/ui_platforms/player_theme/ui_context_creator.dart';
 import 'package:than_sound/ui_platforms/mobile/mobile_player_ui_actions.dart';
 
-class PlayerContentThemeProviderScreen extends StatefulWidget {
-  const PlayerContentThemeProviderScreen({super.key});
+class MobileNowPlayingProviderPage extends StatefulWidget {
+  const MobileNowPlayingProviderPage({super.key});
 
   @override
-  State<PlayerContentThemeProviderScreen> createState() =>
-      _PlayerContentThemeProviderScreenState();
+  State<MobileNowPlayingProviderPage> createState() =>
+      _MobileNowPlayingProviderPageState();
 }
 
-class _PlayerContentThemeProviderScreenState
-    extends State<PlayerContentThemeProviderScreen> {
+class _MobileNowPlayingProviderPageState
+    extends State<MobileNowPlayingProviderPage> {
   @override
   void initState() {
     init();
