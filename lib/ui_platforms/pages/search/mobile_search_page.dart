@@ -6,7 +6,7 @@ import 'package:than_sound/core/controllers/interfaces/i_controller.dart';
 import 'package:than_sound/core/controllers/player_state/player_state_controller.dart';
 import 'package:than_sound/core/models/audio_file.dart';
 import 'package:than_sound/ui_platforms/components/dialog/confirm_alert_dialog.dart';
-import 'package:than_sound/ui_platforms/mobile/components/audio_sliver_list.dart';
+import 'package:than_sound/ui_platforms/components/audio_sliver_list.dart';
 
 class MobileSearchPage extends StatefulWidget {
   const MobileSearchPage({super.key});

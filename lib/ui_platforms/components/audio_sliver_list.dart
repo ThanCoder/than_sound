@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:than_sound/ui_platforms/components/audio_item_menu.dart';
-import 'package:than_sound/ui_platforms/mobile/components/audio_list_item.dart';
+import 'package:than_sound/ui_platforms/components/audio_list_item.dart';
 import 'package:than_sound/const_keys.dart';
 import 'package:than_sound/core/models/audio_file.dart';
 
@@ -30,6 +30,7 @@ class AudioSliverList extends StatelessWidget {
         showModalBottomSheet(
           context: context,
           isScrollControlled: true,
+          showDragHandle: true,
           builder: (context) =>
               AudioItemMenu(file: file, showDeleteAction: true),
         );

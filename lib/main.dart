@@ -72,5 +72,3 @@ void main() async {
 
   runApp(const MainApp());
 }
-
-// AllFileStateController(), PlayerStateController()..init()
