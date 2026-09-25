@@ -36,6 +36,7 @@ class _PlatformMainScreenState extends State<PlatformMainScreen> {
   @override
   Widget build(BuildContext context) {
     if (TPlatform.isMobile) {
+      PlatformUtil.isDesktopNotifier.value = false;
       return MobileHomeScreen();
     }
     return LayoutBuilder(

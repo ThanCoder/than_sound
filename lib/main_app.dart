@@ -2,7 +2,7 @@ import 'package:cfb_store/cfb_store.dart';
 import 'package:flutter/material.dart';
 import 'package:than_sound/const_keys.dart';
 import 'package:than_sound/ui_platforms/pages/partials/material_theme_provider.dart';
-import 'package:than_sound/ui_platforms/platform_main_screen.dart';
+import 'package:than_sound/platform_main_screen.dart';
 
 class MainApp extends StatelessWidget {
   const MainApp({super.key});

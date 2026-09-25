@@ -3,8 +3,10 @@ import 'package:t_widgets/t_widgets.dart';
 import 'package:than_sound/core/controllers/interfaces/i_controller.dart';
 import 'package:than_sound/core/controllers/player_state/player_state_controller.dart';
 import 'package:than_sound/core/models/audio_file.dart';
+import 'package:than_sound/core/utils/platform_util.dart';
 import 'package:than_sound/ui_platforms/components/dialog/confirm_alert_dialog.dart';
 import 'package:than_sound/ui_platforms/desktop/desktop_now_playing_page.dart';
+import 'package:than_sound/ui_platforms/player_theme_provider/mobile_now_playing_provider_page.dart';
 
 Future<void> openConfirmAndPlay(
   BuildContext context, {
@@ -38,9 +40,16 @@ Future<void> openConfirmAndPlay(
     if (current != null &&
         current.id == file.id &&
         playstateController.state.playing) {
-      context.pushMaterialPageRoute(
-        builder: (mainCtx) => DesktopNowPlayingPage(),
-      );
+      if (PlatformUtil.isDesktopNotifier.value) {
+        context.pushMaterialPageRoute(
+          builder: (mainCtx) => DesktopNowPlayingPage(),
+        );
+      } else {
+        // mobile
+        context.pushMaterialPageRoute(
+          builder: (mainCtx) => MobileNowPlayingProviderPage(),
+        );
+      }
       return;
     }
   }

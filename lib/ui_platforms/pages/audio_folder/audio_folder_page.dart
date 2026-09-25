@@ -24,7 +24,10 @@ class _AudioFolderPageState extends State<AudioFolderPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(appBar: AppBar(), body: _body);
+    return Scaffold(
+      appBar: AppBar(title: Text('Audio Folders')),
+      body: _body,
+    );
   }
 
   Widget get _body {
