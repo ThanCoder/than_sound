@@ -4,13 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:t_widgets/t_widgets.dart';
 import 'package:than_pkg_android/than_pkg_android.dart';
 import 'package:than_sound/core/models/audio_file.dart';
+import 'package:than_sound/funcs.dart';
 import 'package:than_sound/ui_platforms/components/audio_list_header.dart';
 import 'package:than_sound/ui_platforms/components/audio_sliver_list.dart';
 import 'package:than_sound/const_keys.dart';
 import 'package:than_sound/core/controllers/all_audio/all_file_state_controller.dart';
 import 'package:than_sound/core/controllers/interfaces/i_controller.dart';
 import 'package:than_sound/core/controllers/player_state/player_state_controller.dart';
-import 'package:than_sound/ui_platforms/desktop/desktop_now_playing_page.dart';
 import 'package:than_sound/ui_platforms/pages/partials/sort_provider.dart';
 
 class DesktopListPage extends StatefulWidget {
@@ -68,26 +68,13 @@ class _DesktopListPageState extends State<DesktopListPage> {
     }
   }
 
-  Future<void> openConfirmAndPlay(AudioFile file) async {
-    final current = playstateController.state.current;
-
-    if (current != null &&
-        current.id == file.id &&
-        playstateController.state.playing) {
-      context.pushMaterialPageRoute(
-        builder: (mainCtx) => DesktopNowPlayingPage(),
-      );
-      return;
-    }
-
-    final con = ControllerManager.read<AllFileStateController>();
-
-    await playstateController.actions.setTracks(
-      con.files,
+  Future<void> _openConfirmAndPlay(AudioFile file) async {
+    await openConfirmAndPlay(
+      context,
+      file: file,
+      sourceFiles: ControllerManager.read<AllFileStateController>().files,
       source: const AllFileStateSource(),
     );
-
-    await playstateController.actions.open(file);
   }
 
   void goCurrentTrack() {
@@ -277,7 +264,7 @@ class _DesktopListPageState extends State<DesktopListPage> {
             padding: const EdgeInsets.symmetric(horizontal: 16),
             sliver: AudioSliverList(
               list: con.files,
-              onClicked: openConfirmAndPlay,
+              onClicked: _openConfirmAndPlay,
             ),
           ),
 

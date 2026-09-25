@@ -3,6 +3,7 @@ import 'package:t_widgets/t_widgets.dart';
 import 'package:than_sound/core/utils/p_utils.dart';
 import 'package:than_sound/ui_platforms/mobile/setting/audio_setting_page.dart';
 import 'package:than_sound/ui_platforms/mobile/setting/ui_theme_setting_page.dart';
+import 'package:than_sound/ui_platforms/pages/app_about_dialog.dart';
 import 'package:than_sound/ui_platforms/pages/dev_pages/dev_route_tile.dart';
 import 'package:than_sound/ui_platforms/pages/share_server/server_home_page.dart';
 import 'package:than_sound/ui_platforms/pages/partials/cache_manager.dart';
@@ -49,6 +50,7 @@ class _MorePageState extends State<MorePage> {
             },
           ),
           DevRouteTile(),
+          AppAboutDialogListTile(descText: 'Audio Player Application.'),
           SizedBox(height: 50),
         ],
       ),

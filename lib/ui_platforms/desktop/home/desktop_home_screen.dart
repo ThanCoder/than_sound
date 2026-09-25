@@ -6,7 +6,7 @@ import 'package:than_sound/ui_platforms/components/sleep_timer/sleep_timer_page.
 import 'package:than_sound/ui_platforms/desktop/home/desktop_list_page.dart';
 import 'package:than_sound/ui_platforms/pages/music_tracker/music_tracker_page.dart';
 import 'package:than_sound/ui_platforms/pages/share_server/server_home_page.dart';
-import 'package:than_sound/ui_platforms/pages/library/lib_page.dart';
+import 'package:than_sound/ui_platforms/pages/library/lib_home_page.dart';
 import 'package:than_sound/ui_platforms/pages/more_page.dart';
 
 class DesktopHomeScreen extends StatefulWidget {
@@ -74,7 +74,7 @@ class _DesktopHomeScreenState extends State<DesktopHomeScreen> {
       index: index,
       children: [
         DesktopListPage(),
-        LibPage(),
+        LibHomePage(),
         MusicTrackerPage(),
         MorePage(),
         SleepTimerPage(),

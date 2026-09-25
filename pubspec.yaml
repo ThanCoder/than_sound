@@ -1,7 +1,7 @@
 name: than_sound
 description: "Audio Project For Free"
 publish_to: "none" # Remove this line if you wish to publish to pub.dev
-version: 0.9.0
+version: 0.10.0
 
 repository: https://github.com/ThanCoder/than_sound.git
 
@@ -41,6 +41,7 @@ dependencies:
   t_client:
     git: https://github.com/ThanCoder/t_client
   url_launcher: ^6.3.2
+  path_provider: ^2.1.6
 
 # flutter pub upgrade dart_core_extensions t_widgets t_server
 

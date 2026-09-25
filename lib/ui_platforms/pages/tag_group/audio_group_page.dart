@@ -8,7 +8,7 @@ import 'package:than_sound/ui_platforms/components/audio_item_menu.dart';
 import 'package:than_sound/ui_platforms/components/audio_list_item.dart';
 import 'package:than_sound/ui_platforms/components/audio_thumbnail.dart';
 import 'package:than_sound/ui_platforms/desktop/desktop_now_playing_page.dart';
-import 'package:than_sound/ui_platforms/pages/library/lib_page.dart';
+import 'package:than_sound/ui_platforms/pages/tag_group/lib_tag_type.dart';
 import 'package:than_sound/ui_platforms/player_theme_provider/mobile_now_playing_provider_page.dart';
 
 class AudioGroupPage extends StatefulWidget {

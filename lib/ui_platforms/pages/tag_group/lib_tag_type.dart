@@ -1,10 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:than_sound/core/models/audio_file.dart';
 
 enum LibTagType {
   artist,
   album,
   genre,
   year;
+
+  String get label {
+    return switch (this) {
+      artist => 'Artist',
+      album => 'Album',
+      genre => 'Genre',
+      year => 'Year',
+    };
+  }
 
   Icon get icon {
     if (this == artist) {
@@ -23,4 +33,13 @@ enum LibTagType {
   }
 }
 
-// static List<String> tags = ['artist', 'album', 'genre', 'year', 'format'];
+class AudioGroup {
+  const AudioGroup({required this.name, required this.files});
+
+  final String name;
+  final List<AudioFile> files;
+
+  int get count => files.length;
+
+  AudioFile get cover => files.first;
+}

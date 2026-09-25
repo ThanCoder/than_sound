@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:t_widgets/t_widgets.dart';
 import 'package:than_pkg_android/than_pkg_android.dart';
 import 'package:than_sound/core/models/audio_file.dart';
-import 'package:than_sound/ui_platforms/components/dialog/confirm_alert_dialog.dart';
+import 'package:than_sound/funcs.dart';
 import 'package:than_sound/ui_platforms/components/audio_list_header.dart';
 import 'package:than_sound/ui_platforms/components/audio_sliver_list.dart';
 import 'package:than_sound/ui_platforms/components/list_gps_button.dart';
@@ -92,29 +92,36 @@ class _AudioListPageState extends State<AudioListPage> {
     }
   }
 
-  void openConfrmAndPlay(AudioFile file) async {
-    final current = playstateController.state.current;
-    if (current != null &&
-        current.id == file.id &&
-        playstateController.state.playing) {
-      final confirmed = await showConfirmDialog(
-        context,
-        'Want to Song Restart!',
-      );
-      if (confirmed) {
-        await playstateController.actions.setTracks(
-          ControllerManager.read<AllFileStateController>().files,
-          source: const AllFileStateSource(),
-        );
-        await playstateController.actions.open(file);
-      }
-      return;
-    }
-    await playstateController.actions.setTracks(
-      ControllerManager.read<AllFileStateController>().files,
+  void _openConfrmAndPlay(AudioFile file) async {
+    await openConfirmAndPlay(
+      context,
+      file: file,
+      sourceFiles: ControllerManager.read<AllFileStateController>().files,
       source: const AllFileStateSource(),
+      showConfirmBox: true,
     );
-    await playstateController.actions.open(file);
+    // final current = playstateController.state.current;
+    // if (current != null &&
+    //     current.id == file.id &&
+    //     playstateController.state.playing) {
+    //   final confirmed = await showConfirmDialog(
+    //     context,
+    //     'Want to Song Restart!',
+    //   );
+    //   if (confirmed) {
+    //     await playstateController.actions.setTracks(
+    //       ControllerManager.read<AllFileStateController>().files,
+    //       source: const AllFileStateSource(),
+    //     );
+    //     await playstateController.actions.open(file);
+    //   }
+    //   return;
+    // }
+    // await playstateController.actions.setTracks(
+    //   ControllerManager.read<AllFileStateController>().files,
+    //   source: const AllFileStateSource(),
+    // );
+    // await playstateController.actions.open(file);
   }
 
   @override
@@ -284,7 +291,7 @@ class _AudioListPageState extends State<AudioListPage> {
 
           SliverToBoxAdapter(child: AudioListHeader()),
 
-          AudioSliverList(list: con.files, onClicked: openConfrmAndPlay),
+          AudioSliverList(list: con.files, onClicked: _openConfrmAndPlay),
 
           SliverToBoxAdapter(
             child: SizedBox(height: pCon.state.showFloatWidget ? 130 : 90),

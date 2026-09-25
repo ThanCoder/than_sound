@@ -4,7 +4,7 @@ import 'package:than_sound/ui_platforms/mobile/components/audio_float_widget.dar
 import 'package:than_sound/core/controllers/interfaces/i_controller.dart';
 import 'package:than_sound/core/controllers/player_state/player_state_controller.dart';
 import 'package:than_sound/ui_platforms/mobile/home/audio_list_page.dart';
-import 'package:than_sound/ui_platforms/pages/library/lib_page.dart';
+import 'package:than_sound/ui_platforms/pages/library/lib_home_page.dart';
 import 'package:than_sound/ui_platforms/pages/music_tracker/music_tracker_page.dart';
 import 'package:than_sound/ui_platforms/pages/search/mobile_search_page.dart';
 import 'package:than_sound/ui_platforms/pages/more_page.dart';
@@ -41,7 +41,7 @@ class _MobileHomeScreenState extends State<MobileHomeScreen> {
                 children: [
                   AudioListPage(),
                   MobileSearchPage(),
-                  LibPage(),
+                  LibHomePage(),
                   MusicTrackerPage(),
                   MorePage(),
                 ],
@@ -76,6 +76,7 @@ class _MobileHomeScreenState extends State<MobileHomeScreen> {
             icon: Icon(Icons.library_music_outlined),
             label: 'Library',
           ),
+
           NavigationDestination(
             icon: Icon(Icons.track_changes_outlined),
             label: 'Tracker',

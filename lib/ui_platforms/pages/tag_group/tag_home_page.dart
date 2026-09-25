@@ -4,36 +4,20 @@ import 'package:than_sound/core/controllers/all_audio/all_file_state_controller.
 import 'package:than_sound/core/controllers/interfaces/i_controller.dart';
 import 'package:than_sound/core/extensions/audio_file_extensions.dart';
 import 'package:than_sound/core/models/audio_file.dart';
-import 'package:than_sound/ui_platforms/pages/library/favourite/favourite_count_view.dart';
 import 'package:than_sound/ui_platforms/components/audio_thumbnail.dart';
-import 'package:than_sound/ui_platforms/pages/library/audio_group_page.dart';
-import 'package:than_sound/ui_platforms/pages/library/lib_tag_type.dart';
-import 'package:than_sound/ui_platforms/pages/library/tag_header.dart';
+import 'package:than_sound/ui_platforms/pages/tag_group/audio_group_page.dart';
+import 'package:than_sound/ui_platforms/pages/tag_group/lib_tag_type.dart';
 
-class AudioGroup {
-  const AudioGroup({required this.name, required this.files});
-
-  final String name;
-  final List<AudioFile> files;
-
-  int get count => files.length;
-
-  AudioFile get cover => files.first;
-}
-
-class LibPage extends StatefulWidget {
-  const LibPage({super.key});
+class TagHomePage extends StatefulWidget {
+  const new({super.key});
 
   @override
-  State<LibPage> createState() => _LibPageState();
+  State<TagHomePage> createState() => _TagHomePageState();
 }
 
-class _LibPageState extends State<LibPage> {
-  ColorScheme get col => context.colorScheme;
-
-  final currentTag = ValueNotifier<LibTagType>(LibTagType.artist);
-
+class _TagHomePageState extends State<TagHomePage> {
   final con = ControllerManager.read<AllFileStateController>();
+  final currentTag = ValueNotifier<LibTagType>(LibTagType.artist);
 
   List<AudioGroup> _groups(LibTagType type) {
     final groups = <String, List<AudioFile>>{};
@@ -55,61 +39,101 @@ class _LibPageState extends State<LibPage> {
         .map((e) => AudioGroup(name: e.key, files: e.value))
         .toList();
   }
-  
+
+  final tags = LibTagType.values;
+  ColorScheme get col => Theme.of(context).colorScheme;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: context.colorScheme.surface,
-      body: Padding(
-        padding: const EdgeInsets.all(4),
-        child: CustomScrollView(
-          slivers: [
-            SliverAppBar(
-              backgroundColor: context.colorScheme.surfaceContainer,
-              foregroundColor: context.colorScheme.onSurfaceVariant,
-              title: Text("Library"),
-            ),
-            SliverToBoxAdapter(child: SizedBox(height: 10)),
-            SliverGrid.list(
-              gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-                maxCrossAxisExtent: 250,
-                mainAxisExtent: 50,
-              ),
-              children: [FavouriteCountView()],
-            ),
-            //
-            SliverToBoxAdapter(
-              child: SizedBox(
-                height: 60,
-                child: TagHeader(currentTag: currentTag),
+      appBar: AppBar(),
+      body: CustomScrollView(
+        slivers: [
+          SliverAppBar(
+            automaticallyImplyLeading: false,
+            floating: true,
+            pinned: true,
+            flexibleSpace: SingleChildScrollView(
+              scrollDirection: .horizontal,
+              child: Padding(
+                padding: .symmetric(vertical: 10, horizontal: 15),
+                child: Row(
+                  spacing: 8,
+                  children: tags.map((e) => _tagItem(e)).toList(),
+                ),
               ),
             ),
+          ),
 
-            _tagList(),
-          ],
-        ),
+          // list
+          SliverPadding(
+            padding: .symmetric(vertical: 5, horizontal: 5),
+            sliver: _list,
+          ),
+        ],
       ),
     );
   }
 
-  Widget _tagList() {
+  Widget _tagItem(LibTagType tag) {
     return ValueListenableBuilder(
       valueListenable: currentTag,
-      builder: (context, value, child) {
-        final groups = _groups(value);
+      builder: (context, current, child) {
+        return GestureDetector(
+          onTap: () {
+            currentTag.value = tag;
+          },
+          child: Container(
+            padding: .symmetric(vertical: 4, horizontal: 6),
+            decoration: BoxDecoration(
+              color: col.tertiaryContainer,
+              borderRadius: .circular(15),
+              boxShadow: current != tag
+                  ? null
+                  : [
+                      .new(
+                        blurRadius: 5,
+                        color: col.onTertiaryContainer,
+                        spreadRadius: 2,
+                      ),
+                    ],
+            ),
+            child: Row(
+              children: [
+                tag.icon,
+                Text(
+                  tag.label,
+                  style: TextStyle(
+                    color: col.onTertiaryContainer,
+                    fontWeight: .w600,
+                    fontSize: 18,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget get _list {
+    return ValueListenableBuilder(
+      valueListenable: currentTag,
+      builder: (context, tag, child) {
+        final groups = _groups(tag);
         return SliverGrid.builder(
+          itemCount: groups.length,
           gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
             maxCrossAxisExtent: 200,
             mainAxisExtent: 200,
             mainAxisSpacing: 4,
             crossAxisSpacing: 4,
           ),
-          itemCount: groups.length,
           itemBuilder: (context, index) {
-            final group = groups[index];
+            final item = groups[index];
 
-            return gridItem(group);
+            return gridItem(item);
           },
         );
       },

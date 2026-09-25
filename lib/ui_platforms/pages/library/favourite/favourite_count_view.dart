@@ -19,6 +19,7 @@ class _FavouriteCountViewState extends State<FavouriteCountView> {
   Widget build(BuildContext context) {
     final col = Theme.of(context).colorScheme;
     return InkWell(
+      borderRadius: .circular(15),
       onTap: () {
         context.pushMaterialPageRoute(
           builder: (mainCtx) => MobileFavouriteListPage(),

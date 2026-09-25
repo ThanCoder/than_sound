@@ -10,6 +10,7 @@ import 'package:than_sound/core/controllers/all_audio/all_file_state_controller.
 import 'package:than_sound/core/controllers/interfaces/i_controller.dart';
 import 'package:than_sound/core/controllers/player/my_audio_handler.dart';
 import 'package:than_sound/core/controllers/player_state/player_state_controller.dart';
+import 'package:than_sound/core/utils/app_util.dart';
 import 'package:than_sound/core/utils/p_utils.dart';
 import 'package:than_sound/main_app.dart';
 import 'package:mpv_audio_kit/mpv_audio_kit.dart';
@@ -30,10 +31,8 @@ void main() async {
   }
 
   await PUtils.instance.init();
-  //app config
-  await CFBStore.getInstance.open(
-    PUtils.instance.getConfigPath('app.config.cbf'),
-  );
+  await AppUtil.instance.init();
+
   await AllFileStateController.cacheStore.open(
     PUtils.instance.getCachePath('app.audio.cache.files.cfb'),
   );

@@ -37,6 +37,11 @@ class AllFileStateController extends IController {
   static const String sortIdKey = 'sort-id-key';
   static const String sortValueKey = 'sort-value-key';
 
+  Stream<AllFileResetEvent> get resetEvent =>
+      event.whereType<AllFileResetEvent>();
+
+  final folders = <String, List<AudioFile>>{};
+
   @override
   Future<void> init() async {
     scanFromStorage();
@@ -59,6 +64,7 @@ class AllFileStateController extends IController {
         _state = _state.copyWith(isLoading: false);
         sort(_state.currentSort, files);
         _con.add(state);
+        reloadAudioFolders();
         addEvent(AllFileResetEvent());
       }
 
@@ -71,11 +77,12 @@ class AllFileStateController extends IController {
       _state = _state.copyWith(isLoading: false);
       sort(_state.currentSort, files);
       _con.add(state);
+      reloadAudioFolders();
       addEvent(AllFileResetEvent());
       // set cache
       if (files.isNotEmpty) {
         final cList = files.map((e) => e.toMap()).toList();
-        cacheStore.put('list', cList);
+        cacheStore.put('list', cList).writeAll();
       }
       _playerStateController.actions.setSource(NoneAudioSource());
     } catch (e) {
@@ -88,6 +95,13 @@ class AllFileStateController extends IController {
     final res = cacheStore.getMapList('list');
     if (res.isEmpty) return [];
     return res.map((e) => AudioFile.fromMap(e)).toList();
+  }
+
+  void reloadAudioFolders() {
+    folders.clear();
+    for (var f in files) {
+      folders.putIfAbsent(f.dirname, () => []).add(f);
+    }
   }
 
   AudioFile? getById(String id) {

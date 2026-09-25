@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'dart:typed_data';
+
 import 'package:dart_core_extensions/dart_core_extensions.dart';
 import 'package:desktop_drop/desktop_drop.dart';
 import 'package:file_type_plus/file_type_plus.dart';

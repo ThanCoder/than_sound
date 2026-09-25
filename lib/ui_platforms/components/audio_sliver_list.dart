@@ -6,7 +6,7 @@ import 'package:than_sound/core/models/audio_file.dart';
 
 class AudioSliverList extends StatelessWidget {
   final List<AudioFile> list;
-  final void Function(AudioFile) onClicked;
+  final void Function(AudioFile file) onClicked;
   const AudioSliverList({
     super.key,
     required this.list,

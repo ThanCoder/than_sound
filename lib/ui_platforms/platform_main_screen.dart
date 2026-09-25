@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:cfb_store/cfb_store.dart';
+import 'package:dart_core_extensions/dart_core_extensions.dart';
 import 'package:flutter/material.dart';
 import 'package:than_sound/const_keys.dart';
 import 'package:than_sound/core/utils/platform_util.dart';
@@ -34,12 +35,15 @@ class _PlatformMainScreenState extends State<PlatformMainScreen> {
 
   @override
   Widget build(BuildContext context) {
+    if (TPlatform.isMobile) {
+      return MobileHomeScreen();
+    }
     return LayoutBuilder(
       builder: (context, constraints) {
         this.constraints = constraints;
         saveWindowSizeTimer();
 
-        final isMobile = constraints.maxWidth < 500;
+        final isMobile = constraints.maxWidth <= 500;
         PlatformUtil.isDesktopNotifier.value = !isMobile;
         if (isMobile) {
           return MobileHomeScreen();
