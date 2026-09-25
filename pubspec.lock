@@ -924,10 +924,11 @@ packages:
   than_audiotag:
     dependency: "direct main"
     description:
-      name: than_audiotag
-      sha256: "5e7dba33871ec006a3145f89e8aee7b8008cb3cc8807db5ef04d20869e6c7c58"
-      url: "https://pub.dev"
-    source: hosted
+      path: "."
+      ref: HEAD
+      resolved-ref: "9d2456fe910134fbb2bb755dd20ea1f69751031d"
+      url: "https://github.com/ThanCoder/than_audiotag"
+    source: git
     version: "0.3.0"
   than_pkg_android:
     dependency: "direct main"

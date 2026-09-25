@@ -46,7 +46,7 @@ class _TagHomePageState extends State<TagHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(title: Text('Audio Tags')),
       body: CustomScrollView(
         slivers: [
           SliverAppBar(
