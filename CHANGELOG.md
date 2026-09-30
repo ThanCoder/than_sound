@@ -1,3 +1,6 @@
+# 0.9.0
+* Fixed `Fav Play List` မှာ fav toggle လုပ်ရင် playlist ပျောက်ခြင်း
+
 # 0.6.1
 + Fixed `Play List Next,Prev Error`
 

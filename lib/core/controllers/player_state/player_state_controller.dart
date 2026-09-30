@@ -58,27 +58,28 @@ class PlayerStateController extends IController {
   }
 
   void _listenAllState() {
-    ControllerManager.read<AllFileStateController>().event
-        .whereType<AllFileRemoveEvent>()
-        .listen((event) {
-          final file = event.file;
-          final fIndex = state.files.indexWhere((e) => e.path == file.path);
-          if (fIndex != -1) {
-            state.files.removeAt(fIndex);
-          }
-          final pIndex = state.playOrder.indexWhere((e) => e.path == file.path);
-          if (pIndex != -1) {
-            state.playOrder.removeAt(pIndex);
-          }
-          stream._con.add(PlayListChanged(file));
-          stream._con.add(PlayOrderChanged());
-        });
-    final favCon = ControllerManager.read<FavouriteController>();
-    favCon.event.whereType<FavouriteControllerValueChanged>().listen((event) {
-      if (state.source is FavouriteStateSource) {
-        state.files = state.files;
-        actions._setToggleShuffle();
+    final allCon = ControllerManager.read<AllFileStateController>();
+    allCon.event.whereType<AllFileRemoveEvent>().listen((event) {
+      final file = event.file;
+      final fIndex = state.files.indexWhere((e) => e.path == file.path);
+      if (fIndex != -1) {
+        state.files.removeAt(fIndex);
       }
+      final pIndex = state.playOrder.indexWhere((e) => e.path == file.path);
+      if (pIndex != -1) {
+        state.playOrder.removeAt(pIndex);
+      }
+      stream._con.add(PlayListChanged(file));
+      stream._con.add(PlayOrderChanged());
     });
+
+    // final favCon = ControllerManager.read<FavouriteController>();
+    // favCon.event.whereType<FavouriteControllerValueChanged>().listen((event) {
+    //   if (state.source is FavouriteStateSource) {
+    //     state.files = state.files;
+    //     state.playOrder = List.of(state.files);
+    //     actions._setToggleShuffle();
+    //   }
+    // });
   }
 }
