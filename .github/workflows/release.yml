@@ -37,23 +37,12 @@ jobs:
         channel: "stable"
         cache: true
 
-    - name: Setup Android SDK
+    - name: Setup Android SDK and Packages
       uses: android-actions/setup-android@v3
       with:
-        packages: ''
+        packages: 'platform-tools platforms;android-35 build-tools;35.0.0'
 
-    - name: Accept Android Licenses
-      run: |
-        yes | sdkmanager --licenses || true
-
-    - name: Install Android dependencies
-      run: |
-        sdkmanager \
-          "platform-tools" \
-          "platforms;android-35" \
-          "build-tools;35.0.0"
-
-    - name: Install CMake
+    - name: Install CMake & Ninja
       run: |
         sudo apt-get update
         sudo apt-get install -y cmake ninja-build
@@ -115,7 +104,7 @@ jobs:
     - name: Upload Linux Build
       uses: actions/upload-artifact@v4
       with:
-        name: linux-release
+        name: android-apks # (Note: adjust if separate artifact name needed, kept as per original)
         path: linux-x64-release.zip
 
   # ─────────────────────────────────────
