@@ -20,9 +20,19 @@ mixin BassConfigListener {
   void _update() {
     final cf = BassConfig.fromMap(config.getMap(audioBassConfigKey));
     controller.player.updateAudioEffects(
-      (e) => e.copyWith(
-        bass: BassSettings(enabled: cf.enable, g: cf.gain, f: cf.frequency),
-      ),
+      (fx) => [
+        for (var e in fx)
+          e is BassEffect
+              ? e.copyWith(
+                  enabled: cf.enable,
+                  gain: cf.gain,
+                  frequency: cf.frequency,
+                )
+              : e,
+      ],
     );
+    //  e.copyWith(
+    //         bass: BassSettings(enabled: cf.enable, g: cf.gain, f: cf.frequency),
+    //       ),
   }
 }

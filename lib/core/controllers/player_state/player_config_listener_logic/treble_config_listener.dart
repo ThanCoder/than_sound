@@ -22,9 +22,19 @@ mixin TrebleConfigListener {
   void _update() {
     final cf = TrebleConfig.fromMap(config.getMap(audioTrebleConfigKey));
     controller.player.updateAudioEffects(
-      (e) => e.copyWith(
-        treble: TrebleSettings(enabled: cf.enable, g: cf.gain, f: cf.frequency),
-      ),
+      (xf) => [
+        for (final e in xf)
+          e is TrebleEffect
+              ? e.copyWith(
+                  enabled: cf.enable,
+                  gain: cf.gain,
+                  frequency: cf.frequency,
+                )
+              : e,
+      ],
     );
+    // e.copyWith(
+    //     treble: TrebleSettings(enabled: cf.enable, g: cf.gain, f: cf.frequency),
+    //   ),
   }
 }

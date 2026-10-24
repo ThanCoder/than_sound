@@ -26,7 +26,7 @@ class _AudioFolderPageState extends State<AudioFolderPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text('Audio Folders')),
-      body: _body,
+      body: Padding(padding: const EdgeInsets.all(8.0), child: _body),
     );
   }
 
@@ -81,7 +81,10 @@ class _AudioFolderPageState extends State<AudioFolderPage> {
               child: Column(
                 crossAxisAlignment: .start,
                 spacing: 2,
-                children: [Text(title), Text('Count: ${files.length}')],
+                children: [
+                  Text(title, style: TextStyle(fontWeight: .w600)),
+                  Text('Count: ${files.length}'),
+                ],
               ),
             ),
           ],

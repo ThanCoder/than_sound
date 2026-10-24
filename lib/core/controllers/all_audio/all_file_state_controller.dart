@@ -5,21 +5,27 @@ import 'dart:isolate';
 import 'package:cfb_store/cfb_store.dart';
 import 'package:dart_core_extensions/dart_core_extensions.dart';
 import 'package:flutter/material.dart';
-import 'package:than_sound/core/controllers/all_audio/all_file_event.dart';
-import 'package:than_sound/core/controllers/all_audio/all_state.dart';
+import 'package:than_sound/const_keys.dart';
 import 'package:than_sound/core/controllers/interfaces/i_controller.dart';
 import 'package:than_sound/core/controllers/player_state/player_state_controller.dart';
 import 'package:than_sound/core/extensions/audio_file_extensions.dart';
 import 'package:than_sound/core/models/audio_file.dart';
 import 'package:than_sound/core/models/audio_meta.dart';
 import 'package:than_sound/core/scanner/audio_scanner.dart';
+import 'package:than_sound/core/utils/p_utils.dart';
 import 'package:than_sound/ui_platforms/pages/partials/sort_provider.dart';
+
+part 'all_file_event.dart';
+part 'all_state.dart';
 
 class AllFileStateController extends IController {
   PlayerStateController get _playerStateController =>
       ControllerManager.read<PlayerStateController>();
 
-  final List<AudioFile> files = [];
+  List<AudioFile> files = [];
+  final folders = <String, List<AudioFile>>{};
+  // final map = <String, AudioFile>{};
+
   final List<SortItem> sortList = [
     .nameSortItem,
     .dateSortItem,
@@ -40,11 +46,28 @@ class AllFileStateController extends IController {
   Stream<AllFileResetEvent> get resetEvent =>
       event.whereType<AllFileResetEvent>();
 
-  final folders = <String, List<AudioFile>>{};
-
+  final _cf = CFBStore.getInstance;
   @override
   Future<void> init() async {
-    scanFromStorage();
+    _cf.stream.put
+        .where(
+          (e) =>
+              e.key == audioFilterDurationEnableKeyName ||
+              e.key == audioFilterDurationValueKeyName,
+        )
+        .listen((event) {
+          final enable = _cf.getBool(audioFilterDurationEnableKeyName, true);
+          if (!enable || files.isEmpty) {
+            scanFromStorage();
+            return;
+          }
+          _audioFilesFilter();
+          addEvent(AllFileResetEvent());
+        });
+    // scanFromStorage();
+    await cacheStore.open(
+      PUtils.instance.getCachePath('app.audio.cache.files.cfb'),
+    );
   }
 
   Future<void> scanFromStorage({bool usedCache = true}) async {
@@ -73,12 +96,15 @@ class AllFileStateController extends IController {
         files.clear();
         files.addAll(list);
       }
+      // filter
+      _audioFilesFilter();
 
       _state = _state.copyWith(isLoading: false);
       sort(_state.currentSort, files);
       _con.add(state);
       reloadAudioFolders();
       addEvent(AllFileResetEvent());
+
       // set cache
       if (files.isNotEmpty) {
         final cList = files.map((e) => e.toMap()).toList();
@@ -89,6 +115,13 @@ class AllFileStateController extends IController {
       _state = _state.copyWith(isLoading: false, errorMessage: e.toString());
       _con.add(state);
     }
+  }
+
+  void _audioFilesFilter() {
+    final enable = _cf.getBool(audioFilterDurationEnableKeyName, true);
+    if (!enable || files.isEmpty) return;
+    final sec = _cf.getInt(audioFilterDurationValueKeyName, 5);
+    files = files.where((e) => e.meta.duration.inSeconds >= sec).toList();
   }
 
   List<AudioFile> get _cacheList {
@@ -185,16 +218,16 @@ class AllFileStateController extends IController {
         return;
       }
       files.removeAt(index);
+      // delete
+      // final f = File(file.path);
+      // if (f.existsSync()) {
+      //   await f.delete();
+      // }
+
       addEvent(AllFileRemoveEvent(file));
       addEvent(AllFileResetEvent());
 
       _con.add(_state);
-
-      // delete
-      final f = File(file.path);
-      if (f.existsSync()) {
-        await f.delete();
-      }
     } catch (e) {
       debugPrint('[AllFileStateController:deleteAudioFile]: $e');
     }

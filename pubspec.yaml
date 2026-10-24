@@ -10,14 +10,14 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  cupertino_icons: ^1.0.8
-  mpv_audio_kit: ^0.4.5
+  cupertino_icons: ^2.0.0
+  mpv_audio_kit: ^0.5.3
   marquee: ^2.3.0
   crypto: ^3.0.7
-  cfb_store: ^0.7.0
+  cfb_store: ^0.8.0
   than_pkg_linux: ^0.2.0
-  than_pkg_android: ^0.6.1
-  desktop_drop: ^0.7.1
+  than_pkg_android: ^0.7.0
+  desktop_drop: ^0.8.4
   lottie: ^3.5.1
   audio_session: ^0.2.4
   audio_service: ^0.18.19

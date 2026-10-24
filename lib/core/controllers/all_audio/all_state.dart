@@ -1,4 +1,4 @@
-import 'package:than_sound/ui_platforms/pages/partials/sort_provider.dart';
+part of 'all_file_state_controller.dart';
 
 class AllState {
   final bool isLoading;

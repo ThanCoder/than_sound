@@ -32,7 +32,7 @@ class PlayerStateSessionListener {
             deviceRemoved.type == .bluetoothSco) {
           player.pause();
         }
-        // // wried
+        // wried
         // if (deviceRemoved.type == .wiredHeadset ||
         //     deviceRemoved.type == .wiredHeadphones) {
         //   player.pause();

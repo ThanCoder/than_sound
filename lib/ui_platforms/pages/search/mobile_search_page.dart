@@ -152,32 +152,38 @@ class _MobileSearchPageState extends State<MobileSearchPage> {
 
   SliverToBoxAdapter _searchbar() {
     return SliverToBoxAdapter(
-      child: SearchBar(
-        hintText: 'Search',
-        focusNode: focusNode,
-        controller: controller,
-        leading: Icon(Icons.search),
-        trailing: [
-          IconButton(
-            onPressed: () {
-              controller.text = '';
-              result.clear();
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: SearchBar(
+          shape: WidgetStatePropertyAll(
+            RoundedRectangleBorder(borderRadius: .circular(14)),
+          ),
+          hintText: 'Search',
+          focusNode: focusNode,
+          controller: controller,
+          leading: Icon(Icons.search),
+          trailing: [
+            IconButton(
+              onPressed: () {
+                controller.text = '';
+                result.clear();
+                setState(() {
+                  showNotfoundResult = false;
+                });
+              },
+              icon: Icon(Icons.clear_all_outlined),
+            ),
+          ],
+          onTapOutside: (event) {
+            focusNode.unfocus();
+            if (showNotfoundResult != false) {
               setState(() {
                 showNotfoundResult = false;
               });
-            },
-            icon: Icon(Icons.clear_all_outlined),
-          ),
-        ],
-        onTapOutside: (event) {
-          focusNode.unfocus();
-          if (showNotfoundResult != false) {
-            setState(() {
-              showNotfoundResult = false;
-            });
-          }
-        },
-        onChanged: onChanged,
+            }
+          },
+          onChanged: onChanged,
+        ),
       ),
     );
   }

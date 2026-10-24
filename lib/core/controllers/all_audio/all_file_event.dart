@@ -1,5 +1,5 @@
-import 'package:than_sound/core/controllers/interfaces/i_controller.dart';
-import 'package:than_sound/core/models/audio_file.dart';
+part of 'all_file_state_controller.dart';
+
 
 class AllFileLoaded extends IControllerEvent {}
 

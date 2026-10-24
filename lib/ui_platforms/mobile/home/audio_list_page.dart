@@ -28,6 +28,8 @@ class AudioListPage extends StatefulWidget {
 }
 
 class _AudioListPageState extends State<AudioListPage> {
+  final controller = ScrollController();
+
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -42,8 +44,10 @@ class _AudioListPageState extends State<AudioListPage> {
     super.dispose();
   }
 
-  final controller = ScrollController();
   final playstateController = ControllerManager.read<PlayerStateController>();
+  final con = ControllerManager.read<AllFileStateController>();
+  final pCon = ControllerManager.read<PlayerStateController>();
+  ColorScheme get colors => Theme.of(context).colorScheme;
 
   Future<void> init({bool usedCache = true}) async {
     try {
@@ -55,7 +59,6 @@ class _AudioListPageState extends State<AudioListPage> {
           return;
         }
       }
-      final con = ControllerManager.read<AllFileStateController>();
       await con.scanFromStorage(usedCache: usedCache);
       if (!mounted) return;
 
@@ -100,49 +103,15 @@ class _AudioListPageState extends State<AudioListPage> {
       source: const AllFileStateSource(),
       showConfirmBox: true,
     );
-    // final current = playstateController.state.current;
-    // if (current != null &&
-    //     current.id == file.id &&
-    //     playstateController.state.playing) {
-    //   final confirmed = await showConfirmDialog(
-    //     context,
-    //     'Want to Song Restart!',
-    //   );
-    //   if (confirmed) {
-    //     await playstateController.actions.setTracks(
-    //       ControllerManager.read<AllFileStateController>().files,
-    //       source: const AllFileStateSource(),
-    //     );
-    //     await playstateController.actions.open(file);
-    //   }
-    //   return;
-    // }
-    // await playstateController.actions.setTracks(
-    //   ControllerManager.read<AllFileStateController>().files,
-    //   source: const AllFileStateSource(),
-    // );
-    // await playstateController.actions.open(file);
   }
 
   @override
   Widget build(BuildContext context) {
-    final con = ControllerManager.read<AllFileStateController>();
-    final pCon = ControllerManager.read<PlayerStateController>();
     return StreamBuilder(
       stream: con.stream,
       builder: (context, asyncSnapshot) {
         return Scaffold(
           backgroundColor: context.colorScheme.surface,
-          appBar: AppBar(
-            backgroundColor: context.colorScheme.surfaceContainer,
-            title: const Text(
-              'ThanSound',
-              style: TextStyle(fontWeight: FontWeight.w700),
-            ),
-            actions: actions,
-            centerTitle: false,
-            scrolledUnderElevation: 0,
-          ),
           body: Stack(
             children: [
               Positioned.fill(child: bodyWidget),
@@ -166,7 +135,7 @@ class _AudioListPageState extends State<AudioListPage> {
     );
   }
 
-  List<Widget> get actions {
+  List<Widget> get _actions {
     final con = ControllerManager.read<AllFileStateController>();
 
     return [
@@ -187,91 +156,7 @@ class _AudioListPageState extends State<AudioListPage> {
   }
 
   Widget get bodyWidget {
-    final con = ControllerManager.read<AllFileStateController>();
     final state = con.state;
-    final colors = Theme.of(context).colorScheme;
-
-    if (state.isLoading && con.files.isEmpty) {
-      return Center(child: TLoaderRandom());
-    }
-
-    if (state.errorMessage.isNotEmpty) {
-      return Center(
-        child: Container(
-          margin: const EdgeInsets.all(24),
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
-          decoration: BoxDecoration(
-            color: colors.errorContainer,
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: colors.error.withValues(alpha: .25)),
-          ),
-          child: Row(
-            children: [
-              Icon(Icons.error_outline_rounded, color: colors.onErrorContainer),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Text(
-                  state.errorMessage,
-                  style: TextStyle(
-                    color: colors.onErrorContainer,
-                    fontSize: 13,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      );
-    }
-
-    if (con.files.isEmpty) {
-      return Center(
-        child: Container(
-          margin: const EdgeInsets.all(24),
-          padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 24),
-          decoration: BoxDecoration(
-            color: colors.surfaceContainerLow,
-            borderRadius: BorderRadius.circular(20),
-            border: Border.all(
-              color: colors.outlineVariant.withValues(alpha: .3),
-            ),
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(
-                Icons.music_off_rounded,
-                size: 42,
-                color: colors.onSurfaceVariant,
-              ),
-
-              const SizedBox(height: 12),
-
-              Text(
-                'No Audio Files',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w700,
-                  color: colors.onSurface,
-                ),
-              ),
-
-              const SizedBox(height: 5),
-
-              Text(
-                'Your audio library is empty.',
-                style: TextStyle(fontSize: 12, color: colors.onSurfaceVariant),
-              ),
-
-              const SizedBox(height: 16),
-
-              RefreshButton(text: const Text('Scan Again'), onClicked: init),
-            ],
-          ),
-        ),
-      );
-    }
 
     final pCon = ControllerManager.read<PlayerStateController>();
 
@@ -281,6 +166,10 @@ class _AudioListPageState extends State<AudioListPage> {
         physics: const AlwaysScrollableScrollPhysics(),
         controller: controller,
         slivers: [
+          _appbar,
+          if (state.isLoading && con.files.isEmpty)
+            SliverFillRemaining(child: Center(child: TLoaderRandom())),
+
           if (state.isLoading && con.files.isNotEmpty)
             SliverToBoxAdapter(
               child: LinearProgressIndicator(
@@ -288,15 +177,116 @@ class _AudioListPageState extends State<AudioListPage> {
                 backgroundColor: colors.surfaceContainerHighest,
               ),
             ),
+          // header
+          if (state.errorMessage.isEmpty && con.files.isNotEmpty)
+            SliverToBoxAdapter(child: AudioListHeader()),
 
-          SliverToBoxAdapter(child: AudioListHeader()),
+          if (state.errorMessage.isNotEmpty)
+            SliverFillRemaining(child: _errorWidget),
 
-          AudioSliverList(list: con.files, onClicked: _openConfrmAndPlay),
+          if (state.errorMessage.isEmpty && con.files.isEmpty)
+            SliverFillRemaining(child: _listEmptyWidget),
 
-          SliverToBoxAdapter(
-            child: SizedBox(height: pCon.state.showFloatWidget ? 130 : 90),
-          ),
+          if (state.errorMessage.isEmpty)
+            AudioSliverList(list: con.files, onClicked: _openConfrmAndPlay),
+
+          if (state.errorMessage.isEmpty)
+            SliverToBoxAdapter(
+              child: SizedBox(height: pCon.state.showFloatWidget ? 130 : 90),
+            ),
         ],
+      ),
+    );
+  }
+
+  Widget get _appbar {
+    return SliverAppBar(
+      snap: true,
+      floating: true,
+      pinned: false,
+      backgroundColor: context.colorScheme.surfaceContainer,
+      title: const Text(
+        'ThanSound',
+        style: TextStyle(fontWeight: FontWeight.w700),
+      ),
+      actions: _actions,
+    );
+  }
+
+  Widget get _errorWidget {
+    return Center(
+      child: Container(
+        margin: const EdgeInsets.all(24),
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+        decoration: BoxDecoration(
+          color: colors.errorContainer,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: colors.error.withValues(alpha: .25)),
+        ),
+        child: Row(
+          children: [
+            Icon(Icons.error_outline_rounded, color: colors.onErrorContainer),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Text(
+                con.state.errorMessage,
+                style: TextStyle(
+                  color: colors.onErrorContainer,
+                  fontSize: 13,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget get _listEmptyWidget {
+    return Center(
+      child: Container(
+        margin: const EdgeInsets.all(24),
+        padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 24),
+        decoration: BoxDecoration(
+          color: colors.surfaceContainerLow,
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+            color: colors.outlineVariant.withValues(alpha: .3),
+          ),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              Icons.music_off_rounded,
+              size: 42,
+              color: colors.onSurfaceVariant,
+            ),
+
+            const SizedBox(height: 12),
+
+            Text(
+              'No Audio Files',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w700,
+                color: colors.onSurface,
+              ),
+            ),
+
+            const SizedBox(height: 5),
+
+            Text(
+              'Your audio library is empty.',
+              style: TextStyle(fontSize: 12, color: colors.onSurfaceVariant),
+            ),
+
+            const SizedBox(height: 16),
+
+            RefreshButton(text: const Text('Scan Again'), onClicked: init),
+          ],
+        ),
       ),
     );
   }

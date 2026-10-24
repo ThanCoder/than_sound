@@ -9,6 +9,31 @@ class AudioEqHomePage extends StatefulWidget {
 
   @override
   State<AudioEqHomePage> createState() => _AudioEqHomePageState();
+
+  static Widget listTile(BuildContext context) {
+    final col = Theme.of(context).colorScheme;
+    return ListTile(
+      tileColor: col.surfaceContainer,
+      shape: RoundedRectangleBorder(borderRadius: .circular(15)),
+      contentPadding: .symmetric(vertical: 10, horizontal: 12),
+      leading: Container(
+        padding: .all(10),
+        decoration: BoxDecoration(
+          color: col.primaryContainer,
+          borderRadius: .circular(15),
+          boxShadow: [
+            .new(color: col.primary, blurRadius: 12, spreadRadius: 1),
+          ],
+        ),
+        child: Icon(Icons.equalizer_outlined, color: col.onPrimaryContainer),
+      ),
+      title: Text('Audio Equalizers'),
+      trailing: Icon(Icons.arrow_forward_ios_outlined),
+      onTap: () {
+        context.pushMaterialPageRoute(builder: (mainCtx) => AudioEqHomePage());
+      },
+    );
+  }
 }
 
 class _AudioEqHomePageState extends State<AudioEqHomePage> {
@@ -52,7 +77,7 @@ class _AudioEqHomePageState extends State<AudioEqHomePage> {
             ),
             _menuTile(
               'Trable',
-              icon: Icons.equalizer_outlined,
+              icon: Icons.equalizer_sharp,
               subTitle: 'Trable Boost',
               onTap: () {
                 context.pushMaterialPageRoute(

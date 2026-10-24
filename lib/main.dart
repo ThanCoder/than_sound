@@ -33,9 +33,7 @@ void main() async {
   await PUtils.instance.init();
   await AppUtil.instance.init();
 
-  await AllFileStateController.cacheStore.open(
-    PUtils.instance.getCachePath('app.audio.cache.files.cfb'),
-  );
+
 
   if (Platform.isLinux) {
     // print('main: ${CFBStore.getInstance.getDouble(linuxWindowWidthKey)}');

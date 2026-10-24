@@ -2,12 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:than_sound/core/controllers/all_audio/all_file_state_controller.dart';
 import 'package:than_sound/core/controllers/interfaces/i_controller.dart';
 
-class AudioListHeader extends StatelessWidget {
+class AudioListHeader extends StatefulWidget {
   const AudioListHeader({super.key});
 
   @override
+  State<AudioListHeader> createState() => _AudioListHeaderState();
+}
+
+class _AudioListHeaderState extends State<AudioListHeader> {
+  final con = ControllerManager.read<AllFileStateController>();
+  @override
   Widget build(BuildContext context) {
-    final con = ControllerManager.read<AllFileStateController>();
     final colors = Theme.of(context).colorScheme;
 
     return Padding(
@@ -56,18 +61,27 @@ class AudioListHeader extends StatelessWidget {
                 color: colors.primary.withValues(alpha: .10),
                 borderRadius: BorderRadius.circular(20),
               ),
-              child: Text(
-                '${con.files.length}',
-                style: TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w700,
-                  color: colors.primary,
-                ),
-              ),
+              child: _countWidget(colors),
             ),
           ],
         ),
       ),
+    );
+  }
+
+  StreamBuilder<AllFileLoaded> _countWidget(ColorScheme colors) {
+    return StreamBuilder(
+      stream: con.event.whereType<AllFileLoaded>(),
+      builder: (context, asyncSnapshot) {
+        return Text(
+          '${con.files.length}',
+          style: TextStyle(
+            fontSize: 12,
+            fontWeight: FontWeight.w700,
+            color: colors.primary,
+          ),
+        );
+      },
     );
   }
 }
