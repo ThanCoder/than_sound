@@ -219,10 +219,10 @@ class AllFileStateController extends IController {
       }
       files.removeAt(index);
       // delete
-      // final f = File(file.path);
-      // if (f.existsSync()) {
-      //   await f.delete();
-      // }
+      final f = File(file.path);
+      if (f.existsSync()) {
+        await f.delete();
+      }
 
       addEvent(AllFileRemoveEvent(file));
       addEvent(AllFileResetEvent());

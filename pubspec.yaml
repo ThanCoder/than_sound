@@ -11,7 +11,7 @@ dependencies:
   flutter:
     sdk: flutter
   cupertino_icons: ^2.0.0
-  mpv_audio_kit: ^0.5.3
+  mpv_audio_kit: ^0.6.1
   marquee: ^2.3.0
   crypto: ^3.0.7
   cfb_store: ^0.8.0
@@ -31,6 +31,7 @@ dependencies:
   package_info_plus: ^10.2.1
   url_launcher: ^6.3.2
   path_provider: ^2.1.6
+  dart_core_extensions: ^0.7.0
 
   t_widgets:
     git: https://github.com/ThanCoder/t_widgets.git
@@ -40,7 +41,6 @@ dependencies:
     git: https://github.com/ThanCoder/t_client
   than_audiotag:
     git: https://github.com/ThanCoder/than_audiotag.git
-  dart_core_extensions: ^0.7.0
 
 dev_dependencies:
   flutter_test:
