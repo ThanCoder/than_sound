@@ -49,11 +49,11 @@ class PlayerStateSessionListener {
         '[dev:session] '
         'begin=${event.begin}, '
         'type=${event.type}, '
-        'playing=${player.state.playing}',
+        'playing=${player.state.playback.playing}',
       );
 
       if (event.begin) {
-        wasPlayingBeforeInterruption = player.state.playing;
+        wasPlayingBeforeInterruption = player.state.playback.playing;
 
         print(
           '[dev:session] interruption started '
@@ -95,7 +95,7 @@ class PlayerStateSessionListener {
 
           print(
             '[dev:session] -> play() done '
-            'playing=${player.state.playing}',
+            'playing=${player.state.playback.playing}',
           );
           break;
 

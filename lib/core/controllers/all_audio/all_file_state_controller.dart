@@ -4,7 +4,7 @@ import 'dart:isolate';
 
 import 'package:cfb_store/cfb_store.dart';
 import 'package:dart_core_extensions/dart_core_extensions.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:than_sound/const_keys.dart';
 import 'package:than_sound/core/controllers/interfaces/i_controller.dart';
 import 'package:than_sound/core/controllers/player_state/player_state_controller.dart';
@@ -13,7 +13,7 @@ import 'package:than_sound/core/models/audio_file.dart';
 import 'package:than_sound/core/models/audio_meta.dart';
 import 'package:than_sound/core/scanner/audio_scanner.dart';
 import 'package:than_sound/core/utils/p_utils.dart';
-import 'package:than_sound/ui_platforms/pages/partials/sort_provider.dart';
+import 'package:than_sound/platforms/pages/partials/sort_provider.dart';
 
 part 'all_file_event.dart';
 part 'all_state.dart';

@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:audio_service/audio_service.dart';
 import 'package:audio_session/audio_session.dart';
 import 'package:cfb_store/cfb_store.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:than_pkg_linux/than_pkg_linux.dart';
 import 'package:than_sound/const_keys.dart';
 import 'package:than_sound/core/controllers/all_audio/all_file_state_controller.dart';
@@ -14,8 +14,8 @@ import 'package:than_sound/core/utils/app_util.dart';
 import 'package:than_sound/core/utils/p_utils.dart';
 import 'package:than_sound/main_app.dart';
 import 'package:mpv_audio_kit/mpv_audio_kit.dart';
-import 'package:than_sound/ui_platforms/pages/library/favourite/favourite_controller.dart';
-import 'package:than_sound/ui_platforms/pages/music_tracker/music_tracker_controller.dart';
+import 'package:than_sound/platforms/pages/library/favourite/favourite_controller.dart';
+import 'package:than_sound/platforms/pages/music_tracker/music_tracker_controller.dart';
 import 'package:waveform_visualizer/waveform_visualizer.dart';
 
 void main() async {
@@ -32,8 +32,6 @@ void main() async {
 
   await PUtils.instance.init();
   await AppUtil.instance.init();
-
-
 
   if (Platform.isLinux) {
     // print('main: ${CFBStore.getInstance.getDouble(linuxWindowWidthKey)}');

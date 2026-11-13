@@ -2,11 +2,11 @@ import 'dart:async';
 
 import 'package:cfb_store/cfb_store.dart';
 import 'package:dart_core_extensions/dart_core_extensions.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:than_sound/const_keys.dart';
 import 'package:than_sound/core/utils/platform_util.dart';
-import 'package:than_sound/ui_platforms/desktop/home/desktop_home_screen.dart';
-import 'package:than_sound/ui_platforms/mobile/home/mobile_home_screen.dart';
+import 'package:than_sound/platforms/desktop/home/desktop_home_screen.dart';
+import 'package:than_sound/platforms/mobile/home/mobile_home_screen.dart';
 
 class PlatformMainScreen extends StatefulWidget {
   const PlatformMainScreen({super.key});

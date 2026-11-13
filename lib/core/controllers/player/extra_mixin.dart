@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:audio_service/audio_service.dart';
-import 'package:mpv_audio_kit/mpv_audio_kit.dart' hide MediaAction;
+import 'package:mpv_audio_kit/mpv_audio_kit.dart' hide MediaAction, PlaybackState;
 import 'package:than_sound/core/controllers/player/my_audio_handler.dart';
 import 'package:than_sound/core/models/audio_file.dart';
 
@@ -71,9 +71,9 @@ mixin ExtraMixin {
     },
     androidCompactActionIndices: const [0, 1, 2],
     processingState: processingState,
-    playing: audioHandler.stateController.player.state.playing,
-    updatePosition: audioHandler.stateController.player.state.position,
-    bufferedPosition: audioHandler.stateController.player.state.buffer,
+    playing: audioHandler.stateController.player.state.playback.playing,
+    updatePosition: audioHandler.stateController.player.state.playback.position,
+    bufferedPosition: audioHandler.stateController.player.state.network.buffer,
     speed: 1.0,
     queueIndex: audioHandler.stateController.state.currentIndex,
     // speed: state.cacheSpeed
@@ -81,7 +81,7 @@ mixin ExtraMixin {
 
   AudioProcessingState get processingState {
     final state = audioHandler.stateController.player.state;
-    return state.buffering
+    return state.network.buffering
         ? AudioProcessingState.buffering
         : AudioProcessingState.ready;
   }

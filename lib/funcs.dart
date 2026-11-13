@@ -1,12 +1,13 @@
-import 'package:flutter/material.dart';
-import 'package:t_widgets/t_widgets.dart';
+import 'package:material_ui/material_ui.dart';
+
 import 'package:than_sound/core/controllers/interfaces/i_controller.dart';
 import 'package:than_sound/core/controllers/player_state/player_state_controller.dart';
 import 'package:than_sound/core/models/audio_file.dart';
 import 'package:than_sound/core/utils/platform_util.dart';
-import 'package:than_sound/ui_platforms/components/dialog/confirm_alert_dialog.dart';
-import 'package:than_sound/ui_platforms/desktop/desktop_now_playing_page.dart';
-import 'package:than_sound/ui_platforms/player_theme_provider/mobile_now_playing_provider_page.dart';
+import 'package:than_sound/ui/build_context_x.dart';
+import 'package:than_sound/platforms/components/dialog/confirm_alert_dialog.dart';
+import 'package:than_sound/platforms/desktop/desktop_now_playing_page.dart';
+import 'package:than_sound/platforms/player_theme_provider/mobile_now_playing_provider_page.dart';
 
 Future<void> openConfirmAndPlay(
   BuildContext context, {

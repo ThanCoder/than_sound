@@ -6,16 +6,18 @@ version: 0.10.0
 repository: https://github.com/ThanCoder/than_sound.git
 
 environment:
-  sdk: ^3.13.0
+  sdk: ^3.14.0
 dependencies:
   flutter:
     sdk: flutter
+  material_ui: ^1.11.0
+
   cupertino_icons: ^2.0.0
-  mpv_audio_kit: ^0.6.1
+  mpv_audio_kit: ^0.7.0
   marquee: ^2.3.0
   crypto: ^3.0.7
   cfb_store: ^0.8.0
-  than_pkg_linux: ^0.2.0
+  than_pkg_linux: ^0.3.0
   than_pkg_android: ^0.7.0
   desktop_drop: ^0.8.4
   lottie: ^3.5.1
@@ -31,17 +33,18 @@ dependencies:
   package_info_plus: ^10.2.1
   url_launcher: ^6.3.2
   path_provider: ^2.1.6
-  dart_core_extensions: ^0.7.0
+  dart_core_extensions: ^0.8.0
 
-  t_widgets:
-    git: https://github.com/ThanCoder/t_widgets.git
   t_server:
     git: https://github.com/ThanCoder/t_server.git
   t_client:
     git: https://github.com/ThanCoder/t_client
   than_audiotag:
     git: https://github.com/ThanCoder/than_audiotag.git
+  # flutter pub upgrade --major-versions
 
+  t_widgets: any
+  than_reader: any
 dev_dependencies:
   flutter_test:
     sdk: flutter

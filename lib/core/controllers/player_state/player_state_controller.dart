@@ -4,7 +4,7 @@ import 'dart:io';
 import 'package:audio_service/audio_service.dart';
 import 'package:audio_session/audio_session.dart';
 import 'package:cfb_store/cfb_store.dart';
-import 'package:mpv_audio_kit/mpv_audio_kit.dart';
+import 'package:mpv_audio_kit/mpv_audio_kit.dart' hide PlaybackState;
 import 'package:than_sound/const_keys.dart';
 import 'package:than_sound/core/controllers/all_audio/all_file_state_controller.dart';
 import 'package:than_sound/core/controllers/interfaces/i_controller.dart';
@@ -12,9 +12,9 @@ import 'package:than_sound/core/controllers/player_state/player_config_listener_
 import 'package:than_sound/core/controllers/player_state/player_config_listener_logic/treble_config_listener.dart';
 import 'package:than_sound/core/controllers/player_state/player_fade_controller.dart';
 import 'package:than_sound/core/controllers/player_state/player_loop.dart';
-import 'package:than_sound/ui_platforms/components/sleep_timer/sleep_timer.dart';
+import 'package:than_sound/platforms/components/sleep_timer/sleep_timer.dart';
 import 'package:than_sound/core/models/audio_file.dart';
-import 'package:than_sound/ui_platforms/pages/library/favourite/favourite_controller.dart';
+import 'package:than_sound/platforms/pages/library/favourite/favourite_controller.dart';
 
 part 'events.dart';
 part 'state.dart';
