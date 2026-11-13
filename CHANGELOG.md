@@ -1,19 +1,23 @@
 # 0.10.0
 
+- Upgraded `migrate_design_widgets`
+
 # 0.9.0
-* Fixed `Fav Play List` မှာ fav toggle လုပ်ရင် playlist ပျောက်ခြင်း
+
+- Fixed `Fav Play List` မှာ fav toggle လုပ်ရင် playlist ပျောက်ခြင်း
 
 # 0.6.1
-+ Fixed `Play List Next,Prev Error`
+
+- Fixed `Play List Next,Prev Error`
 
 # 0.5.0
 
-+ Added `Sleep Timer`
-+ Modified `Home Navigation UI`
-+ Modified `Player State Core`
+- Added `Sleep Timer`
+- Modified `Home Navigation UI`
+- Modified `Player State Core`
 
-- Some Added `Desktop Version`
-- Fixed `Slider` -> `onChangedEnd` to `onChanged`
+* Some Added `Desktop Version`
+* Fixed `Slider` -> `onChangedEnd` to `onChanged`
 
 ## 0.2.0
 
