@@ -43,8 +43,6 @@ dependencies:
     git: https://github.com/ThanCoder/than_audiotag.git
   # flutter pub upgrade --major-versions
 
-  t_widgets: any
-  than_reader: any
 dev_dependencies:
   flutter_test:
     sdk: flutter
